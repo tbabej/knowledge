@@ -20,3 +20,12 @@ let s:plugin_path = escape(expand('<sfile>:p:h:h'), '\')
 
 " Execute the main body of taskwiki source
 execute 'pyfile ' . s:plugin_path . '/knowledge/knowledge.py'
+
+augroup knowledge
+    autocmd!
+    " Create new notes in Anki when saved
+    execute "autocmd BufWrite *.".expand('%:e')." KnowledgeBufferSave"
+augroup END
+
+" Global update commands
+command! KnowledgeBufferSave :py create_notes()
