@@ -55,7 +55,8 @@ class AnkiProxy(object):
         if status == 1:
             raise AnkiException("First field cannot be empty")
         elif status == 2:
-            raise AnkiException("Duplicate note")
+            # This means only that the first field is identical
+            pass
 
         self.collection.addNote(note)
         self.collection.autosave()
