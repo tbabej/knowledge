@@ -48,11 +48,9 @@ class WikiNote(object):
         self.data.update({
             'header_start': match.group('header_start'),
             'header_end': match.group('header_end'),
+            'id': metadata,
             'line': number,
         })
-
-        # No ID in metadata means this is a new note
-        attempt_to_add = not metadata
 
         # Parse out the answer
         answerlines = []
@@ -76,6 +74,9 @@ class WikiNote(object):
         return repr(self.fields)
 
     def save(self):
+        if self.data.get('id') is not None:
+            return
+
         obtained_id = proxy.add_note('TestDeck', 'Basic', self.fields)
 
         if obtained_id:
