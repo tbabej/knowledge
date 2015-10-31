@@ -48,6 +48,7 @@ class WikiNote(object):
         self.data.update({
             'header_start': match.group('header_start'),
             'header_end': match.group('header_end'),
+            'line': number,
         })
 
         # No ID in metadata means this is a new note
@@ -81,3 +82,20 @@ class WikiNote(object):
             self.data['id'] = obtained_id
             proxy.collection.flush()
             proxy.collection.save()
+            self.update_in_buffer()
+
+    def update_in_buffer(self):
+        """
+        Updates the representation of the note in the buffer.
+        Note: Currently only affects the header.
+        """
+
+        line = ' '.join([
+            self.data['header_start'],
+            self.fields['Front'],
+            '@',
+            str(self.data['id']),
+            self.data['header_end'],
+        ])
+
+        vim.current.buffer[self.data['line']] = line
