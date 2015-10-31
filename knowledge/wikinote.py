@@ -63,6 +63,10 @@ class WikiNote(object):
     def __repr__(self):
         return repr(self.fields)
 
+    @property
+    def created(self):
+        return self.data.get('id') is not None
+
     def save(self):
         if self.data.get('id') is not None:
             return
