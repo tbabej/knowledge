@@ -12,6 +12,7 @@ NOTE_HEADLINE = re.compile(
     '(?P<header_end>[=]+)'  # Heading ending
     )
 
+
 class WikiNote(object):
 
     def __init__(self, proxy):
@@ -40,7 +41,7 @@ class WikiNote(object):
         self.data.update({
             'header_start': match.group('header_start'),
             'header_end': match.group('header_end'),
-            'id': metadata,
+            'id': metadata or None,
             'line': number,
         })
 
