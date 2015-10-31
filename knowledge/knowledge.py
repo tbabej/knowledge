@@ -1,3 +1,4 @@
+import os
 import re
 import sys
 import vim
@@ -5,6 +6,9 @@ import vim
 # Insert the knowledge on the python path
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, os.path.join(BASE_DIR, 'knowledge'))
+
+from proxy import AnkiProxy
+proxy = AnkiProxy(os.path.expanduser('~/Documents/Anki/User 1/collection.anki2'))
 
 NOTE_HEADLINE = re.compile(
     '^'                    # Starts at the begging of the line
@@ -63,3 +67,9 @@ class WikiNote(object):
 
     def __repr__(self):
         return repr(self.data)
+
+    def save(self):
+        proxy.add_note('TestDeck', 'Basic', self.data)
+        proxy.collection.flush()
+        proxy.collection.save()
+        proxy.collection.close()
