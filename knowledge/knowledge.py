@@ -12,13 +12,13 @@ proxy = AnkiProxy(os.path.expanduser('~/Documents/Anki/User 1/collection.anki2')
 
 NOTE_HEADLINE = re.compile(
     '^'                    # Starts at the begging of the line
-    '[=]+'                 # Heading begging
+    '(?P<header_start>[=]+)'  # Heading beggining
     '(?P<question>[^=\|\[\{]*)'  # Name of the viewport, all before the | sign
                              # Cannot include '[', '=', '|, and '{'
     '@'                   # Divider @
     '(?P<metadata>[^=@]*?)'       # Filter
     '\s*'                  # Any whitespace
-    '[=]+'                 # Header ending
+    '(?P<header_end>[=]+)'  # Heading ending
     )
 
 class WikiNote(object):
@@ -44,6 +44,11 @@ class WikiNote(object):
         # If we have a match, determine if it's an existing note
         metadata = match.group('metadata').strip()
         question = match.group('question').strip()
+
+        self.data.update({
+            'header_start': match.group('header_start'),
+            'header_end': match.group('header_end'),
+        })
 
         # No ID in metadata means this is a new note
         attempt_to_add = not metadata
