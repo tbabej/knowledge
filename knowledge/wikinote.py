@@ -1,3 +1,6 @@
+import re
+import vim
+
 NOTE_HEADLINE = re.compile(
     '^'                    # Starts at the begging of the line
     '(?P<header_start>[=]+)'  # Heading beggining
