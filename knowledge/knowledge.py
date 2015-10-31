@@ -24,6 +24,7 @@ NOTE_HEADLINE = re.compile(
 class WikiNote(object):
 
     def __init__(self):
+        self.fields = dict()
         self.data = dict()
 
     @classmethod
@@ -58,7 +59,7 @@ class WikiNote(object):
             elif candidate:
                 answerlines.append(candidate)
 
-        self.data.update({
+        self.fields.update({
             'Front': question,
             'Back': '</br>\n'.join(answerlines),
         })
@@ -66,10 +67,12 @@ class WikiNote(object):
         return self
 
     def __repr__(self):
-        return repr(self.data)
+        return repr(self.fields)
 
     def save(self):
-        proxy.add_note('TestDeck', 'Basic', self.data)
-        proxy.collection.flush()
-        proxy.collection.save()
-        proxy.collection.close()
+        obtained_id = proxy.add_note('TestDeck', 'Basic', self.fields)
+
+        if obtained_id:
+            self.data['id'] = obtained_id
+            proxy.collection.flush()
+            proxy.collection.save()
