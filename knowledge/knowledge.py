@@ -60,7 +60,7 @@ class WikiNote(object):
 
         self.data.update({
             'Front': question,
-            'Back': '\n'.join(answerlines),
+            'Back': '</br>\n'.join(answerlines),
         })
 
         return self
