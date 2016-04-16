@@ -61,3 +61,35 @@ class AnkiProxy(object):
         self.collection.addNote(note)
         self.collection.autosave()
         return note.id
+
+
+class MnemosyneProxy(object):
+    """
+    An abstraction over Mnemosyne interface.
+    """
+
+    def __init__(self, path=None):
+        from mnemosyne.script import Mnemosyne
+        self.mnemo = Mnemosyne(path)
+
+    def add_note(self, tags, model_name, fields):
+        """
+        Adds a new fact with specified fields, model name and tags.
+        Returns the ID of the fact.
+        """
+
+        card_type = self.mnemo.card_type_with_id(model_name)
+        controller = self.mnemo.controller()
+
+        cards = controller.create_new_cards(
+            fields,
+            card_type,
+            grade=-1,
+            tag_names=tags
+        )
+
+        # We expect exactly one card created
+        assert len(cards) == 1
+
+        # Return the fact ID
+        return cards[0].fact.id
