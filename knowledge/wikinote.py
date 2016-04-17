@@ -3,7 +3,10 @@ import vim
 
 import utils
 
-QUESTION_PREFIXES = ('Q', 'How', 'Explain', 'Define', 'List')
+QUESTION_PREFIXES = vim.vars.get(
+    'knowledge_question_prefixes',
+    ('Q', 'How', 'Explain', 'Define', 'List', 'Prove')
+)
 
 QUESTION = re.compile(
     '^'                                    # Starts at the begging
