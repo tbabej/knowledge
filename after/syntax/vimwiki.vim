@@ -10,3 +10,7 @@ let s:conceal = exists("+conceallevel") ? ' conceal': ''
 for s:i in range(1,6)
   execute 'syn match WikiNoteHeaderDef containedin=VimwikiHeader'.s:i.' contained /@[^=]*/'.s:conceal
 endfor
+
+" Conceal the fact identifiers
+execute 'syn match FactIdentifier /\v\[[0-9a-zA-Z]{22}\]$/'.s:conceal
+highlight link FactIdentifier Comment
