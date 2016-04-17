@@ -57,7 +57,7 @@ class WikiNote(object):
         self.proxy = proxy
 
     @classmethod
-    def from_line(cls, number, proxy):
+    def from_line(cls, number, proxy, tags=None):
         """
         This methods detects if a current line is a note-defining headline. If
         positive, it will try to parse the note data out of the block.
@@ -74,9 +74,12 @@ class WikiNote(object):
         identifier = match.group('identifier')
         question = match.group('question').strip()
 
+        tags = tags or []
+
         self.data.update({
             'id': identifier,
             'line': number,
+            'tags': set(tags)
         })
 
         # Parse out the remaining question and answer parts
@@ -116,7 +119,12 @@ class WikiNote(object):
         if self.data.get('id') is not None:
             return
 
-        obtained_id = self.proxy.add_note('TestDeck', '1', self.fields)
+        obtained_id = self.proxy.add_note(
+            'TestDeck',
+            '1',
+            self.fields,
+            tags=self.data['tags']
+        )
 
         if obtained_id:
             self.data['id'] = obtained_id
