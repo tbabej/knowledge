@@ -1,15 +1,18 @@
 import re
 import vim
 
-NOTE_HEADLINE = re.compile(
-    '^'                    # Starts at the begging of the line
-    '(?P<header_start>[=]+)'  # Heading beggining
-    '(?P<question>[^=\|\[\{]*)'  # Name of the viewport, all before the | sign
-                             # Cannot include '[', '=', '|, and '{'
-    '@'                   # Divider @
-    '(?P<metadata>[^=@]*?)'       # Filter
-    '\s*'                  # Any whitespace
-    '(?P<header_end>[=]+)'  # Heading ending
+QUESTION_PREFIXES = ('Q', 'How', 'Explain', 'Define', 'List')
+
+QUESTION = re.compile(
+    '^'                                    # Starts at the begging
+    '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
+    '\s*'                                  # Followed by any whitespace
+    '(\['
+      '(?P<identifier>.*)'                 # With opt. identifier in []
+    '\])?'
+    '\s*'
+    '$'                                    # Matches on whole line
+    .format(prefixes='|'.join(QUESTION_PREFIXES))
     )
 
 
@@ -27,7 +30,7 @@ class WikiNote(object):
         positive, it will try to parse the note data out of the block.
         """
 
-        match = re.search(NOTE_HEADLINE, vim.current.buffer[number])
+        match = re.search(QUESTION, vim.current.buffer[number])
 
         if not match:
             return None
@@ -35,31 +38,36 @@ class WikiNote(object):
         self = cls(proxy)
 
         # If we have a match, determine if it's an existing note
-        metadata = match.group('metadata').strip()
+        identifier = match.group('identifier')
         question = match.group('question').strip()
 
         self.data.update({
-            'header_start': match.group('header_start'),
-            'header_end': match.group('header_end'),
-            'id': metadata or None,
+            'id': identifier,
             'line': number,
         })
 
-        # Parse out the answer
+        # Parse out the remaining question and answer parts
+        questionlines = [question]
         answerlines = []
+        parsing_question = True
+
         for line in vim.current.buffer[(number+1):]:
             candidate = line.strip()
 
-            # Consider new heading or --- as a end of the answer
-            if candidate.startswith('=') or candidate.startswith('---'):
+            # Empty line finishes the parsing
+            if not candidate:
                 break
-            elif candidate:
-                answerlines.append(candidate)
+
+            # First line starting with '- ' denotes start of the answer
+            if candidate.startswith('- '):
+                answerlines.append(candidate[2:])
+                parsing_question = False
+            elif parsing_question:
+                questionlines.append(candidate)
 
         self.fields.update({
-            'Heading': "Added from anki",
-            'Front': question,
-            'Back': '</br>\n'.join(answerlines),
+            'Front': '\n'.join(questionlines),
+            'Back': '\n'.join(answerlines),
         })
 
         return self
@@ -75,26 +83,24 @@ class WikiNote(object):
         if self.data.get('id') is not None:
             return
 
-        obtained_id = self.proxy.add_note('TestDeck', 'Basic', self.fields)
+        obtained_id = self.proxy.add_note('TestDeck', '1', self.fields)
 
         if obtained_id:
             self.data['id'] = obtained_id
-            self.proxy.collection.flush()
-            self.proxy.collection.save()
             self.update_in_buffer()
 
     def update_in_buffer(self):
         """
         Updates the representation of the note in the buffer.
-        Note: Currently only affects the header.
+        Note: Currently only affects the first line.
         """
 
-        line = ' '.join([
-            self.data['header_start'],
-            self.fields['Front'],
-            '@',
-            str(self.data['id']),
-            self.data['header_end'],
-        ])
+        questionline = self.fields.get('Front').splitlines()[0]
+        identifier = self.data.get('id')
+
+        if identifier is not None:
+            line = '{0} [{1}]'.format(questionline, identifier)
+        else:
+            line = questionline
 
         vim.current.buffer[self.data['line']] = line
