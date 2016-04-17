@@ -65,7 +65,7 @@ class HeaderStack(object):
     def deck(self):
         keys = sorted(self.headers.keys(), reverse=False)
         for key in keys:
-            deck = self.headers[key].get('deck')
+            deck = self.headers[key].data.get('deck')
             if deck is not None:
                 return deck
 
@@ -73,7 +73,7 @@ class HeaderStack(object):
     def model(self):
         keys = sorted(self.headers.keys(), reverse=False)
         for key in keys:
-            model = self.headers[key].get('model')
+            model = self.headers[key].data.get('model')
             if model is not None:
                 return model
 

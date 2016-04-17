@@ -129,7 +129,7 @@ class WikiNote(object):
             return
 
         obtained_id = self.proxy.add_note(
-            self.fields,
+            fields=self.fields,
             deck=self.data['deck'],
             model=self.data['model'],
             tags=self.data['tags'],
