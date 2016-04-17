@@ -89,8 +89,9 @@ class MnemosyneProxy(object):
         }
 
         # Convert the deck name to the tag
-        tags = (tags or [])
-        tags.append(deck_name.replace('.', '::'))
+        tags = (tags or set())
+        if deck_name is not None:
+            tags.add(deck_name.replace('.', '::'))
 
         card_type = self.mnemo.card_type_with_id(model_name)
         controller = self.mnemo.controller()

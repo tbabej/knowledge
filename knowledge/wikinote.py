@@ -43,7 +43,7 @@ class Header(object):
             'header_start': match.group('header_start'),
             'header_end': match.group('header_end'),
             'name': match.group('name'),
-            'metadata': match.group('metadata'),
+            'metadata': match.group('metadata').strip().split(),
         })
 
         return self
