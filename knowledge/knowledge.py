@@ -1,3 +1,5 @@
+from __future__ import print_function
+import operator
 import os
 import re
 import sys
@@ -37,9 +39,14 @@ class HeaderStack(object):
         # Set the currently pushed level
         self.headers[pushed_level] = header
 
-    def get(self):
-        return set(self.headers.values())
+    @property
+    def tags(self):
+        tag_sets = [
+            set(header.data.get('metadata'))
+            for header in self.headers.values()
+        ]
 
+        return reduce(operator.or_, tag_sets, set())
 
 
 def create_notes():
@@ -50,7 +57,7 @@ def create_notes():
     stack = HeaderStack()
 
     for line_number in range(len(vim.current.buffer)):
-        note = WikiNote.from_line(line_number, proxy, tags=stack.get())
+        note = WikiNote.from_line(line_number, proxy, tags=stack.tags)
 
         if note is None:
             header = Header.from_line(line_number)
