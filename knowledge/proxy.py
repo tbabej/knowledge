@@ -8,6 +8,9 @@ class AnkiProxy(object):
     An abstraction over Anki interface.
     """
 
+    DEFAULT_DECK = "Knowledge"
+    DEFAULT_MODEL = "Basic"
+
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
         import anki
@@ -65,6 +68,9 @@ class MnemosyneProxy(object):
     """
     An abstraction over Mnemosyne interface.
     """
+
+    DEFAULT_DECK = None
+    DEFAULT_MODEL = "1"
 
     def __init__(self, path=None):
         from mnemosyne.script import Mnemosyne
