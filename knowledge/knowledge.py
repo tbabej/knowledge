@@ -9,8 +9,21 @@ import vim
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, os.path.join(BASE_DIR, 'knowledge'))
 
-from proxy import AnkiProxy
-from wikinote import WikiNote
+import error
+# Handle error without traceback, if they're KnowledgeException
+def output_exception(original_hook, exception_type, value, tb):
+    print("Handled by knowledge", file=sys.stderr)
+    if exception_type is error.KnowledgeException:
+        print(unicode(value), file=sys.stderr)
+    else:
+        original_hook(exception_type, value, tb)
+
+# Wrap the original except hook
+sys.excepthook = lambda a,b,c: output_exception(sys.excepthook, a, b, c)
+
+
+from proxy import AnkiProxy, MnemosyneProxy
+from wikinote import WikiNote, Header
 
 #proxy = AnkiProxy(os.path.expanduser('~/Documents/Anki/User 1/collection.anki2'))
 proxy = MnemosyneProxy()

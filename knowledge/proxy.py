@@ -1,8 +1,6 @@
 import sys
 
-
-class AnkiException(Exception):
-    pass
+from error import KnowledgeException
 
 
 class AnkiProxy(object):
@@ -33,9 +31,9 @@ class AnkiProxy(object):
         deck = self.decks.byName(deck_name)
 
         if model is None:
-            raise AnkiException("Model {0} not found".format(model_name))
+            raise KnowledgeException("Model {0} not found".format(model_name))
         elif deck is None:
-            raise AnkiException("Deck {0} not found".format(deck_name))
+            raise KnowledgeException("Deck {0} not found".format(deck_name))
 
         # Create a new Note
         note = anki.notes.Note(self.collection, model)
@@ -53,7 +51,7 @@ class AnkiProxy(object):
         status = note.dupeOrEmpty()
 
         if status == 1:
-            raise AnkiException("First field cannot be empty")
+            raise KnowledgeException("First field cannot be empty")
         elif status == 2:
             # This means only that the first field is identical
             pass
@@ -70,7 +68,13 @@ class MnemosyneProxy(object):
 
     def __init__(self, path=None):
         from mnemosyne.script import Mnemosyne
-        self.mnemo = Mnemosyne(path)
+
+        try:
+            self.mnemo = Mnemosyne(path)
+        except SystemExit:
+            raise KnowledgeException(
+                "Mnemosyne is running. Please close it and reopen the file."
+            )
 
     def add_note(self, deck_name, model_name, fields, tags=None):
         """
