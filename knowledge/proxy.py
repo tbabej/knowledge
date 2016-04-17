@@ -114,3 +114,46 @@ class MnemosyneProxy(object):
 
         # Return the fact ID
         return cards[0].fact.id
+
+    def update_note(self, identifier, fields, deck=None, model=None, tags=None):
+        # Get the fact from Mnemosyne
+        db = self.mnemo.database()
+        fact = db.fact(identifier, is_id_internal=False)
+        cards = db.cards_from_fact(fact)
+
+        # Convert the deck name to the tag
+        tags = (tags or set())
+        if deck is not None:
+            tags.add(deck.replace('.', '::'))
+
+        # Transform the fields data to mnemosyne format
+        data = {
+            'f': fields.get("Front"),
+            'b': fields.get("Back"),
+        }
+
+        current_data = fact.data
+        current_tags = set([tag.name for tag in cards[0].tags])
+
+        # Bail out if no modifications to be performed
+        if current_tags == tags and current_data == data:
+            return
+
+        # Update the fact
+        fact.data = data
+        db.update_fact(fact)
+
+        # Set new tags for each card
+        old_tag_objects = set()
+        new_tag_objects = db.get_or_create_tags_with_names(tags)
+        for card in cards:
+            old_tag_objects |= card.tags
+            card.tags = new_tag_objects
+            db.update_card(card)
+
+        # Remove redundant tags
+        for tag in old_tag_objects:
+            db.delete_tag_if_unused(tag)
+
+        # Save the changes
+        db.save()
