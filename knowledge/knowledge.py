@@ -55,11 +55,27 @@ class HeaderStack(object):
     @property
     def tags(self):
         tag_sets = [
-            set(header.data.get('metadata'))
+            set(header.data.get('tags', []))
             for header in self.headers.values()
         ]
 
         return reduce(operator.or_, tag_sets, set())
+
+    @property
+    def deck(self):
+        keys = sorted(self.headers.keys(), reverse=False)
+        for key in keys:
+            deck = self.headers[key].get('deck')
+            if deck is not None:
+                return deck
+
+    @property
+    def model(self):
+        keys = sorted(self.headers.keys(), reverse=False)
+        for key in keys:
+            model = self.headers[key].get('model')
+            if model is not None:
+                return model
 
 
 def create_notes():
@@ -70,7 +86,13 @@ def create_notes():
     stack = HeaderStack()
 
     for line_number in range(len(vim.current.buffer)):
-        note = WikiNote.from_line(line_number, proxy, tags=stack.tags)
+        note = WikiNote.from_line(
+            line_number,
+            proxy,
+            tags=stack.tags,
+            deck=stack.deck,
+            model=stack.model,
+        )
 
         if note is None:
             header = Header.from_line(line_number)
