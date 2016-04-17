@@ -12,7 +12,6 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'knowledge'))
 import error
 # Handle error without traceback, if they're KnowledgeException
 def output_exception(original_hook, exception_type, value, tb):
-    print("Handled by knowledge", file=sys.stderr)
     if exception_type is error.KnowledgeException:
         print(unicode(value), file=sys.stderr)
     else:
