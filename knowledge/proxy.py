@@ -72,17 +72,27 @@ class MnemosyneProxy(object):
         from mnemosyne.script import Mnemosyne
         self.mnemo = Mnemosyne(path)
 
-    def add_note(self, tags, model_name, fields):
+    def add_note(self, deck_name, model_name, fields, tags=None):
         """
         Adds a new fact with specified fields, model name and tags.
         Returns the ID of the fact.
         """
 
+        # Transform the fields data to mnemosyne format
+        data = {
+            'f': fields.get("Front"),
+            'b': fields.get("Back"),
+        }
+
+        # Convert the deck name to the tag
+        tags = (tags or [])
+        tags.append(deck_name.replace('.', '::'))
+
         card_type = self.mnemo.card_type_with_id(model_name)
         controller = self.mnemo.controller()
 
         cards = controller.create_new_cards(
-            fields,
+            data,
             card_type,
             grade=-1,
             tag_names=tags
