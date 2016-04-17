@@ -28,4 +28,4 @@ augroup knowledge
 augroup END
 
 " Global update commands
-command! KnowledgeBufferSave :py create_notes()
+command! KnowledgeBufferSave :py create_notes(update=True)

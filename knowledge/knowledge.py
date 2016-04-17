@@ -92,7 +92,7 @@ class HeaderStack(object):
                 return model
 
 
-def create_notes():
+def create_notes(update=False):
     """
     Loops over current buffer and adds any new notes to Anki.
     """
@@ -113,5 +113,5 @@ def create_notes():
             if header is not None:
                 stack.push(header)
 
-        elif not note.created:
+        elif not note.created or update:
             note.save()

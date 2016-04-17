@@ -129,6 +129,7 @@ class WikiNote(object):
 
     def save(self):
         if self.data.get('id') is not None:
+            self._update()
             return
 
         obtained_id = self.proxy.add_note(
@@ -141,6 +142,15 @@ class WikiNote(object):
         if obtained_id:
             self.data['id'] = obtained_id
             self.update_in_buffer()
+
+    def _update(self):
+        self.proxy.update_note(
+            identifier=self.data['id'],
+            fields=self.fields,
+            deck=self.data['deck'],
+            model=self.data['model'],
+            tags=self.data['tags']
+        )
 
     def update_in_buffer(self):
         """
