@@ -13,7 +13,40 @@ QUESTION = re.compile(
     '\s*'
     '$'                                    # Matches on whole line
     .format(prefixes='|'.join(QUESTION_PREFIXES))
-    )
+)
+
+NOTE_HEADLINE = re.compile(
+    '^'                       # Starts at the begging of the line
+    '(?P<header_start>[=]+)'  # Heading beggining
+    '(?P<name>[^=\|\[]*)'     # Name of the viewport, all before the | sign
+    '@'                       # Divider @
+    '(?P<metadata>[^=@]*?)'   # Metadata string
+    '\s*'                     # Any whitespace
+    '(?P<header_end>[=]+)'    # Heading ending
+)
+
+
+class Header(object):
+
+    def __init__(self):
+        self.data = dict()
+
+    @classmethod
+    def from_line(cls, number):
+        match = re.search(NOTE_HEADLINE, vim.current.buffer[number])
+
+        if not match:
+            return None
+
+        self = cls()
+        self.data.update({
+            'header_start': match.group('header_start'),
+            'header_end': match.group('header_end'),
+            'name': match.group('name'),
+            'metadata': match.group('metadata'),
+        })
+
+        return self
 
 
 class WikiNote(object):
