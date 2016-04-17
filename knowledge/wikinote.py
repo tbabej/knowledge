@@ -1,6 +1,8 @@
 import re
 import vim
 
+import utils
+
 QUESTION_PREFIXES = ('Q', 'How', 'Explain', 'Define', 'List')
 
 QUESTION = re.compile(
@@ -43,8 +45,11 @@ class Header(object):
             'header_start': match.group('header_start'),
             'header_end': match.group('header_end'),
             'name': match.group('name'),
-            'metadata': match.group('metadata').strip().split(),
         })
+
+        # Update the header data from the hidden config string
+        metadata = match.group('metadata').strip()
+        self.data.update(utils.string_to_kwargs(metadata))
 
         return self
 
