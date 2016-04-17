@@ -25,18 +25,18 @@ class AnkiProxy(object):
     def decks(self):
         return self.collection.decks
 
-    def add_note(self, deck_name, model_name, fields, tags=None):
+    def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new note of the given model to the given deck.
         """
 
-        model = self.models.byName(model_name)
-        deck = self.decks.byName(deck_name)
+        model = self.models.byName(model)
+        deck = self.decks.byName(deck)
 
         if model is None:
-            raise KnowledgeException("Model {0} not found".format(model_name))
+            raise KnowledgeException("Model {0} not found".format(model))
         elif deck is None:
-            raise KnowledgeException("Deck {0} not found".format(deck_name))
+            raise KnowledgeException("Deck {0} not found".format(deck))
 
         # Create a new Note
         note = anki.notes.Note(self.collection, model)
@@ -82,7 +82,7 @@ class MnemosyneProxy(object):
                 "Mnemosyne is running. Please close it and reopen the file."
             )
 
-    def add_note(self, deck_name, model_name, fields, tags=None):
+    def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new fact with specified fields, model name and tags.
         Returns the ID of the fact.
@@ -96,10 +96,10 @@ class MnemosyneProxy(object):
 
         # Convert the deck name to the tag
         tags = (tags or set())
-        if deck_name is not None:
-            tags.add(deck_name.replace('.', '::'))
+        if deck is not None:
+            tags.add(deck.replace('.', '::'))
 
-        card_type = self.mnemo.card_type_with_id(model_name)
+        card_type = self.mnemo.card_type_with_id(model)
         controller = self.mnemo.controller()
 
         cards = controller.create_new_cards(
