@@ -126,8 +126,11 @@ def create_notes(update=False):
     buffer_proxy.obtain()
     stack = HeaderStack()
 
-    for line_number in range(len(buffer_proxy)):
-        note = WikiNote.from_line(
+    # Process each line, skipping over the lines
+    # that can be ignored
+    line_number = 0
+    while line_number < len(buffer_proxy):
+        note, processed = WikiNote.from_line(
             buffer_proxy,
             line_number,
             proxy,
@@ -137,12 +140,14 @@ def create_notes(update=False):
         )
 
         if note is None:
-            header = Header.from_line(buffer_proxy, line_number)
+            header, processed = Header.from_line(buffer_proxy, line_number)
             if header is not None:
                 stack.push(header)
 
         elif not note.created or update:
             note.save()
+
+        line_number += processed
 
     # Make sure changes are saved in the db
     proxy.commit()

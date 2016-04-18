@@ -46,7 +46,7 @@ class Header(object):
         match = re.search(NOTE_HEADLINE, buffer_proxy[number])
 
         if not match:
-            return None
+            return None, 1
 
         self = cls()
         self.data.update({
@@ -80,7 +80,7 @@ class WikiNote(object):
         match = re.search(QUESTION, buffer_proxy[number])
 
         if not match:
-            return None
+            return None, 1
 
         self = cls(buffer_proxy, proxy)
 
@@ -129,7 +129,7 @@ class WikiNote(object):
             'Back': '\n'.join(answerlines),
         })
 
-        return self
+        return self, len(questionlines) + len(answerlines)
 
     def __repr__(self):
         return repr(self.fields)
