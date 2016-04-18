@@ -106,7 +106,9 @@ class MnemosyneProxy(object):
             data,
             card_type,
             grade=-1,
-            tag_names=tags
+            tag_names=tags,
+            check_for_duplicates=False,
+            save=False,
         )
 
         # We expect exactly one card created
