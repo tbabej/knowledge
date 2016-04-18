@@ -42,8 +42,8 @@ class Header(object):
         self.data = dict()
 
     @classmethod
-    def from_line(cls, number):
-        match = re.search(NOTE_HEADLINE, vim.current.buffer[number])
+    def from_line(cls, buffer_proxy, number):
+        match = re.search(NOTE_HEADLINE, buffer_proxy[number])
 
         if not match:
             return None
@@ -64,24 +64,25 @@ class Header(object):
 
 class WikiNote(object):
 
-    def __init__(self, proxy):
+    def __init__(self, buffer_proxy, proxy):
         self.fields = dict()
         self.data = dict()
+        self.buffer_proxy = buffer_proxy
         self.proxy = proxy
 
     @classmethod
-    def from_line(cls, number, proxy, tags=None, model=None, deck=None):
+    def from_line(cls, buffer_proxy, number, proxy, tags=None, model=None, deck=None):
         """
         This methods detects if a current line is a note-defining headline. If
         positive, it will try to parse the note data out of the block.
         """
 
-        match = re.search(QUESTION, vim.current.buffer[number])
+        match = re.search(QUESTION, buffer_proxy[number])
 
         if not match:
             return None
 
-        self = cls(proxy)
+        self = cls(buffer_proxy, proxy)
 
         # If we have a match, determine if it's an existing note
         identifier = match.group('identifier')
@@ -109,7 +110,7 @@ class WikiNote(object):
         answerlines = []
         parsing_question = True
 
-        for line in vim.current.buffer[(number+1):]:
+        for line in self.buffer_proxy[(number+1):]:
             candidate = line.strip()
 
             # Empty line finishes the parsing
@@ -176,4 +177,4 @@ class WikiNote(object):
         else:
             line = questionline
 
-        vim.current.buffer[self.data['line']] = line
+        self.buffer_proxy[self.data['line']] = line

@@ -92,15 +92,43 @@ class HeaderStack(object):
                 return model
 
 
+class BufferProxy(object):
+
+    def __init__(self, buffer_object):
+        self.object = buffer_object
+
+    def obtain(self):
+        self.data = self.object[:]
+
+    def push(self):
+        self.object[:] = self.data
+
+    def __getitem__(self, index):
+        return self.data[index]
+
+    def __setitem__(self, index, lines):
+        self.data[index] = lines
+
+    def __iter__(self):
+        for line in self.data:
+            yield line
+
+    def __len__(self):
+        return len(self.data)
+
+
 def create_notes(update=False):
     """
     Loops over current buffer and adds any new notes to Anki.
     """
 
+    buffer_proxy = BufferProxy(vim.current.buffer)
+    buffer_proxy.obtain()
     stack = HeaderStack()
 
-    for line_number in range(len(vim.current.buffer)):
+    for line_number in range(len(buffer_proxy)):
         note = WikiNote.from_line(
+            buffer_proxy,
             line_number,
             proxy,
             tags=stack.tags,
@@ -109,7 +137,7 @@ def create_notes(update=False):
         )
 
         if note is None:
-            header = Header.from_line(line_number)
+            header = Header.from_line(buffer_proxy, line_number)
             if header is not None:
                 stack.push(header)
 
@@ -118,3 +146,6 @@ def create_notes(update=False):
 
     # Make sure changes are saved in the db
     proxy.commit()
+
+    # Display the changes in the buffer
+    buffer_proxy.push()
