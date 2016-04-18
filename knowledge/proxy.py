@@ -22,13 +22,17 @@ class AnkiProxy(object):
         Adds a new note of the given model to the given deck.
         """
 
-        model = self.collection.models.byName(model)
-        deck = self.collection.decks.byName(deck)
+        model_name = model
+        deck_name = deck
+
+        model = self.collection.models.byName(model_name)
+        deck = self.collection.decks.byName(deck_name)
 
         if model is None:
-            raise KnowledgeException("Model {0} not found".format(model))
-        elif deck is None:
-            raise KnowledgeException("Deck {0} not found".format(deck))
+            raise KnowledgeException("Model {0} not found".format(model_name))
+
+        if deck is None:
+            raise KnowledgeException("Deck {0} not found".format(deck_name))
 
         # Create a new Note
         note = anki.notes.Note(self.collection, model)
