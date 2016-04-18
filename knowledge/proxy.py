@@ -157,5 +157,6 @@ class MnemosyneProxy(object):
         for tag in old_tag_objects:
             db.delete_tag_if_unused(tag)
 
-        # Save the changes
+    def commit(self):
+        db = self.mnemo.database()
         db.save()

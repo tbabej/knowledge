@@ -115,3 +115,6 @@ def create_notes(update=False):
 
         elif not note.created or update:
             note.save()
+
+    # Make sure changes are saved in the db
+    proxy.commit()
