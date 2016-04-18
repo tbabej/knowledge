@@ -17,21 +17,13 @@ class AnkiProxy(object):
 
         self.collection = anki.storage.Collection(path, lock=False)
 
-    @property
-    def models(self):
-        return self.collection.models
-
-    @property
-    def decks(self):
-        return self.collection.decks
-
     def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new note of the given model to the given deck.
         """
 
-        model = self.models.byName(model)
-        deck = self.decks.byName(deck)
+        model = self.collection.models.byName(model)
+        deck = self.collection.decks.byName(deck)
 
         if model is None:
             raise KnowledgeException("Model {0} not found".format(model))
