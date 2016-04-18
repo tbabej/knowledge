@@ -92,6 +92,8 @@ class WikiNote(object):
         for prefix in QUESTION_OMITTED_PREFIXES:
             if question.startswith(prefix):
                 question = question.lstrip(prefix).strip()
+                self.data['stripped_prefix'] = prefix
+                break
 
         tags = tags or []
         model = model or proxy.DEFAULT_MODEL
@@ -171,6 +173,11 @@ class WikiNote(object):
 
         questionline = self.fields.get('Front').splitlines()[0]
         identifier = self.data.get('id')
+
+        # Add the prefix to the questionline, if necessary
+        prefix = self.data.get('stripped_prefix')
+        if prefix is not None:
+            questionline = '{0} {1}'.format(prefix, questionline)
 
         if identifier is not None:
             line = '{0} [{1}]'.format(questionline, identifier)
