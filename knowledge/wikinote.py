@@ -59,7 +59,7 @@ class Header(object):
         metadata = match.group('metadata').strip()
         self.data.update(utils.string_to_kwargs(metadata))
 
-        return self
+        return self, 1
 
 
 class WikiNote(object):
