@@ -5,7 +5,12 @@ import utils
 
 QUESTION_PREFIXES = vim.vars.get(
     'knowledge_question_prefixes',
-    ('Q', 'How', 'Explain', 'Define', 'List', 'Prove')
+    ('Q:', 'How:', 'Explain:', 'Define:', 'List:', 'Prove:')
+)
+
+QUESTION_OMITTED_PREFIXES = vim.vars.get(
+    'knowledge_omitted_prefixes',
+    ('Q:',)
 )
 
 QUESTION = re.compile(
@@ -81,6 +86,11 @@ class WikiNote(object):
         # If we have a match, determine if it's an existing note
         identifier = match.group('identifier')
         question = match.group('question').strip()
+
+        # Strip the question prefixes that should be ignored
+        for prefix in QUESTION_OMITTED_PREFIXES:
+            if question.startswith(prefix):
+                question = question.lstrip(prefix).strip()
 
         tags = tags or []
         model = model or proxy.DEFAULT_MODEL
