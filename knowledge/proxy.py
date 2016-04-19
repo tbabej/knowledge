@@ -60,6 +60,36 @@ class AnkiProxy(object):
         self.collection.addNote(note)
         return note.id
 
+    def update_note(self, identifier, fields, deck=None, model=None, tags=None):
+        # Get the fact from Anki
+        note = self.Note(self.collection, id=identifier)
+
+        # Generate current card data, deck and tags
+        cur_data = {
+            key: note[key]
+            for key in note.keys()
+            if key in fields
+        }
+        cur_deck = note.model()['did']
+        cur_tags = set(note.tags)
+
+        # Bail out if no change is proposed
+        deck = self.collection.decks.byName(deck)
+        deck_id = deck['id'] if deck is not None else None
+
+        if all([cur_deck == deck_id, cur_tags == tags, cur_data == fields]):
+            return
+
+        # There are changes, so update the note
+        for key in fields:
+            note[key] = fields[key]
+
+        note.tags = list(tags)
+        note.model()['did'] = deck_id
+
+        # Push the changes, doesn't get saved without it
+        note.flush()
+
     def commit(self):
         self.collection.save()
 
