@@ -1,0 +1,2 @@
+class KnowledgeException(Exception):
+    pass
