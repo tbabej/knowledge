@@ -33,7 +33,8 @@ class AnkiProxy(object):
             raise KnowledgeException("Model {0} not found".format(model_name))
 
         if deck is None:
-            deck = self.collection.decks.id(deck_name)
+            self.collection.decks.id(deck_name)
+            deck = self.collection.decks.byName(deck_name)
 
         # Create a new Note
         note = self.Note(self.collection, model)
