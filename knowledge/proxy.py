@@ -61,7 +61,7 @@ class AnkiProxy(object):
         return note.id
 
     def commit(self):
-        self.collection.autosave()
+        self.collection.save()
 
 
 class MnemosyneProxy(object):
