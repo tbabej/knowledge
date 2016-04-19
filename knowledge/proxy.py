@@ -24,7 +24,7 @@ class AnkiProxy(object):
         """
 
         model_name = model
-        deck_name = deck
+        deck_name = deck.replace('.', '::')
 
         model = self.collection.models.byName(model_name)
         deck = self.collection.decks.byName(deck_name)
