@@ -16,6 +16,7 @@ class AnkiProxy(object):
         import anki
 
         self.collection = anki.storage.Collection(path, lock=False)
+        self.Note = anki.notes.Note
 
     def add_note(self, deck, model, fields, tags=None):
         """
@@ -35,7 +36,7 @@ class AnkiProxy(object):
             deck = self.collection.decks.id(deck_name)
 
         # Create a new Note
-        note = anki.notes.Note(self.collection, model)
+        note = self.Note(self.collection, model)
 
         # Set the deck and tags
         note.model()['did'] = deck['id']
