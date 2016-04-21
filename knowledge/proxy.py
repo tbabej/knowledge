@@ -1,9 +1,43 @@
+import abc
 import sys
 
 from error import KnowledgeException
 
 
-class AnkiProxy(object):
+class SRSProxy(object):
+
+    @abc.abstractmethod
+    def __init__(self, path=None):
+        """
+        Initialize the proxy object. Takes an optional path to the database
+        file.
+        """
+
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_note(self, deck, model, fields, tags=None):
+        """
+        Adds a new fact to the database. Returns the identifier to the task.
+        """
+
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def update_note(self, identifier, fields, deck=None, model=None, tags=None):
+        """
+        Updates the given fact. If the fact could not be found, raises FactNotFound
+        exception.
+        """
+
+    @abc.abstractmethod
+    def commit(self):
+        """
+        Actually commits the changes to the database.
+        """
+
+
+class AnkiProxy(SRSProxy):
     """
     An abstraction over Anki interface.
     """
@@ -94,7 +128,7 @@ class AnkiProxy(object):
         self.collection.save()
 
 
-class MnemosyneProxy(object):
+class MnemosyneProxy(SRSProxy):
     """
     An abstraction over Mnemosyne interface.
     """
