@@ -1,7 +1,7 @@
 import abc
 import sys
 
-from error import KnowledgeException
+from error import KnowledgeException, FactNotFoundException
 
 
 class SRSProxy(object):
@@ -96,7 +96,12 @@ class AnkiProxy(SRSProxy):
 
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         # Get the fact from Anki
-        note = self.Note(self.collection, id=identifier)
+        try:
+            note = self.Note(self.collection, id=identifier)
+        except TypeError:
+            # Anki raises TypeError in case ID is not found
+            raise FactNotFound("Fact with ID '{0}' could not be found"
+                               .format(identifier))
 
         # Generate current card data, deck and tags
         cur_data = {
@@ -184,7 +189,14 @@ class MnemosyneProxy(SRSProxy):
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         # Get the fact from Mnemosyne
         db = self.mnemo.database()
-        fact = db.fact(identifier, is_id_internal=False)
+
+        try:
+            fact = db.fact(identifier, is_id_internal=False)
+        except TypeError:
+            # Mnemosyne raises TypeError in case ID is not found
+            raise FactNotFound("Fact with ID '{0}' could not be found"
+                               .format(identifier))
+
         cards = db.cards_from_fact(fact)
 
         # Convert the deck name to the tag
