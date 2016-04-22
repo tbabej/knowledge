@@ -36,6 +36,41 @@ class SRSProxy(object):
         Actually commits the changes to the database.
         """
 
+    def process_matheq(self, field):
+        # Use list to store the string to avoid unnecessary
+        # work with copying string once per each letter during buildup
+        result = []
+        escaped = False
+        inside_eq = False
+
+        for index, char in enumerate(field):
+            if char == '$' and not escaped:
+                if inside_eq:
+                    result.append(self.SYMBOL_EQ_CLOSE)
+                    inside_eq = False
+                else:
+                    result.append(self.SYMBOL_EQ_OPEN)
+                    inside_eq = True
+            elif char == "\\" and field[index+1] == '$':
+                escaped = True
+                continue
+            else:
+                result.append(char)
+
+            escaped = False
+
+        return ''.join(result)
+
+
+    def process_all(self, fields):
+        for method in (self.process_matheq,):
+            fields = {
+                key: method(value)
+                for key, value in fields.iteritems()
+            }
+
+        return fields
+
 
 class AnkiProxy(SRSProxy):
     """
@@ -44,6 +79,8 @@ class AnkiProxy(SRSProxy):
 
     DEFAULT_DECK = "Knowledge"
     DEFAULT_MODEL = "Basic"
+    SYMBOL_EQ_OPEN = "[$]"
+    SYMBOL_EQ_CLOSE = "[/$]"
 
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
@@ -62,6 +99,9 @@ class AnkiProxy(SRSProxy):
 
         model = self.collection.models.byName(model_name)
         deck = self.collection.decks.byName(deck_name)
+
+        # Pre-process data in fields
+        fields = self.process_all(fields)
 
         if model is None:
             raise KnowledgeException("Model {0} not found".format(model_name))
@@ -103,6 +143,9 @@ class AnkiProxy(SRSProxy):
             raise FactNotFound("Fact with ID '{0}' could not be found"
                                .format(identifier))
 
+        # Pre-process data in fields
+        fields = self.process_all(fields)
+
         # Generate current card data, deck and tags
         cur_data = {
             key: note[key]
@@ -140,6 +183,8 @@ class MnemosyneProxy(SRSProxy):
 
     DEFAULT_DECK = None
     DEFAULT_MODEL = "1"
+    SYMBOL_EQ_OPEN = "<$>"
+    SYMBOL_EQ_CLOSE = "</$>"
 
     def __init__(self, path=None):
         from mnemosyne.script import Mnemosyne
@@ -156,6 +201,8 @@ class MnemosyneProxy(SRSProxy):
         Adds a new fact with specified fields, model name and tags.
         Returns the ID of the fact.
         """
+        # Pre-process data in fields
+        fields = self.process_all(fields)
 
         # Transform the fields data to mnemosyne format
         data = {
@@ -203,6 +250,9 @@ class MnemosyneProxy(SRSProxy):
         tags = (tags or set())
         if deck is not None:
             tags.add(deck.replace('.', '::'))
+
+        # Pre-process data in fields
+        fields = self.process_all(fields)
 
         # Transform the fields data to mnemosyne format
         data = {
