@@ -25,22 +25,23 @@ from wikinote import WikiNote, Header
 
 SRS_PROVIDER = vim.vars.get('knowledge_srs_provider')
 DATA_DIR = vim.vars.get('knowledge_data_dir')
-proxy = None
 
-if SRS_PROVIDER == 'Anki':
-    proxy = AnkiProxy(DATA_DIR)
-elif SRS_PROVIDER == 'Mnemosyne':
-    proxy = MnemosyneProxy(DATA_DIR)
-elif SRS_PROVIDER is None:
-    raise error.KnowledgeException(
-        "Variable knowledge_srs_provider has to have "
-        "one of the following values: Anki, Mnemosyne"
-    )
-else:
-    raise error.KnowledgeException(
-        "SRS provider '{0}' is not supported."
-        .format(SRS_PROVIDER)
-    )
+
+def get_proxy():
+    if SRS_PROVIDER == 'Anki':
+        return AnkiProxy(DATA_DIR)
+    elif SRS_PROVIDER == 'Mnemosyne':
+        return MnemosyneProxy(DATA_DIR)
+    elif SRS_PROVIDER is None:
+        raise error.KnowledgeException(
+            "Variable knowledge_srs_provider has to have "
+            "one of the following values: Anki, Mnemosyne"
+        )
+    else:
+        raise error.KnowledgeException(
+            "SRS provider '{0}' is not supported."
+            .format(SRS_PROVIDER)
+        )
 
 
 class HeaderStack(object):
@@ -122,6 +123,7 @@ def create_notes(update=False):
     Loops over current buffer and adds any new notes to Anki.
     """
 
+    srs_proxy = get_proxy()
     buffer_proxy = BufferProxy(vim.current.buffer)
     buffer_proxy.obtain()
     stack = HeaderStack()
@@ -133,7 +135,7 @@ def create_notes(update=False):
         note, processed = WikiNote.from_line(
             buffer_proxy,
             line_number,
-            proxy,
+            srs_proxy,
             tags=stack.tags,
             deck=stack.deck,
             model=stack.model,
@@ -150,7 +152,7 @@ def create_notes(update=False):
         line_number += processed
 
     # Make sure changes are saved in the db
-    proxy.commit()
+    srs_proxy.commit()
 
     # Display the changes in the buffer
     buffer_proxy.push()
