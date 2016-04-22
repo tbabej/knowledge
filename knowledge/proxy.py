@@ -26,8 +26,8 @@ class SRSProxy(object):
     @abc.abstractmethod
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         """
-        Updates the given fact. If the fact could not be found, raises FactNotFound
-        exception.
+        Updates the given fact. If the fact could not be found,
+        raises FactNotFoundException.
         """
 
     @abc.abstractmethod
@@ -140,8 +140,8 @@ class AnkiProxy(SRSProxy):
             note = self.Note(self.collection, id=identifier)
         except TypeError:
             # Anki raises TypeError in case ID is not found
-            raise FactNotFound("Fact with ID '{0}' could not be found"
-                               .format(identifier))
+            raise FactNotFoundException("Fact with ID '{0}' could not be found"
+                                        .format(identifier))
 
         # Pre-process data in fields
         fields = self.process_all(fields)
@@ -241,8 +241,8 @@ class MnemosyneProxy(SRSProxy):
             fact = db.fact(identifier, is_id_internal=False)
         except TypeError:
             # Mnemosyne raises TypeError in case ID is not found
-            raise FactNotFound("Fact with ID '{0}' could not be found"
-                               .format(identifier))
+            raise FactNotFoundException("Fact with ID '{0}' could not be found"
+                                        .format(identifier))
 
         cards = db.cards_from_fact(fact)
 
