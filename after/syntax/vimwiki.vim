@@ -12,5 +12,5 @@ for s:i in range(1,6)
 endfor
 
 " Conceal the fact identifiers
-execute 'syn match FactIdentifier /\v\[[0-9a-zA-Z]{13,22}\]$/'.s:conceal
+execute 'syn match FactIdentifier /\v\@[0-9a-zA-Z]{13,22}$/'.s:conceal
 highlight link FactIdentifier Comment

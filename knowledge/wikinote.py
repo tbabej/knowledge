@@ -17,9 +17,9 @@ QUESTION = re.compile(
     '^'                                    # Starts at the begging
     '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
     '\s*'                                  # Followed by any whitespace
-    '(\['
-      '(?P<identifier>.*)'                 # With opt. identifier in []
-    '\])?'
+    '('
+      '@(?P<identifier>.*)'                # With opt. identifier marked by @
+    ')?'
     '\s*'
     '$'                                    # Matches on whole line
     .format(prefixes='|'.join(QUESTION_PREFIXES))
@@ -180,7 +180,7 @@ class WikiNote(object):
             questionline = '{0} {1}'.format(prefix, questionline)
 
         if identifier is not None:
-            line = '{0} [{1}]'.format(questionline, identifier)
+            line = '{0} @{1}'.format(questionline, identifier)
         else:
             line = questionline
 
