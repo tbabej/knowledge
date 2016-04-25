@@ -225,7 +225,10 @@ class WikiNote(object):
         Note: Currently only affects the first line.
         """
 
-        questionline = self.fields.get('Front').splitlines()[0]
+        # Get first line of the question
+        questionline = self.fields.get('Front') or self.fields.get('Text')
+        questionline = questionline.splitlines()[0]
+
         identifier = self.data.get('id')
 
         # Add the prefix to the questionline, if necessary
