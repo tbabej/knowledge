@@ -112,7 +112,7 @@ class WikiNote(object):
 
     def parse_basic(self, match):
         # If we have a match, determine if it's an existing note
-        self.data['identifier'] = match.group('identifier')
+        self.data['id'] = match.group('identifier')
         question = match.group('question').strip()
 
         # Strip the question prefixes that should be ignored
@@ -179,7 +179,7 @@ class WikiNote(object):
         if match:
             # If present, do not include it in the field, and save it
             lines[0] = ''.join(lines[0].split('@')[:-1])
-            self.data['identifier'] = match.group('identifier')
+            self.data['id'] = match.group('identifier')
 
         self.fields.update({
             'Text': '\n'.join(lines)
