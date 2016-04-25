@@ -197,13 +197,11 @@ class MnemosyneProxy(SRSProxy):
                 "Mnemosyne is running. Please close it and reopen the file."
             )
 
-    def add_note(self, deck, model, fields, tags=None):
+    def extract_data(self, fields, model):
         """
-        Adds a new fact with specified fields, model name and tags.
-        Returns the ID of the fact.
+        Extracts the data dict from the given fields, depending
+        on the model being used.
         """
-        # Pre-process data in fields
-        fields = self.process_all(fields)
 
         # Transform the fields data to mnemosyne format
         if model == self.CLOSE_MODEL:
@@ -213,6 +211,18 @@ class MnemosyneProxy(SRSProxy):
                 'f': fields.get("Front"),
                 'b': fields.get("Back"),
             }
+
+        return data
+
+    def add_note(self, deck, model, fields, tags=None):
+        """
+        Adds a new fact with specified fields, model name and tags.
+        Returns the ID of the fact.
+        """
+
+        # Pre-process data in fields
+        fields = self.process_all(fields)
+        data = self.extract_data(fields, model)
 
         # Convert the deck name to the tag
         tags = (tags or set())
@@ -259,10 +269,7 @@ class MnemosyneProxy(SRSProxy):
         fields = self.process_all(fields)
 
         # Transform the fields data to mnemosyne format
-        data = {
-            'f': fields.get("Front"),
-            'b': fields.get("Back"),
-        }
+        data = self.extract_data(fields, model)
 
         current_data = fact.data
         current_tags = set([tag.name for tag in cards[0].tags])
