@@ -181,6 +181,7 @@ class MnemosyneProxy(SRSProxy):
     An abstraction over Mnemosyne interface.
     """
 
+    CLOSE_MODEL = "5"
     DEFAULT_DECK = None
     DEFAULT_MODEL = "1"
     SYMBOL_EQ_OPEN = "<$>"
@@ -205,10 +206,13 @@ class MnemosyneProxy(SRSProxy):
         fields = self.process_all(fields)
 
         # Transform the fields data to mnemosyne format
-        data = {
-            'f': fields.get("Front"),
-            'b': fields.get("Back"),
-        }
+        if model == self.CLOSE_MODEL:
+            data = {'text': fields.get("Text")}
+        else:
+            data = {
+                'f': fields.get("Front"),
+                'b': fields.get("Back"),
+            }
 
         # Convert the deck name to the tag
         tags = (tags or set())
