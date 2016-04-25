@@ -16,7 +16,7 @@ QUESTION_OMITTED_PREFIXES = vim.vars.get(
 QUESTION = re.compile(
     '^'                                    # Starts at the begging
     '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
-    '\s*'                                  # Followed by any whitespace
+    '\s+'                                  # Followed by any whitespace
     '('
       '@(?P<identifier>.*)'                # With opt. identifier marked by @
     ')?'
@@ -26,7 +26,7 @@ QUESTION = re.compile(
 )
 
 CLOSE_MARK = re.compile('[^\[]\[[^\[]+')
-CLOSE_IDENTIFIER = re.compile('^.+@(?P<identifier>.*)\s*$')
+CLOSE_IDENTIFIER = re.compile('^.+\s@(?P<identifier>.*)\s*$')
 
 NOTE_HEADLINE = re.compile(
     '^'                       # Starts at the begging of the line
