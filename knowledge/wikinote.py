@@ -25,6 +25,9 @@ QUESTION = re.compile(
     .format(prefixes='|'.join(QUESTION_PREFIXES))
 )
 
+CLOSE_MARK = re.compile('[^\[]\[[^\[]+')
+CLOSE_IDENTIFIER = re.compile('^.+@(?P<identifier>.*)\s*$')
+
 NOTE_HEADLINE = re.compile(
     '^'                       # Starts at the begging of the line
     '(?P<header_start>[=]+)'  # Heading beggining
@@ -77,15 +80,39 @@ class WikiNote(object):
         positive, it will try to parse the note data out of the block.
         """
 
-        match = re.search(QUESTION, buffer_proxy[number])
+        basic_question = re.search(QUESTION, buffer_proxy[number])
+        close_mark_present = re.search(CLOSE_MARK, buffer_proxy[number])
 
-        if not match:
+        if not close_mark_present and not basic_question:
             return None, 1
 
         self = cls(buffer_proxy, proxy)
 
+        tags = tags or []
+        deck = deck or proxy.DEFAULT_DECK
+
+        if close_mark_present:
+            model = model or proxy.CLOSE_MODEL
+        else:
+            model = model or proxy.DEFAULT_MODEL
+
+        self.data.update({
+            'line': number,
+            'tags': set(tags),
+            'model': model,
+            'deck': deck,
+        })
+
+        if close_mark_present:
+            line_shift = self.parse_close()
+        elif basic_question:
+            line_shift = self.parse_basic(basic_question)
+
+        return self, line_shift
+
+    def parse_basic(self, match):
         # If we have a match, determine if it's an existing note
-        identifier = match.group('identifier')
+        self.data['identifier'] = match.group('identifier')
         question = match.group('question').strip()
 
         # Strip the question prefixes that should be ignored
@@ -95,24 +122,12 @@ class WikiNote(object):
                 self.data['stripped_prefix'] = prefix
                 break
 
-        tags = tags or []
-        model = model or proxy.DEFAULT_MODEL
-        deck = deck or proxy.DEFAULT_DECK
-
-        self.data.update({
-            'id': identifier,
-            'line': number,
-            'tags': set(tags),
-            'model': model,
-            'deck': deck,
-        })
-
         # Parse out the remaining question and answer parts
         questionlines = [question]
         answerlines = []
         parsing_question = True
 
-        for line in self.buffer_proxy[(number+1):]:
+        for line in self.buffer_proxy[(self.data['line']+1):]:
             candidate = line.strip()
 
             # Empty line finishes the parsing
@@ -131,7 +146,46 @@ class WikiNote(object):
             'Back': '\n'.join(answerlines),
         })
 
-        return self, len(questionlines) + len(answerlines)
+        return len(questionlines) + len(answerlines)
+
+    def parse_close(self):
+        lines = []
+
+        # First, let's add upper part of the paragraph
+        for line in reversed(self.buffer_proxy[:(self.data['line']-1)]):
+            candidate = line.strip()
+
+            # Empty line finishes the parsing
+            if not candidate:
+                break
+            else:
+                lines.append(line)
+
+        # Now the lower part of the paragraph
+        lines_inspected_forward = 0
+
+        for line in self.buffer_proxy[(self.data['line']):]:
+            lines_inspected_forward += 1
+            candidate = line.strip()
+
+            # Empty line finishes the parsing
+            if not candidate:
+                break
+            else:
+                lines.append(line)
+
+        # Look for the identifier on the first line
+        match = re.search(CLOSE_IDENTIFIER, lines[0])
+        if match:
+            # If present, do not include it in the field, and save it
+            lines[0] = ''.join(lines[0].split('@')[:-1])
+            self.data['identifier'] = match.group('identifier')
+
+        self.fields.update({
+            'Text': '\n'.join(lines)
+        })
+
+        return lines_inspected_forward
 
     def __repr__(self):
         return repr(self.fields)
