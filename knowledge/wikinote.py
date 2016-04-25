@@ -152,6 +152,8 @@ class WikiNote(object):
         lines = []
 
         # First, let's add upper part of the paragraph
+        lines_included_upwards = 0
+
         for line in reversed(self.buffer_proxy[:(self.data['line'])]):
             candidate = line.strip()
 
@@ -159,6 +161,7 @@ class WikiNote(object):
             if not candidate:
                 break
             else:
+                lines_included_upwards += 1
                 lines.append(line)
 
         # Now the lower part of the paragraph
@@ -173,6 +176,10 @@ class WikiNote(object):
                 break
             else:
                 lines.append(line)
+
+        # If anything was in the upper part of the paragraph, shift the
+        # marked line for this note
+        self.data['line'] = self.data['line'] - len(lines) + 1
 
         # Look for the identifier on the first line
         match = re.search(CLOSE_IDENTIFIER, lines[0])
