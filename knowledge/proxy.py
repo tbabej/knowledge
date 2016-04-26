@@ -241,8 +241,12 @@ class MnemosyneProxy(SRSProxy):
             save=False,
         )
 
-        # We expect exactly one card created
-        assert len(cards) == 1
+        # We expect exactly one card created for regular cards,
+        # or at least one for closes
+        if model == self.DEFAULT_MODEL:
+            assert len(cards) == 1
+        elif model == self.CLOSE_MODEL:
+            assert len(cards) >= 1
 
         # Return the fact ID
         return cards[0].fact.id
