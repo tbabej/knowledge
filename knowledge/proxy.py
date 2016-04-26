@@ -1,5 +1,6 @@
 import abc
 import sys
+import time
 
 from error import KnowledgeException, FactNotFoundException
 
@@ -306,8 +307,13 @@ class MnemosyneProxy(SRSProxy):
         # Set new tags for each card
         old_tag_objects = set()
         new_tag_objects = db.get_or_create_tags_with_names(tags)
+
+        # Fetch the current time
+        modification_time = int(time.time())
+
         for card in cards:
             old_tag_objects |= card.tags
+            card.modification_time = modification_time
             card.tags = new_tag_objects
             db.update_card(card)
 
