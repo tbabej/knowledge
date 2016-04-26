@@ -26,7 +26,7 @@ QUESTION = re.compile(
 )
 
 CLOSE_MARK = re.compile('[^\[]\[[^\[]+')
-CLOSE_IDENTIFIER = re.compile('^.+\s@(?P<identifier>.*)\s*$')
+CLOSE_IDENTIFIER = re.compile('^.+\s@(?P<identifier>.*)\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = re.compile(
     '^'                       # Starts at the begging of the line
@@ -181,15 +181,16 @@ class WikiNote(object):
         # marked line for this note
         self.data['line'] = self.data['line'] - lines_included_upwards
 
-        # Look for the identifier on the first line
-        match = re.search(CLOSE_IDENTIFIER, lines[0])
+        # Look for the identifier on any line
+        textlines = '\n'.join(lines)
+        match = re.search(CLOSE_IDENTIFIER, textlines)
         if match:
             # If present, do not include it in the field, and save it
-            lines[0] = ''.join(lines[0].split('@')[:-1])
+            textlines = re.sub(CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
         self.fields.update({
-            'Text': '\n'.join(lines)
+            'Text': textlines
         })
 
         return lines_inspected_forward
@@ -233,19 +234,19 @@ class WikiNote(object):
         """
 
         # Get first line of the question
-        questionline = self.fields.get('Front') or self.fields.get('Text')
-        questionline = questionline.splitlines()[0]
+        question = self.fields.get('Front') or self.fields.get('Text')
+        lines = question.splitlines()
 
         identifier = self.data.get('id')
 
         # Add the prefix to the questionline, if necessary
         prefix = self.data.get('stripped_prefix')
         if prefix is not None:
-            questionline = '{0} {1}'.format(prefix, questionline)
+            lines[0] = '{0} {1}'.format(prefix, lines[0])
 
         if identifier is not None:
-            line = '{0} @{1}'.format(questionline, identifier)
-        else:
-            line = questionline
+            lines[0] = '{0} @{1}'.format(lines[0], identifier)
 
-        self.buffer_proxy[self.data['line']] = line
+        # Update all the lines over which the question spans
+        position = self.data['line']
+        self.buffer_proxy[position:position+len(lines)] = lines
