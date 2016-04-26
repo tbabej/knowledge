@@ -283,8 +283,25 @@ class MnemosyneProxy(SRSProxy):
             return
 
         # Update the fact
+        card_type = self.mnemo.card_type_with_id(model)
+        new, edited, deleted = card_type.edit_fact(fact, data)
         fact.data = data
         db.update_fact(fact)
+
+        # Create, delete and edit all cards that were affected by this update
+        # This mainly happens with card types that generate multiple cards, like
+        # questions with multiple closes
+        for card in deleted:
+            db.delete_card(card)
+
+        for card in new:
+            db.add_card(card)
+
+        for card in edited:
+            db.update_card(card)
+
+        # Refetch the list of cards
+        cards = db.cards_from_fact(fact)
 
         # Set new tags for each card
         old_tag_objects = set()
