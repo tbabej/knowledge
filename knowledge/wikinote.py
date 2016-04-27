@@ -25,7 +25,7 @@ QUESTION = re.compile(
     .format(prefixes='|'.join(QUESTION_PREFIXES))
 )
 
-CLOSE_MARK = re.compile('[^\[]\[[^\[]+')
+CLOSE_MARK = re.compile('[^\[](?<!\* )\[[^\[]+')
 CLOSE_IDENTIFIER = re.compile('^.+\s@(?P<identifier>.*)\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = re.compile(
