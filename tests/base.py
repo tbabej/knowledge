@@ -2,6 +2,7 @@
 
 import os
 import re
+import shutil
 import subprocess
 import tempfile
 import vimrunner
@@ -34,6 +35,8 @@ class IntegrationTest(object):
 
     def setup_db(self):
         self.dir = tempfile.mkdtemp(dir='/tmp/')
+        shutil.copyfile("tests/mnemosyne-empty.db",
+                        os.path.join(self.dir, "default.db"))
 
     def start_client(self, retry=3):
         try:
