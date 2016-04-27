@@ -152,7 +152,7 @@ class WikiNote(object):
         lines = []
 
         # First, let's add upper part of the paragraph
-        lines_included_upwards = -1
+        lines_included_upwards = 0
 
         for line in reversed(self.buffer_proxy[:(self.data['line'])]):
             candidate = line.strip()
