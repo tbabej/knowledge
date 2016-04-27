@@ -230,7 +230,11 @@ class MnemosyneProxy(SRSProxy):
         if deck is not None:
             tags.add(deck.replace('.', '::'))
 
-        card_type = self.mnemo.card_type_with_id(model)
+        try:
+            card_type = self.mnemo.card_type_with_id(model)
+        except KeyError:
+            raise KnowledgeException("Model (card type) '{0}' does "
+                                     "not exist".format(model))
         controller = self.mnemo.controller()
 
         cards = controller.create_new_cards(
@@ -264,6 +268,9 @@ class MnemosyneProxy(SRSProxy):
                                         .format(identifier))
 
         cards = db.cards_from_fact(fact)
+        if not cards:
+            raise FactNotFoundException("Fact with ID '{0}' does not have any"
+                                        "cards assigned".format(identifier))
 
         # Convert the deck name to the tag
         tags = (tags or set())
