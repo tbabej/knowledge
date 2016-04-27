@@ -27,3 +27,17 @@ class TestWriteRegularFile(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestWriteInTaskwikiFile(IntegrationTest):
+
+    viminput = """
+    * [ ] This is a taskwiki task that should be ignored
+    """
+
+    vimoutput = """
+    * [ ] This is a taskwiki task that should be ignored
+    """
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
