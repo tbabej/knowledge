@@ -16,8 +16,8 @@ QUESTION_OMITTED_PREFIXES = vim.vars.get(
 QUESTION = re.compile(
     '^'                                    # Starts at the begging
     '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
-    '\s+'                                  # Followed by any whitespace
     '('
+      '\s+'                                # Followed by any whitespace
       '@(?P<identifier>.*)'                # With opt. identifier marked by @
     ')?'
     '\s*'
