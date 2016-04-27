@@ -10,15 +10,16 @@ BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, os.path.join(BASE_DIR, 'knowledge'))
 
 import error
-# Handle error without traceback, if they're KnowledgeException
-def output_exception(original_hook, exception_type, value, tb):
-    if exception_type is error.KnowledgeException:
+
+# Handle error without traceback, if they're descendants of VimPrettyException
+def output_exception(exception_type, value, tb):
+    if any(['VimPretty' in t.__name__ for t in exception_type.mro()]):
         print(unicode(value), file=sys.stderr)
     else:
-        original_hook(exception_type, value, tb)
+        sys.__excepthook__(exception_type, value, tb)
 
 # Wrap the original except hook
-sys.excepthook = lambda a,b,c: output_exception(sys.excepthook, a, b, c)
+sys.excepthook = output_exception
 
 from proxy import AnkiProxy, MnemosyneProxy
 from wikinote import WikiNote, Header
