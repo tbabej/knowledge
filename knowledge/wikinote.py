@@ -26,7 +26,7 @@ QUESTION = re.compile(
 )
 
 CLOSE_MARK = re.compile('[^\[](?<!\* )\[[^\[]+')
-CLOSE_IDENTIFIER = re.compile('^.+\s@(?P<identifier>.*)\s*$', re.MULTILINE)
+CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>.*)\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = re.compile(
     '^'                       # Starts at the begging of the line
