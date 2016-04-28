@@ -155,7 +155,15 @@ class IntegrationTest(object):
                 l[4:]
                 for l in self.vimoutput.strip('\n').splitlines()[:-1]
             ]
-            assert self.read_buffer() == lines
+
+            # Replace any identifiers in the output by {identifier}
+            # placeholder
+            buffer_lines = [
+                re.sub('@(?P<identifier>.*)\s*$', '{identifier}', line)
+                for line in self.read_buffer()
+            ]
+
+            assert buffer_lines == lines
 
     def execute(self):
         pass
