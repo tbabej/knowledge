@@ -41,3 +41,19 @@ class TestWriteInTaskwikiFile(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreateBasicNote(IntegrationTest):
+
+    viminput = """
+    Q: This is a question
+    - And this is the answer
+    """
+
+    vimoutput = """
+    Q: This is a question {identifier}
+    - And this is the answer
+    """
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
