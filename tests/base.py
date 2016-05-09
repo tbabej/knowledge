@@ -16,6 +16,7 @@ class IntegrationTest(object):
 
     viminput = None
     vimoutput = None
+    notes = None
     tasks = []
 
     def add_plugin(self, name):
@@ -164,6 +165,32 @@ class IntegrationTest(object):
             ]
 
             assert buffer_lines == lines
+
+        if self.notes:
+            from mnemosyne.script import Mnemosyne
+            mnemosyne = Mnemosyne(self.dir)
+            db = mnemosyne.database()
+
+            identifiers = filter(lambda x: x is not None, [
+                re.search('@(?P<identifier>.*)\s*$', line)
+                for line in self.read_buffer()
+            ])
+
+            facts = [
+                db.fact(identifier.group('identifier'), is_id_internal=False)
+                for identifier in identifiers
+            ]
+
+            for index, fact in enumerate(facts):
+                expected_fact = self.notes[index]
+
+                assert expected_fact.get('text') == fact.data.get('text')
+                assert expected_fact.get('front') == fact.data.get('f')
+                assert expected_fact.get('back') == fact.data.get('b')
+
+                cards = db.cards_from_fact(fact)
+                tags = expected_fact.get('tags') or ['__UNTAGGED__']
+                assert tags == [tag.name for tag in cards[0].tags]
 
     def execute(self):
         pass
