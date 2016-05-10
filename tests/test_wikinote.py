@@ -93,3 +93,26 @@ class TestCreateBasicMultilineNote(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreateBasicMathNote(IntegrationTest):
+
+    viminput = """
+    Q: State the Pythagorean theorem
+    - $c^2 = a^2 + b^2$
+    """
+
+    vimoutput = """
+    Q: State the Pythagorean theorem {identifier}
+    - $c^2 = a^2 + b^2$
+    """
+
+    notes = [
+        dict(
+            front='State the Pythagorean theorem',
+            back='<$>c^2 = a^2 + b^2</$>',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
