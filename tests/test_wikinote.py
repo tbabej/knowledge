@@ -64,3 +64,32 @@ class TestCreateBasicNote(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreateBasicMultilineNote(IntegrationTest):
+
+    viminput = """
+    Q: This is a multiline question
+    - And this is the answer
+    - which spans over multiple lines
+    - and nobody minds.
+    """
+
+    vimoutput = """
+    Q: This is a multiline question {identifier}
+    - And this is the answer
+    - which spans over multiple lines
+    - and nobody minds.
+    """
+
+    notes = [
+        dict(
+            front='This is a multiline question',
+            back="And this is the answer\n"
+                 "which spans over multiple lines\n"
+                 "and nobody minds."
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
