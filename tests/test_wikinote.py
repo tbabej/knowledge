@@ -158,3 +158,34 @@ class TestCreteClozeNoteParagraph(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreteClozeNoteParagraphReformatting(IntegrationTest):
+
+    viminput = """
+    The circumference of Earth is approximately [6378] km.
+    """
+
+    vimoutput = """
+    The circumference of {identifier}
+    Earth is approximately [6378] km.
+    """
+
+    notes = [
+        dict(
+            text='The circumference of\nEarth is approximately [6378] km.',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
+
+        # Wrap the line after third word
+        self.client.type("3wi")
+        self.client.type("<Enter>")
+        self.client.type("<Esc>")
+
+        # The following seems redundant, however weirdly enough, does not work
+        # if either of the lines is removed
+        self.client.type(":w<Enter>")
+        self.command("w", regex="written$", lines=1)
