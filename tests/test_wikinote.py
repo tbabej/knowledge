@@ -55,5 +55,12 @@ class TestCreateBasicNote(IntegrationTest):
     - And this is the answer
     """
 
+    notes = [
+        dict(
+            front='This is a question',
+            back='And this is the answer',
+        )
+    ]
+
     def execute(self):
         self.command("w", regex="written$", lines=1)
