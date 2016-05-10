@@ -193,6 +193,17 @@ class MnemosyneProxy(SRSProxy):
 
         try:
             self.mnemo = Mnemosyne(path)
+
+            # Activate the Cloze plugin
+            # Note: The import needs to be here, since it relies on the
+            # presence of the translation engine, which is initialized with
+            # the mnemosyne object.
+            from mnemosyne.libmnemosyne.card_types.cloze import ClozePlugin
+            for plugin in self.mnemo.plugins():
+                if isinstance(plugin, ClozePlugin):
+                    plugin.activate()
+                    break
+
         except SystemExit:
             raise KnowledgeException(
                 "Mnemosyne is running. Please close it and reopen the file."
