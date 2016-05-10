@@ -136,3 +136,25 @@ class TestCreteClozeNote(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreteClozeNoteParagraph(IntegrationTest):
+
+    viminput = """
+    The circumference of Earth is
+    approximately [6378] km.
+    """
+
+    vimoutput = """
+    The circumference of Earth is {identifier}
+    approximately [6378] km.
+    """
+
+    notes = [
+        dict(
+            text='The circumference of Earth is\napproximately [6378] km.',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
