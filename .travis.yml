@@ -27,7 +27,7 @@ install:
   - popd
   # Setup taskwiki
   - cp -r $TRAVIS_BUILD_DIR ~/.vim/bundle/knowledge
-  - mkdir ~/taskwiki-coverage
+  - mkdir ~/knowledge-coverage
 before_script:
   - cd ~/.vim/bundle/knowledge
 script:
