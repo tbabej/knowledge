@@ -246,7 +246,7 @@ class WikiNote(object):
             lines[0] = '{0} {1}'.format(prefix, lines[0])
 
         if identifier is not None:
-            lines[0] = '{0} @{1}'.format(lines[0], identifier)
+            lines[0] = '{0} @{1}'.format(lines[0].rstrip(), identifier)
 
         # Update all the lines over which the question spans
         position = self.data['line']
