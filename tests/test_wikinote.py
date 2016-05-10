@@ -118,7 +118,7 @@ class TestCreateBasicMathNote(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
-class TestCreteClozeNote(IntegrationTest):
+class TestCreateClozeNote(IntegrationTest):
 
     viminput = """
     The circumference of Earth is approximately [6378] km.
@@ -138,7 +138,7 @@ class TestCreteClozeNote(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
-class TestCreteClozeNoteParagraph(IntegrationTest):
+class TestCreateClozeNoteParagraph(IntegrationTest):
 
     viminput = """
     The circumference of Earth is
@@ -160,7 +160,7 @@ class TestCreteClozeNoteParagraph(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
-class TestCreteClozeNoteParagraphReformatting(IntegrationTest):
+class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
 
     viminput = """
     The circumference of Earth is approximately [6378] km.
