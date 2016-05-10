@@ -226,6 +226,7 @@ class WikiNote(object):
             model=self.data['model'],
             tags=self.data['tags']
         )
+        self.update_in_buffer()
 
     def update_in_buffer(self):
         """
