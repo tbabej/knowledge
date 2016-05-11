@@ -19,7 +19,7 @@ endif
 let s:plugin_path = escape(expand('<sfile>:p:h:h'), '\')
 
 " Execute the main body of taskwiki source
-execute 'pyfile ' . s:plugin_path . '/knowledge/knowledge.py'
+execute 'pyfile ' . s:plugin_path . '/knowledge/main.py'
 
 augroup knowledge
     autocmd!
