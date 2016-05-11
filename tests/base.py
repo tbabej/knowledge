@@ -161,7 +161,7 @@ class IntegrationTest(object):
             # Replace any identifiers in the output by {identifier}
             # placeholder
             buffer_lines = [
-                re.sub('@(?P<identifier>.*)\s*$', '{identifier}', line)
+                re.sub('@(?P<identifier>[^\s]+)\s*$', '{identifier}', line)
                 for line in self.read_buffer()
             ]
 
@@ -175,7 +175,7 @@ class IntegrationTest(object):
             db = mnemosyne.database()
 
             identifiers = filter(lambda x: x is not None, [
-                re.search('@(?P<identifier>.*)\s*$', line)
+                re.search('@(?P<identifier>[^\s]+)\s*$', line)
                 for line in self.read_buffer()
             ])
 
