@@ -8,8 +8,6 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 install:
-  # Escape the virtualenv
-  - export PATH=/usr/bin:$PATH
   # Install testing tools
   - pip install pytest pytest-cov coveralls vimrunner
   # Install to both virtualenv and outside it, vim needs it too
