@@ -52,6 +52,7 @@ class IntegrationTest(object):
     def configure_global_varialbes(self):
         self.command('let g:knowledge_data_dir="{0}"'.format(self.dir))
         self.command('let g:knowledge_srs_provider="Mnemosyne"')
+        self.command('let g:knowledge_measure_coverage="yes"')
 
     def setup(self):
         self.setup_db()
