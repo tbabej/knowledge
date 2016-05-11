@@ -2,7 +2,7 @@ import abc
 import sys
 import time
 
-from error import KnowledgeException, FactNotFoundException
+from knowledge.error import KnowledgeException, FactNotFoundException
 
 
 class SRSProxy(object):

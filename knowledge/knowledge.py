@@ -7,11 +7,11 @@ import vim
 
 # Insert the knowledge on the python path
 BASE_DIR = vim.eval("s:plugin_path")
-sys.path.insert(0, os.path.join(BASE_DIR, 'knowledge'))
+sys.path.insert(0, BASE_DIR)
 
-import error
-from proxy import AnkiProxy, MnemosyneProxy
-from wikinote import WikiNote, Header
+from knowledge import error
+from knowledge.proxy import AnkiProxy, MnemosyneProxy
+from knowledge.wikinote import WikiNote, Header
 
 SRS_PROVIDER = vim.vars.get('knowledge_srs_provider')
 DATA_DIR = vim.vars.get('knowledge_data_dir')

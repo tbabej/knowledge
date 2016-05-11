@@ -1,7 +1,7 @@
 import re
 import vim
 
-import utils
+from knowledge import utils
 
 QUESTION_PREFIXES = vim.vars.get(
     'knowledge_question_prefixes',
