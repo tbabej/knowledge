@@ -20,8 +20,9 @@ install:
   - wget http://downloads.sourceforge.net/project/mnemosyne-proj/mnemosyne/mnemosyne-2.3.6/Mnemosyne-2.3.6.tar.gz
   - tar xfv Mnemosyne-2.3.6.tar.gz
   - pushd Mnemosyne-2.3.6
-  # Install both system-wide and to virtualenv
+  # Install Mnemosyne libraries both system-wide and to virtualenv
   - sudo python setup.py install
+  - sudo /home/travis/virtualenv/python2.7.10/bin/python setup.py install
   - popd
   - mnemosyne --version
   # Setup Gvim
