@@ -9,7 +9,7 @@ import vim
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, BASE_DIR)
 
-from knowledge import error
+from knowledge import errors
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
 from knowledge.wikinote import WikiNote, Header
 
@@ -23,12 +23,12 @@ def get_proxy():
     elif SRS_PROVIDER == 'Mnemosyne':
         return MnemosyneProxy(DATA_DIR)
     elif SRS_PROVIDER is None:
-        raise error.KnowledgeException(
+        raise errors.KnowledgeException(
             "Variable knowledge_srs_provider has to have "
             "one of the following values: Anki, Mnemosyne"
         )
     else:
-        raise error.KnowledgeException(
+        raise errors.KnowledgeException(
             "SRS provider '{0}' is not supported."
             .format(SRS_PROVIDER)
         )
