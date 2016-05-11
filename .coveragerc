@@ -1,0 +1,2 @@
+[report]
+omit = /usr/*,/tmp/*,*/__init__.py,*/knowledge/coverage.py
