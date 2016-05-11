@@ -21,6 +21,9 @@ install:
   - sudo python setup.py install
   - popd
   - mnemosyne --version
+  - python -c "import sys; print sys.path"
+  - export PYTHONPATH="/usr/lib/python2.7/site-packages:/usr/local/lib/python2.7/site-packages"
+  - python -c "import sys; print sys.path"
   # Setup Gvim
   - sudo apt-get install -qq vim-gnome
   - gvim --version
