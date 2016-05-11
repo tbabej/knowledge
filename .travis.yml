@@ -14,7 +14,13 @@ install:
   - sudo pip install pytest pytest-cov coveralls vimrunner
   # Setup Mnemosyne
   - sudo apt-get update -qq
-  - sudo apt-get install -qq mnemosyne
+  - sudo apt-get install -qq libicu52 libqt4-sql-sqlite python-cherrypy3 python-matplotlib python-qt4 python-qt4-sql
+  - wget http://downloads.sourceforge.net/project/mnemosyne-proj/mnemosyne/mnemosyne-2.3.6/Mnemosyne-2.3.6.tar.gz
+  - tar xfv Mnemosyne-2.3.6.tar.gz
+  - pushd Mnemosyne-2.3.6
+  - sudo python setup.py install
+  - popd
+  - mnemosyne --version
   # Setup Gvim
   - sudo apt-get install -qq vim-gnome
   - gvim --version
