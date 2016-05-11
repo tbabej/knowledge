@@ -9,7 +9,6 @@ import vim
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, BASE_DIR)
 
-from knowledge import coverage
 from knowledge import error
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
 from knowledge.wikinote import WikiNote, Header
