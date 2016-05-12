@@ -22,3 +22,6 @@ execute 'syn match CloseBorder containedin=Close,CloseRest contained /\[\|\]/'.s
 execute 'syn match CloseMeta containedin=Close,CloseRest contained /:[^:]\+\ze\]/'.s:conceal
 highlight link Close Keyword
 highlight link CloseRest Keyword
+
+" Define SRSQuestion region that allows folding of the explicit questions
+execute 'syntax region SRSQuestion start=/^\(Q\|How\|Explain\|Define\|List\|Prove\): / end=/\n\ze\n/ transparent fold'
