@@ -30,6 +30,11 @@ augroup knowledge
     autocmd!
     " Create new notes in Anki when saved
     execute "autocmd BufWrite *.".expand('%:e')." KnowledgeBufferSave"
+
+    " Autoclose when opening
+    if exists('g:knowledge_autoclose_questions')
+        execute "autocmd BufWinEnter,SessionLoadPost *.".expand('%:e')." KnowledgeCloseQuestions"
+    endif
 augroup END
 
 " Global update commands
