@@ -160,6 +160,29 @@ class TestCreateClozeNoteParagraph(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
+class TestCreateMultilineClozeNote(IntegrationTest):
+
+    viminput = """
+    First law: The orbit of a planet is [an ellipse with the Sun at one of the two
+    foci]
+    """
+
+    vimoutput = """
+    First law: The orbit of a planet is [an ellipse with the Sun at one of the two {identifier}
+    foci]
+    """
+
+    notes = [
+        dict(
+            text='First law: The orbit of a planet is [an ellipse with the Sun at '
+                 'one of the two\nfoci]',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
+
+
 class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
 
     viminput = """
