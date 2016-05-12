@@ -15,7 +15,10 @@ endfor
 execute 'syn match FactIdentifier /\v\@[0-9a-zA-Z]{13,22}$/'.s:conceal
 highlight link FactIdentifier Comment
 
-execute 'syn match Close /\(\* \)\@<!\[\([^\[\]\@]\|\n\)\+\(\]\| \ze@\)/'
-execute 'syn match CloseBorder containedin=Close contained /\[\|\]/'.s:conceal
-execute 'syn match CloseMeta containedin=Close contained /:[^:]\+\ze\]/'.s:conceal
+execute 'syn match Close /\(\* \)\@<!\[\([^\[\]\@]\|\n\)\+\(\]\| \ze\(@[0-9a-zA-Z]\)\)/'
+execute 'syn match CloseRest /\([^\n]\n\)\@<=\([^\[\]\@]\|\n\)\+\]/'
+
+execute 'syn match CloseBorder containedin=Close,CloseRest contained /\[\|\]/'.s:conceal
+execute 'syn match CloseMeta containedin=Close,CloseRest contained /:[^:]\+\ze\]/'.s:conceal
 highlight link Close Keyword
+highlight link CloseRest Keyword
