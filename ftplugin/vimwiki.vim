@@ -34,3 +34,4 @@ augroup END
 
 " Global update commands
 command! KnowledgeBufferSave :py create_notes(update=True)
+command! KnowledgeCloseQuestions :py close_questions()

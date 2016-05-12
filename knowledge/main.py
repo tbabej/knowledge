@@ -9,9 +9,9 @@ import vim
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, BASE_DIR)
 
-from knowledge import errors
+from knowledge import errors, utils
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
-from knowledge.wikinote import WikiNote, Header
+from knowledge.wikinote import WikiNote, Header, QUESTION
 
 SRS_PROVIDER = vim.vars.get('knowledge_srs_provider')
 DATA_DIR = vim.vars.get('knowledge_data_dir')
@@ -146,3 +146,15 @@ def create_notes(update=False):
 
     # Display the changes in the buffer
     buffer_proxy.push()
+
+def close_questions():
+    """
+    Loops over the current buffer and closes any SRSQuestion regions.
+    """
+
+    buffer_proxy = BufferProxy(vim.current.buffer)
+    buffer_proxy.obtain()
+
+    for number in range(len(buffer_proxy)):
+        if re.search(QUESTION, buffer_proxy[number]) is not None:
+            utils.close_fold(number)
