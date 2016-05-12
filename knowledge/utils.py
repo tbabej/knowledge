@@ -1,3 +1,5 @@
+import vim
+
 def string_to_args(line):
     output = []
     escape_global_chars = ('"', "'")
@@ -72,3 +74,13 @@ def args_to_kwargs(args):
             output['deck'] = arg
 
     return output
+
+def close_fold(line):
+    # Line number needs to be normalized for vim
+    line = line + 1
+
+    # Check if line is already closed
+    fold_closed = (vim.eval("foldclosed({0})".format(line)) != '-1')
+
+    if not fold_closed:
+        vim.command("{0}foldclose".format(line))
