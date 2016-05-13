@@ -43,6 +43,7 @@ class SRSProxy(object):
         result = []
         escaped = False
         inside_eq = False
+        last_open_index = 0
 
         for index, char in enumerate(field):
             if char == '$' and not escaped:
@@ -50,6 +51,7 @@ class SRSProxy(object):
                     result.append(self.SYMBOL_EQ_CLOSE)
                     inside_eq = False
                 else:
+                    last_open_index = len(result)
                     result.append(self.SYMBOL_EQ_OPEN)
                     inside_eq = True
             elif char == "\\" and field[index+1] == '$':
@@ -59,6 +61,10 @@ class SRSProxy(object):
                 result.append(char)
 
             escaped = False
+
+        # If single $ was converted, roll it back
+        if inside_eq:
+            result[last_open_index] = '$'
 
         return ''.join(result)
 
