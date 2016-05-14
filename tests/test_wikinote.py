@@ -235,3 +235,36 @@ class TestOpenDollarSign(IntegrationTest):
 
     def execute(self):
         self.command("w", regex="written$", lines=1)
+
+
+class TestOpenDollarSignMultiple(IntegrationTest):
+
+    viminput = """
+    Q: Command: How to list block devices
+    - $ blkid
+
+    Q: Command: How to list USB devices
+    - $ lsusb
+    """
+
+    vimoutput = """
+    Q: Command: How to list block devices {identifier}
+    - $ blkid
+
+    Q: Command: How to list USB devices {identifier}
+    - $ lsusb
+    """
+
+    notes = [
+        dict(
+            front='Command: How to list block devices',
+            back='$ blkid',
+        ),
+        dict(
+            front='Command: How to list USB devices',
+            back='$ lsusb',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
