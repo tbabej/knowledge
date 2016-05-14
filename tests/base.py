@@ -169,7 +169,6 @@ class IntegrationTest(object):
 
         if self.notes:
             import sys
-            print "Path:", sys.path
             from mnemosyne.script import Mnemosyne
             mnemosyne = Mnemosyne(self.dir)
             db = mnemosyne.database()
