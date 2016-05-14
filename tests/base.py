@@ -194,6 +194,15 @@ class IntegrationTest(object):
                 tags = expected_fact.get('tags') or ['__UNTAGGED__']
                 assert tags == [tag.name for tag in cards[0].tags]
 
+                # Assert that expected number of cards have been generated
+                assert len(db.cards_from_fact(fact)) == expected_fact.get('count', 1)
+
+            # Assert that all facts have been tested
+            assert len(facts) == len(self.notes)
+
+            # Assert that all facts have been obtained
+            assert len(facts) == db.fact_count()
+
     def execute(self):
         pass
 
