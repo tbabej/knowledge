@@ -212,3 +212,26 @@ class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
         # if either of the lines is removed
         self.client.type(":w<Enter>")
         self.command("w", regex="written$", lines=1)
+
+
+class TestOpenDollarSign(IntegrationTest):
+
+    viminput = """
+    Q: Command: How to list block devices
+    - $ blkid
+    """
+
+    vimoutput = """
+    Q: Command: How to list block devices {identifier}
+    - $ blkid
+    """
+
+    notes = [
+        dict(
+            front='Command: How to list block devices',
+            back='$ blkid',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
