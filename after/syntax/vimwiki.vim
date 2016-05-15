@@ -12,7 +12,7 @@ for s:i in range(1,6)
 endfor
 
 " Define Close region
-syn region Close start=/\[/ end=/\]/ keepend
+syn region Close start=/\[/ end=/\]\|\n\n/ keepend
 highlight link Close Keyword
 
 " Make sure the borders and meta information is concealed
