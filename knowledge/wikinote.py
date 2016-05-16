@@ -162,7 +162,7 @@ class WikiNote(object):
                 break
             else:
                 lines_included_upwards += 1
-                lines.append(line)
+                lines.insert(0, line)
 
         # Now the lower part of the paragraph
         lines_inspected_forward = 0
