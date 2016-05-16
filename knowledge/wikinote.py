@@ -119,7 +119,6 @@ class WikiNote(object):
         for prefix in QUESTION_OMITTED_PREFIXES:
             if question.startswith(prefix):
                 question = question.lstrip(prefix).strip()
-                self.data['stripped_prefix'] = prefix
                 break
 
         # Parse out the remaining question and answer parts
