@@ -160,6 +160,35 @@ class TestCreateClozeNoteParagraph(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
+class TestCreateClozeNoteLongParagraph(IntegrationTest):
+
+    viminput = """
+    The circumference of Earth,
+    the third planet in the Solar System
+    by its distance from the Sun (the central star of the system)
+    is approximately [6378] km.
+    """
+
+    vimoutput = """
+    The circumference of Earth, {identifier}
+    the third planet in the Solar System
+    by its distance from the Sun (the central star of the system)
+    is approximately [6378] km.
+    """
+
+    notes = [
+        dict(
+            text='The circumference of Earth,\n'
+                 'the third planet in the Solar System\n'
+                 'by its distance from the Sun (the central star of the system)\n'
+                 'is approximately [6378] km.',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
+
+
 class TestCreateMultilineClozeNote(IntegrationTest):
 
     viminput = """
