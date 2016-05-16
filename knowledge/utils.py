@@ -84,3 +84,34 @@ def close_fold(line):
 
     if not fold_closed:
         vim.command("{0}foldclose".format(line))
+
+
+def is_list_item(buffer_proxy, number):
+    def is_list_indented_line(line):
+        """
+        Returns True, if it is sure that the current line belongs to a list
+        item.
+        Returns False, if it is sure that the current line does not belong to
+        a list item.
+        Returns None, if it cannot be determined from the information given
+        on this line
+        """
+        if line.startswith('* '):
+            return True
+        elif line.startswith('  '):
+            return None
+        else:
+            return False
+
+    for line in reversed(buffer_proxy[:number+1]):
+        # If we stumbled upon an empty line, and have not yet decided that this
+        # indeed is a list item, then it is not
+        if not line.strip():
+            return False
+
+        if is_list_indented_line(line) is None:
+            # None means we couldn't tell from this line, let's continue
+            continue
+        else:
+            # If we could tell from this line, pass it up
+            return is_list_indented_line(line)
