@@ -216,7 +216,7 @@ class WikiNote(object):
 
         if obtained_id:
             self.data['id'] = obtained_id
-            self.update_in_buffer()
+            self.update_identifier()
 
     def _update(self):
         self.proxy.update_note(
@@ -226,28 +226,28 @@ class WikiNote(object):
             model=self.data['model'],
             tags=self.data['tags']
         )
-        self.update_in_buffer()
+        self.update_identifier()
 
-    def update_in_buffer(self):
+    def update_identifier(self):
         """
         Updates the representation of the note in the buffer.
-        Note: Currently only affects the first line.
+        Note: Only affects the placement of the identifier.
         """
 
-        # Get first line of the question
-        question = self.fields.get('Front') or self.fields.get('Text')
-        lines = question.splitlines()
-
+        # Get the identifier
         identifier = self.data.get('id')
 
-        # Add the prefix to the questionline, if necessary
-        prefix = self.data.get('stripped_prefix')
-        if prefix is not None:
-            lines[0] = '{0} {1}'.format(prefix, lines[0])
+        # Obtain lines that belong under the scope of this note
+        lines = self.buffer_proxy[self.data['line']:self.data['last_line']+1]
 
-        if identifier is not None:
+        # If there is identifier and it's not in the first line, we need to fix it
+        if identifier is not None and identifier not in lines[0]:
             lines[0] = '{0} @{1}'.format(lines[0].rstrip(), identifier)
 
-        # Update all the lines over which the question spans
-        position = self.data['line']
-        self.buffer_proxy[position:position+len(lines)] = lines
+            # Remove identifier from any other line
+            for index in range(1, len(lines)):
+                lines[index] = lines[index].replace(' @' + identifier, '')
+
+            # Update all the lines over which the question spans
+            position = self.data['line']
+            self.buffer_proxy[position:position+len(lines)] = lines
