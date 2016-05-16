@@ -104,7 +104,10 @@ class WikiNote(object):
         })
 
         if close_mark_present:
-            line_shift = self.parse_close()
+            if utils.is_list_item(buffer_proxy, number):
+                line_shift = self.parse_close_list_item()
+            else:
+                line_shift = self.parse_close()
         elif basic_question:
             line_shift = self.parse_basic(basic_question)
 
@@ -145,7 +148,9 @@ class WikiNote(object):
             'Back': '\n'.join(answerlines),
         })
 
-        return len(questionlines) + len(answerlines)
+        question_size = len(questionlines) + len(answerlines)
+        self.data['last_line'] = self.data['line'] + question_size - 1
+        return question_size
 
     def parse_close(self):
         lines = []
@@ -178,7 +183,9 @@ class WikiNote(object):
 
         # If anything was in the upper part of the paragraph, shift the
         # marked line for this note
-        self.data['line'] = self.data['line'] - lines_included_upwards
+        position = self.data['line']
+        self.data['line'] = position - lines_included_upwards
+        self.data['last_line'] = position + lines_inspected_forward - 1
 
         # Look for the identifier on any line
         textlines = '\n'.join(lines)
