@@ -124,3 +124,29 @@ class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
         # if either of the lines is removed
         self.client.type(":w<Enter>")
         self.command("w", regex="written$", lines=1)
+
+
+class TestCreateClozeCodeBlockIgnored(IntegrationTest):
+
+    viminput = """
+    A efficient way of computing the fibbonaci numbers uses the ideas of
+    the dynamic programming:
+
+        fib = [1] * n
+        for i in range(2, n):
+            fib[i] = fib[i-1] + fib[i-2]
+    """
+
+    vimoutput = """
+    A efficient way of computing the fibbonaci numbers uses the ideas of
+    the dynamic programming:
+
+        fib = [1] * n
+        for i in range(2, n):
+            fib[i] = fib[i-1] + fib[i-2]
+    """
+
+    notes = []
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
