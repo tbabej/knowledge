@@ -203,7 +203,6 @@ class WikiNote(object):
         return lines_inspected_forward
 
     def parse_close_list_item(self):
-        ##print("parse_close_list_item at line {0}".format(self.data['line']))
         lines = []
 
         # First, let's add upper part of the paragraph, including the
@@ -212,25 +211,20 @@ class WikiNote(object):
 
         list_item_parsed_upwards = False
         for line in reversed(self.buffer_proxy[:(self.data['line']+1)]):
-            #print "consulting line: ", line
             if not list_item_parsed_upwards:
                 # We know that each line starts with either '* ' or '  '
                 if line.startswith('* '):
-                    ##print "Parsing finished upwards"
                     list_item_parsed_upwards = True
 
-                #print "included"
                 lines_included_upwards += 1
                 lines.insert(0, line)
             else:
                 # If the current item has been parsed, let's go all the way
                 # up and include any non-item parts
                 if line.startswith('* ') or line.startswith('  '):
-                    #print "skipping"
                     continue
                 elif not line.strip():
                     # Empty line means end of parsing
-                    #print "finally, an end"
                     break
                 else:
                     # Non-empty, non-intended line
@@ -238,31 +232,25 @@ class WikiNote(object):
                     # as that number is used to place the identifier
                     # and we want that to be placed at the beginning
                     # of the item
-                    #print "header found!"
                     lines.insert(0, line)
 
         # Now the lower part of the paragraph
         lines_inspected_forward = 1
 
-        #print "going to parse downwards now"
         for line in self.buffer_proxy[(self.data['line']+1):]:
             if line.startswith('* '):
-                #print "new item, finished"
                 # Start of the new item, let's terminate here
                 break
             elif line.startswith('  '):
                 # Continuation of the current item, let's add
-                #print "the same item, adding"
                 lines_inspected_forward += 1
                 lines.append(line)
             else:
-                #print "someting foreign, breakingg"
                 # Anything else terminates the list
                 break
 
         # If anything was in the upper part of the paragraph, shift the
         # marked line for this note
-        #print "moving by ", lines_included_upwards
         position = self.data['line']
         self.data['line'] = position - lines_included_upwards
         self.data['last_line'] = position + lines_inspected_forward - 1
@@ -312,6 +300,7 @@ class WikiNote(object):
             model=self.data['model'],
             tags=self.data['tags']
         )
+        # This is just for reformatting purposes
         self.update_identifier()
 
     def update_identifier(self):
