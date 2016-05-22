@@ -317,7 +317,7 @@ class WikiNote(object):
 
         # If there is identifier and it's not in the first line, we need to fix it
         if identifier is not None and identifier not in lines[0]:
-            lines[0] = '{0} @{1}'.format(lines[0].rstrip(), identifier)
+            lines[0] = u'{0} @{1}'.format(lines[0].rstrip(), identifier)
 
             # Remove identifier from any other line
             for index in range(1, len(lines)):
