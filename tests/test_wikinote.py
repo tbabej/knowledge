@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from tests.base import IntegrationTest
 
 
@@ -46,6 +47,32 @@ class TestCreateBasicMultilineNote(IntegrationTest):
             back="And this is the answer\n"
                  "which spans over multiple lines\n"
                  "and nobody minds."
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
+
+
+class TestCreateBasicUnicodeNote(IntegrationTest):
+
+    viminput = u"""
+    Q: Toto je otázka ktorá nemá úplne ľahkú odpoveď.
+    Bude tento program fungovať aj s krásnou diakritikou?
+    - Veruže bude, prečo by nefungoval?
+    """
+
+    vimoutput = u"""
+    Q: Toto je otázka ktorá nemá úplne ľahkú odpoveď. {identifier}
+    Bude tento program fungovať aj s krásnou diakritikou?
+    - Veruže bude, prečo by nefungoval?
+    """
+
+    notes = [
+        dict(
+            front=u'Toto je otázka ktorá nemá úplne ľahkú odpoveď.\n'
+                  u'Bude tento program fungovať aj s krásnou diakritikou?',
+            back=u'Veruže bude, prečo by nefungoval?',
         )
     ]
 
