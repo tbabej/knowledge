@@ -268,14 +268,19 @@ class MnemosyneProxy(SRSProxy):
                                      "not exist".format(model))
         controller = self.mnemo.controller()
 
-        cards = controller.create_new_cards(
-            data,
-            card_type,
-            grade=-1,
-            tag_names=tags,
-            check_for_duplicates=False,
-            save=False,
-        )
+        try:
+            cards = controller.create_new_cards(
+                data,
+                card_type,
+                grade=-1,
+                tag_names=tags,
+                check_for_duplicates=False,
+                save=False,
+            )
+        except AssertionError:
+            raise KnowledgeException("Fact '{0}' could not be added, it "
+                                     "most likely contains invalid "
+                                     "data".format(fields))
 
         # We expect exactly one card created for regular cards,
         # or at least one for closes
