@@ -1,4 +1,5 @@
 from __future__ import print_function
+import contextlib
 import operator
 import os
 import re
@@ -108,44 +109,54 @@ class BufferProxy(object):
         return len(self.data)
 
 
+@contextlib.contextmanager
+def autodeleted_proxy():
+    proxy = get_proxy()
+    try:
+        yield proxy
+    finally:
+        proxy.cleanup()
+        del proxy
+
+
 def create_notes(update=False):
     """
     Loops over current buffer and adds any new notes to Anki.
     """
 
-    srs_proxy = get_proxy()
-    buffer_proxy = BufferProxy(vim.current.buffer)
-    buffer_proxy.obtain()
-    stack = HeaderStack()
+    with autodeleted_proxy() as srs_proxy:
+        buffer_proxy = BufferProxy(vim.current.buffer)
+        buffer_proxy.obtain()
+        stack = HeaderStack()
 
-    # Process each line, skipping over the lines
-    # that can be ignored
-    line_number = 0
-    while line_number < len(buffer_proxy):
-        note, processed = WikiNote.from_line(
-            buffer_proxy,
-            line_number,
-            srs_proxy,
-            tags=stack.tags,
-            deck=stack.deck,
-            model=stack.model,
-        )
+        # Process each line, skipping over the lines
+        # that can be ignored
+        line_number = 0
+        while line_number < len(buffer_proxy):
+            note, processed = WikiNote.from_line(
+                buffer_proxy,
+                line_number,
+                srs_proxy,
+                tags=stack.tags,
+                deck=stack.deck,
+                model=stack.model,
+            )
 
-        if note is None:
-            header, processed = Header.from_line(buffer_proxy, line_number)
-            if header is not None:
-                stack.push(header)
+            if note is None:
+                header, processed = Header.from_line(buffer_proxy, line_number)
+                if header is not None:
+                    stack.push(header)
 
-        elif not note.created or update:
-            note.save()
+            elif not note.created or update:
+                note.save()
 
-        line_number += processed
+            line_number += processed
 
-    # Make sure changes are saved in the db
-    srs_proxy.commit()
+        # Make sure changes are saved in the db
+        srs_proxy.commit()
 
-    # Display the changes in the buffer
-    buffer_proxy.push()
+        # Display the changes in the buffer
+        buffer_proxy.push()
 
 def close_questions():
     """
