@@ -37,6 +37,12 @@ class SRSProxy(object):
         Actually commits the changes to the database.
         """
 
+    @abc.abstractmethod
+    def cleanup(self):
+        """
+        Make sure that proxy instance has been deinitialized.
+        """
+
     def process_matheq(self, field):
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
@@ -95,6 +101,10 @@ class AnkiProxy(SRSProxy):
 
         self.collection = anki.storage.Collection(path, lock=False)
         self.Note = anki.notes.Note
+
+    def cleanup(self):
+        del self.collection
+        del self.Note
 
     def add_note(self, deck, model, fields, tags=None):
         """
@@ -214,6 +224,10 @@ class MnemosyneProxy(SRSProxy):
             raise KnowledgeException(
                 "Mnemosyne is running. Please close it and reopen the file."
             )
+
+    def cleanup(self):
+        self.mnemo.finalise()
+        del self.mnemo
 
     def extract_data(self, fields, model):
         """
