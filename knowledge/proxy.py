@@ -1,8 +1,10 @@
 import abc
+import re
 import sys
 import time
 
 from knowledge.errors import KnowledgeException, FactNotFoundException
+from knowledge import config
 
 
 class SRSProxy(object):
@@ -44,6 +46,11 @@ class SRSProxy(object):
         """
 
     def process_matheq(self, field):
+        # Process any latex expressions:
+        #   - substitute latex keyword not followed by a space
+        for command in config.GLUED_LATEX_COMMANDS:
+            field = re.sub(command + '(?! )', command + ' ', field)
+
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
         result = []
