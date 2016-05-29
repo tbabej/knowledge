@@ -3,13 +3,9 @@ A module containing knowledge-relevant regular expressions.
 """
 
 import re
-import vim
 
+from knowledge import config
 
-QUESTION_PREFIXES = vim.vars.get(
-    'knowledge_question_prefixes',
-    ('Q:', 'How:', 'Explain:', 'Define:', 'List:', 'Prove:')
-)
 
 QUESTION = re.compile(
     '^'                                    # Starts at the begging
@@ -20,7 +16,7 @@ QUESTION = re.compile(
     ')?'
     '\s*'
     '$'                                    # Matches on whole line
-    .format(prefixes='|'.join(QUESTION_PREFIXES))
+    .format(prefixes='|'.join(config.QUESTION_PREFIXES))
 )
 
 # Marks do not start on a 4-space indented lines, and are not preceded by a '* '

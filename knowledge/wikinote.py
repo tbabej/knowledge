@@ -1,12 +1,6 @@
 import re
-import vim
 
-from knowledge import utils, regexp
-
-QUESTION_OMITTED_PREFIXES = vim.vars.get(
-    'knowledge_omitted_prefixes',
-    ('Q:',)
-)
+from knowledge import config, utils, regexp
 
 
 class Header(object):
@@ -92,7 +86,7 @@ class WikiNote(object):
         question = match.group('question').strip()
 
         # Strip the question prefixes that should be ignored
-        for prefix in QUESTION_OMITTED_PREFIXES:
+        for prefix in config.QUESTION_OMITTED_PREFIXES:
             if question.startswith(prefix):
                 question = question.lstrip(prefix).strip()
                 break
