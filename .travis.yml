@@ -46,7 +46,8 @@ before_script:
   - cd ~/.vim/bundle/knowledge
 script:
   - py.test -vv --cov .
-  - mv ~/knowledge-coverage/.coverage.* .
+  - ls ~/knowledge-coverage
+  - mv ~/knowledge-coverage/.coverage.* . || echo ok
   - coverage combine
   - coverage report
 after_success:
