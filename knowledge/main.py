@@ -10,9 +10,9 @@ import vim
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, BASE_DIR)
 
-from knowledge import errors, utils
+from knowledge import errors, utils, regexp
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
-from knowledge.wikinote import WikiNote, Header, QUESTION
+from knowledge.wikinote import WikiNote, Header
 
 SRS_PROVIDER = vim.vars.get('knowledge_srs_provider')
 DATA_DIR = vim.vars.get('knowledge_data_dir')
@@ -167,5 +167,5 @@ def close_questions():
     buffer_proxy.obtain()
 
     for number in range(len(buffer_proxy)):
-        if re.search(QUESTION, buffer_proxy[number]) is not None:
+        if re.search(regexp.QUESTION, buffer_proxy[number]) is not None:
             utils.close_fold(number)
