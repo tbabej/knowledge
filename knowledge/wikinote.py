@@ -52,8 +52,9 @@ class WikiNote(object):
 
         basic_question = re.search(regexp.QUESTION, buffer_proxy[number])
         close_mark_present = re.search(regexp.CLOSE_MARK, buffer_proxy[number])
+        numlist_item = re.match(regexp.NUMLIST_MARK, buffer_proxy[number])
 
-        if not close_mark_present and not basic_question:
+        if not any([basic_question, close_mark_present, numlist_item]):
             return None, 1
 
         self = cls(buffer_proxy, proxy)
@@ -78,6 +79,8 @@ class WikiNote(object):
                 line_shift = self.parse_close_list_item()
             else:
                 line_shift = self.parse_close()
+        elif numlist_item:
+            line_shift = self.parse_numlist_item()
         elif basic_question:
             line_shift = self.parse_basic(basic_question)
 
@@ -240,6 +243,66 @@ class WikiNote(object):
 
     def __repr__(self):
         return repr(self.fields)
+
+    def parse_numlist_item(self):
+        questionlines = []
+        answerlines = []
+
+        # First, let's add upper part of the paragraph, not including the
+        # current line
+
+        for line in reversed(self.buffer_proxy[:(self.data['line'])]):
+            # If the current item has been parsed, let's go all the way
+            # up and include everything until the line break comes
+
+            if not line.strip():
+                break
+            else:
+                questionlines.insert(0, line)
+
+        # Add a hint about the item number to the question
+        current_line = self.buffer_proxy[(self.data['line'])]
+        numlist_mark = re.match(regexp.NUMLIST_MARK, current_line).group()
+        questionlines.append(numlist_mark)
+
+        # Now the lower part of the paragraph
+        answerlines.append(current_line)
+        lines_inspected_forward = 1
+
+        for line in self.buffer_proxy[(self.data['line']+1):]:
+            if re.match(regexp.NUMLIST_MARK, line):
+                # Start of the new item, let's terminate here
+                break
+            elif line.startswith('  '):
+                # Continuation of the current item, let's add
+                lines_inspected_forward += 1
+                answerlines.append(line)
+            else:
+                # Anything else terminates the list
+                break
+
+        # Mark the last line of this item
+        self.data['last_line'] = self.data['line'] + lines_inspected_forward - 1
+
+        # Look for the identifier on any line among the scope of this item
+        answerlines = '\n'.join(answerlines)
+
+        match = re.search(regexp.CLOSE_IDENTIFIER, answerlines)
+        if match:
+            # If present, do not include it in the field, and save it
+            answerlines = re.sub(regexp.CLOSE_IDENTIFIER, '', answerlines)
+            self.data['id'] = match.group('identifier')
+
+        # Also remove any identifier from the question
+        questionlines = '\n'.join(questionlines)
+        questionlines = re.sub(regexp.CLOSE_IDENTIFIER, '', questionlines)
+
+        self.fields.update({
+            'Front': questionlines,
+            'Back': answerlines
+        })
+
+        return lines_inspected_forward
 
     @property
     def created(self):
