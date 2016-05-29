@@ -1,42 +1,11 @@
 import re
 import vim
 
-from knowledge import utils
-
-QUESTION_PREFIXES = vim.vars.get(
-    'knowledge_question_prefixes',
-    ('Q:', 'How:', 'Explain:', 'Define:', 'List:', 'Prove:')
-)
+from knowledge import utils, regexp
 
 QUESTION_OMITTED_PREFIXES = vim.vars.get(
     'knowledge_omitted_prefixes',
     ('Q:',)
-)
-
-QUESTION = re.compile(
-    '^'                                    # Starts at the begging
-    '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
-    '('
-      '\s+'                                # Followed by any whitespace
-      '@(?P<identifier>.*)'                # With opt. identifier marked by @
-    ')?'
-    '\s*'
-    '$'                                    # Matches on whole line
-    .format(prefixes='|'.join(QUESTION_PREFIXES))
-)
-
-# Marks do not start on a 4-space indented lines, and are not preceded by a '* '
-CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))\[.+')
-CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>.*)\s*$', re.MULTILINE)
-
-NOTE_HEADLINE = re.compile(
-    '^'                       # Starts at the begging of the line
-    '(?P<header_start>[=]+)'  # Heading beggining
-    '(?P<name>[^=\|\[]*)'     # Name of the viewport, all before the | sign
-    '@'                       # Divider @
-    '(?P<metadata>[^=@]*?)'   # Metadata string
-    '\s*'                     # Any whitespace
-    '(?P<header_end>[=]+)'    # Heading ending
 )
 
 
@@ -47,7 +16,7 @@ class Header(object):
 
     @classmethod
     def from_line(cls, buffer_proxy, number):
-        match = re.search(NOTE_HEADLINE, buffer_proxy[number])
+        match = re.search(regexp.NOTE_HEADLINE, buffer_proxy[number])
 
         if not match:
             return None, 1
@@ -81,8 +50,8 @@ class WikiNote(object):
         positive, it will try to parse the note data out of the block.
         """
 
-        basic_question = re.search(QUESTION, buffer_proxy[number])
-        close_mark_present = re.search(CLOSE_MARK, buffer_proxy[number])
+        basic_question = re.search(regexp.QUESTION, buffer_proxy[number])
+        close_mark_present = re.search(regexp.CLOSE_MARK, buffer_proxy[number])
 
         if not close_mark_present and not basic_question:
             return None, 1
@@ -190,10 +159,10 @@ class WikiNote(object):
 
         # Look for the identifier on any line
         textlines = '\n'.join(lines)
-        match = re.search(CLOSE_IDENTIFIER, textlines)
+        match = re.search(regexp.CLOSE_IDENTIFIER, textlines)
         if match:
             # If present, do not include it in the field, and save it
-            textlines = re.sub(CLOSE_IDENTIFIER, '', textlines)
+            textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
         self.fields.update({
@@ -257,10 +226,10 @@ class WikiNote(object):
 
         # Look for the identifier on any line
         textlines = '\n'.join(lines)
-        match = re.search(CLOSE_IDENTIFIER, textlines)
+        match = re.search(regexp.CLOSE_IDENTIFIER, textlines)
         if match:
             # If present, do not include it in the field, and save it
-            textlines = re.sub(CLOSE_IDENTIFIER, '', textlines)
+            textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
         self.fields.update({
