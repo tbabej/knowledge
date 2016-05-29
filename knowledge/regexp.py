@@ -36,3 +36,5 @@ NOTE_HEADLINE = re.compile(
     '\s*'                     # Any whitespace
     '(?P<header_end>[=]+)'    # Heading ending
 )
+
+NUMLIST_MARK = re.compile(r'^(\d+\.)+ ')
