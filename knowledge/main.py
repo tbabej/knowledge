@@ -88,7 +88,7 @@ class BufferProxy(object):
         self.object = buffer_object
 
     def obtain(self):
-        self.data = [line.decode('utf-8', 'ignore') for line in self.object[:]]
+        self.data = [line for line in self.object[:]]
 
     def push(self):
         self.object[:] = self.data
