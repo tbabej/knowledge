@@ -233,7 +233,11 @@ class MnemosyneProxy(SRSProxy):
             )
 
     def cleanup(self):
-        self.mnemo.finalise()
+        try:
+            self.mnemo.finalise()
+        except Exception as e:
+            pass
+
         del self.mnemo
 
     def extract_data(self, fields, model):
