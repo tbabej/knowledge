@@ -86,7 +86,7 @@ class SRSProxy(object):
         for method in (self.process_matheq,):
             fields = {
                 key: method(value)
-                for key, value in fields.iteritems()
+                for key, value in fields.items()
             }
 
         return fields
