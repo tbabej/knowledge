@@ -1,5 +1,6 @@
 from __future__ import print_function
 import contextlib
+import functools
 import operator
 import os
 import re
@@ -62,7 +63,7 @@ class HeaderStack(object):
             for header in self.headers.values()
         ]
 
-        return reduce(operator.or_, tag_sets, set())
+        return functools.reduce(operator.or_, tag_sets, set())
 
     @property
     def deck(self):
