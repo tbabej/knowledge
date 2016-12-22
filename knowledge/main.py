@@ -116,6 +116,7 @@ def autodeleted_proxy():
         del proxy
 
 
+@errors.pretty_exception_handler
 def create_notes(update=False):
     """
     Loops over current buffer and adds any new notes to Anki.
@@ -155,6 +156,8 @@ def create_notes(update=False):
         # Display the changes in the buffer
         buffer_proxy.push()
 
+
+@errors.pretty_exception_handler
 def close_questions():
     """
     Loops over the current buffer and closes any SRSQuestion regions.
