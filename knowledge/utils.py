@@ -115,3 +115,22 @@ def is_list_item(buffer_proxy, number):
         else:
             # If we could tell from this line, pass it up
             return is_list_indented_line(line)
+
+def decode_bytes(var):
+    """
+    Data structures obtained from vim under python3 will return bytestrings.
+    Make sure we can handle that.
+    """
+
+    if isinstance(var, bytes):
+        return var.decode()
+    if isinstance(var, list) or 'vim.list' in str(type(var)):
+        return list([decode_bytes(element) for element in var])
+
+    if isinstance(var, dict) or 'vim.dictionary' in str(type(var)):
+        return  {
+            decode_bytes(key): decode_bytes(value)
+            for key, value in var.items()
+        }
+
+    return var
