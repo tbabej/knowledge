@@ -27,7 +27,7 @@ highlight link FactIdentifier Comment
 highlight link FactIdentifierClosed Comment
 
 " Define SRSQuestion region that allows folding of the explicit questions
-execute 'syntax region SRSQuestion start=/^\(Q\|How\|Explain\|Define\|List\|Prove\): / end=/\n\ze\([^-]\|\n\)/ transparent fold'
+execute 'syntax region SRSQuestion start=/^\(Q\|How\|Explain\|Define\|List\|Prove\|Derive\): / end=/\n\ze\([^-]\|\n\)/ transparent fold'
 
 " Set concealed parts as really concealed in normal mode, and with cursor over
 setlocal conceallevel=3
