@@ -49,7 +49,7 @@ class SRSProxy(object):
         # Process any latex expressions:
         #   - substitute latex keyword not followed by a space
         for command in config.GLUED_LATEX_COMMANDS:
-            field = re.sub(command + '(?! )', command + ' ', field)
+            field = re.sub('\\' + command + '(?! )', '\\' + command + ' ', field)
 
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
