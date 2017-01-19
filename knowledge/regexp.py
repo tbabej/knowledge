@@ -20,7 +20,7 @@ QUESTION = re.compile(
 )
 
 # Marks do not start on a 4-space indented lines, and are not preceded by a '* '
-CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))\[.+')
+CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))(?<!\[)\[.+')
 CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>.*)\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = re.compile(
