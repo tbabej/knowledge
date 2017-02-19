@@ -5,8 +5,8 @@ if version < 704
 endif
 
 " Check presence of the python support
-if ! has("python3")
-  echoerr "Knowledge requires Vim compiled with the Python3 support."
+if ! has("python")
+  echoerr "Knowledge requires Vim compiled with the Python support."
   finish
 endif
 
@@ -24,7 +24,7 @@ if exists("g:knowledge_measure_coverage")
 endif
 
 " Execute the main body of taskwiki source
-execute 'py3file ' . s:plugin_path . '/knowledge/main.py'
+execute 'pyfile ' . s:plugin_path . '/knowledge/main.py'
 
 augroup knowledge
     autocmd!
@@ -38,5 +38,5 @@ augroup knowledge
 augroup END
 
 " Global update commands
-command! KnowledgeBufferSave :py3 create_notes(update=True)
-command! KnowledgeCloseQuestions :py3 close_questions()
+command! KnowledgeBufferSave :py create_notes(update=True)
+command! KnowledgeCloseQuestions :py close_questions()

@@ -336,7 +336,7 @@ class WikiNote(object):
         """
 
         # Get the identifier
-        identifier = self.data.get('id')
+        identifier = str(self.data.get('id'))
 
         # Obtain lines that belong under the scope of this note
         lines = self.buffer_proxy[self.data['line']:self.data['last_line']+1]

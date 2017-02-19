@@ -97,6 +97,7 @@ class AnkiProxy(SRSProxy):
     An abstraction over Anki interface.
     """
 
+    CLOSE_MODEL = "Cloze"
     DEFAULT_DECK = "Knowledge"
     DEFAULT_MODEL = "Basic"
     SYMBOL_EQ_OPEN = "[$]"
@@ -113,6 +114,38 @@ class AnkiProxy(SRSProxy):
         del self.collection
         del self.Note
 
+    def extract_data(self, fields, model):
+        """
+        Extracts the data dict from the given fields, depending
+        on the model being used.
+        """
+
+        # Transform the fields data to mnemosyne format
+        if model == self.CLOSE_MODEL:
+            text = fields.get("Text")
+            result = ''
+            inside_close = False
+            close_counter = 0
+            for t in text:
+                if not inside_close and t == '[':
+                    inside_close = True
+                    close_counter += 1
+                    result += '{{{{c{0}::'.format(close_counter)
+                elif inside_close and t == ']':
+                    inside_close = False
+                    result += '}}'
+                else:
+                    result += t
+            return {'Text': result}
+
+        else:
+            data = {
+                'Front': fields.get("Front"),
+                'Back': fields.get("Back"),
+            }
+
+        return data
+
     def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new note of the given model to the given deck.
@@ -121,11 +154,12 @@ class AnkiProxy(SRSProxy):
         model_name = model
         deck_name = deck.replace('.', '::')
 
-        model = self.collection.models.byName(model_name)
-        deck = self.collection.decks.byName(deck_name)
-
         # Pre-process data in fields
         fields = self.process_all(fields)
+        fields = self.extract_data(fields, model)
+
+        model = self.collection.models.byName(model_name)
+        deck = self.collection.decks.byName(deck_name)
 
         if model is None:
             raise KnowledgeException("Model {0} not found".format(model_name))
@@ -169,6 +203,7 @@ class AnkiProxy(SRSProxy):
 
         # Pre-process data in fields
         fields = self.process_all(fields)
+        fields = self.extract_data(fields, model)
 
         # Generate current card data, deck and tags
         cur_data = {
