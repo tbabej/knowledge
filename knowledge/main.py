@@ -68,10 +68,15 @@ class HeaderStack(object):
     @property
     def deck(self):
         keys = sorted(self.headers.keys(), reverse=True)
+        deck = ''
+
         for key in keys:
-            deck = self.headers[key].data.get('deck')
-            if deck is not None:
-                return deck
+            current_deck = self.headers[key].data.get('deck')
+            if current_deck is not None:
+                deck = current_deck + deck
+
+                if not current_deck.startswith('.'):
+                    return deck
 
     @property
     def model(self):
