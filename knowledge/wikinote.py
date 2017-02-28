@@ -38,7 +38,7 @@ class WikiNote(object):
         self.proxy = proxy
 
     @classmethod
-    def from_line(cls, buffer_proxy, number, proxy, tags=None, model=None, deck=None):
+    def from_line(cls, buffer_proxy, number, proxy, heading=None, tags=None, model=None, deck=None):
         """
         This methods detects if a current line is a note-defining headline. If
         positive, it will try to parse the note data out of the block.
@@ -66,6 +66,7 @@ class WikiNote(object):
             'tags': set(tags),
             'model': model,
             'deck': deck,
+            'heading': heading,
         })
 
         if close_mark_present:
@@ -110,13 +111,19 @@ class WikiNote(object):
             elif parsing_question:
                 questionlines.append(candidate)
 
+        # Compute question size before prepending the heading
+        question_size = len(questionlines) + len(answerlines)
+        self.data['last_line'] = self.data['line'] + question_size - 1
+
+        # Inject heading into the question
+        if self.data.get('heading'):
+            questionlines.insert(0, self.data.get('heading') + '\n')
+
         self.fields.update({
             'Front': '\n'.join(questionlines),
             'Back': '\n'.join(answerlines),
         })
 
-        question_size = len(questionlines) + len(answerlines)
-        self.data['last_line'] = self.data['line'] + question_size - 1
         return question_size
 
     def parse_close(self):
@@ -161,6 +168,10 @@ class WikiNote(object):
             # If present, do not include it in the field, and save it
             textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
+
+        # Inject heading into the question
+        if self.data.get('heading'):
+            textlines = self.data.get('heading') + '\n\n' + textlines
 
         self.fields.update({
             'Text': textlines
@@ -229,6 +240,10 @@ class WikiNote(object):
             textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
+        # Inject heading into the question
+        if self.data.get('heading'):
+            textlines = self.data.get('heading') + '\n\n' + textlines
+
         self.fields.update({
             'Text': textlines
         })
@@ -290,6 +305,10 @@ class WikiNote(object):
         # Also remove any identifier from the question
         questionlines = '\n'.join(questionlines)
         questionlines = re.sub(regexp.CLOSE_IDENTIFIER, '', questionlines)
+
+        # Inject heading into the question
+        if self.data.get('heading'):
+            questionlines = self.data.get('heading') + '\n\n' + questionlines
 
         self.fields.update({
             'Front': questionlines,

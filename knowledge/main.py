@@ -57,6 +57,12 @@ class HeaderStack(object):
         self.headers[pushed_level] = header
 
     @property
+    def heading(self):
+        keys = sorted(self.headers.keys(), reverse=True)
+        for key in keys:
+            return self.headers[key].data['name']
+
+    @property
     def tags(self):
         tag_sets = [
             set(header.data.get('tags', []))
@@ -141,6 +147,7 @@ def create_notes(update=False):
                 buffer_proxy,
                 line_number,
                 srs_proxy,
+                heading=stack.heading,
                 tags=stack.tags,
                 deck=stack.deck,
                 model=stack.model,
