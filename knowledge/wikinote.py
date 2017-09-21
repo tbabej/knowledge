@@ -322,7 +322,7 @@ class WikiNote(object):
         return self.data.get('id') is not None
 
     def save(self):
-        if self.data.get('id') is not None:
+        if self.created:
             self._update()
             return
 
