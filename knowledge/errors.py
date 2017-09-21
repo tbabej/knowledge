@@ -13,6 +13,9 @@ class KnowledgeException(VimPrettyException):
 class FactNotFoundException(KnowledgeException):
     pass
 
+class MappingNotFoundException(KnowledgeException):
+    pass
+
 
 # Handle error without traceback, if they're descendants of VimPrettyException
 def pretty_exception_handler(original_function):
