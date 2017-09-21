@@ -1,6 +1,6 @@
 import re
 
-from knowledge import config, utils, regexp
+from knowledge import config, utils, regexp, backend
 
 
 class Header(object):
@@ -334,12 +334,13 @@ class WikiNote(object):
         )
 
         if obtained_id:
-            self.data['id'] = obtained_id
+            self.data['id'] = backend.put(obtained_id)
             self.update_identifier()
 
     def _update(self):
+        proxy_id = backend.get(self.data['id'])
         self.proxy.update_note(
-            identifier=self.data['id'],
+            identifier=proxy_id,
             fields=self.fields,
             deck=self.data['deck'],
             model=self.data['model'],
