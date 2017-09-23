@@ -319,10 +319,13 @@ class WikiNote(object):
 
     @property
     def created(self):
-        try:
-            return backend.get(self.data.get('id')) is not None
-        except errors.MappingNotFoundException:
+        if not self.knowledge_id_assigned:
             return False
+        else:
+            try:
+                return backend.get(self.data.get('id')) is not None
+            except errors.MappingNotFoundException:
+                return False
 
     @property
     def knowledge_id_assigned(self):
