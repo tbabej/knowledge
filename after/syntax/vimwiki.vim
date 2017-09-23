@@ -24,8 +24,8 @@ execute 'syn match CloseBorder containedin=Close contained /\[\|\]/'.s:conceal
 execute 'syn match CloseMeta containedin=Close contained /:[^:\$]\+\ze\]/'.s:conceal
 
 " Conceal the fact identifiers
-execute 'syn match FactIdentifier /\v\@[0-9a-zA-Z]{13,22}$/'.s:conceal
-execute 'syn match FactIdentifierClosed containedin=Close contained /\v\@[0-9a-zA-Z]{13,22}$/'.s:conceal
+execute 'syn match FactIdentifier /\v\@[0-9a-zA-Z]{10,22}$/'.s:conceal
+execute 'syn match FactIdentifierClosed containedin=Close contained /\v\@[0-9a-zA-Z]{10,22}$/'.s:conceal
 highlight link FactIdentifier Comment
 highlight link FactIdentifierClosed Comment
 
