@@ -1,6 +1,6 @@
 import re
 
-from knowledge import config, utils, regexp, backend
+from knowledge import config, utils, regexp, backend, errors
 
 
 class Header(object):
@@ -319,6 +319,13 @@ class WikiNote(object):
 
     @property
     def created(self):
+        try:
+            return backend.get(self.data.get('id')) is not None
+        except errors.MappingNotFoundException:
+            return False
+
+    @property
+    def knowledge_id_assigned(self):
         return self.data.get('id') is not None
 
     def save(self):
@@ -334,8 +341,11 @@ class WikiNote(object):
         )
 
         if obtained_id:
-            self.data['id'] = backend.put(obtained_id)
-            self.update_identifier()
+            if self.knowledge_id_assigned:
+                backend.assign(obtained_id, self.data.get('id'))
+            else:
+                self.data['id'] = backend.put(obtained_id)
+                self.update_identifier()
 
     def _update(self):
         proxy_id = backend.get(self.data['id'])
