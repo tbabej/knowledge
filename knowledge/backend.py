@@ -29,8 +29,11 @@ def get(knowledge_id):
 
     return mapping.fact_id
 
-@orm.db_session
 def put(fact_id):
     knowledge_id = translator.encode(uuid.uuid4().int >> 64).zfill(11)
+    assign(fact_id, knowledge_id)
+
+@orm.db_session
+def assign(fact_id, knowledge_id):
     Mapping(knowledge_id=knowledge_id, fact_id=fact_id)
     return knowledge_id
