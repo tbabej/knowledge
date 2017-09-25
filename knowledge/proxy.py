@@ -81,9 +81,47 @@ class SRSProxy(object):
 
         return ''.join(result)
 
+    def process_bold(self, field):
+        """
+        Process a field and make sure that text enclosed in star characters is
+        depicted in bold. Ignores enumeration and latex environments.
+        """
+
+        # Use list to store the string to avoid unnecessary
+        # work with copying string once per each letter during buildup
+        result = []
+        escaped = False
+        inside_eq = False
+        inside_bold = False
+        last_open_index = 0
+
+        for index, char in enumerate(field):
+            if char == '$' and not escaped:
+                inside_eq = not inside_eq
+            elif char == '*' and not (inside_eq or index == 0):
+                if not inside_bold:
+                    last_open_index = len(result)
+                    result.append(self.SYMBOL_B_OPEN)
+                    inside_bold = True
+                else:
+                    result.append(self.SYMBOL_B_CLOSE)
+                    inside_bold = False
+            elif char == "\\" and field[index+1] == '$':
+                escaped = True
+                continue
+            else:
+                result.append(char)
+
+            escaped = False
+
+        # If single * was converted, roll it back
+        if inside_eq:
+            result[last_open_index] = '*'
+
+        return ''.join(result)
 
     def process_all(self, fields):
-        for method in (self.process_matheq,):
+        for method in (self.process_matheq, self.process_bold):
             fields = {
                 key: method(value)
                 for key, value in fields.items()
@@ -101,6 +139,8 @@ class AnkiProxy(SRSProxy):
     DEFAULT_MODEL = "Basic"
     SYMBOL_EQ_OPEN = "[$]"
     SYMBOL_EQ_CLOSE = "[/$]"
+    SYMBOL_B_OPEN = "<b>"
+    SYMBOL_B_CLOSE = "</b>"
 
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
@@ -210,6 +250,9 @@ class MnemosyneProxy(SRSProxy):
     DEFAULT_MODEL = "1"
     SYMBOL_EQ_OPEN = "<$>"
     SYMBOL_EQ_CLOSE = "</$>"
+    SYMBOL_B_OPEN = "<b>"
+    SYMBOL_B_CLOSE = "</b>"
+
 
     def __init__(self, path=None):
         from mnemosyne.script import Mnemosyne
