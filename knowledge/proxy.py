@@ -1,4 +1,5 @@
 import abc
+import os
 import re
 import sys
 import time
@@ -22,6 +23,14 @@ class SRSProxy(object):
     def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new fact to the database. Returns the identifier to the task.
+        """
+
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_media_file(self, filename):
+        """
+        Adds a new media file to the media directory.
         """
 
         raise NotImplementedError
@@ -299,6 +308,19 @@ class MnemosyneProxy(SRSProxy):
             }
 
         return data
+
+    def add_media_file(self, filename):
+        """
+        Adds a new media file to the media directory.
+        """
+
+        from mnemosyne.libmnemosyne.utils import copy_file_to_dir, contract_path
+        media_dir = self.mnemo.database().media_dir()
+
+        filename_expanded = os.path.expanduser(filename)
+
+        copy_file_to_dir(filename_expanded, media_dir)
+        return contract_path(filename_expanded, media_dir)
 
     def add_note(self, deck, model, fields, tags=None):
         """
