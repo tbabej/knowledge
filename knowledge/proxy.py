@@ -129,8 +129,61 @@ class SRSProxy(object):
 
         return ''.join(result)
 
+    def process_img(self, field):
+        """
+        Process a field and make sure that image links included in questions
+        get expanded.
+        """
+
+        # Use list to store the string to avoid unnecessary
+        # work with copying string once per each letter during buildup
+        result = []
+        escaped = False
+        inside_eq = False
+        inside_img = False
+        last_open_index = 0
+
+        for index, char in enumerate(field):
+            if char == '$' and not escaped:
+                inside_eq = not inside_eq
+            elif ''.join(field[index-7:index]) == '{{file:' and not inside_eq:
+                inside_img = True
+                result = result[:index-7]
+                result.append(self.SYMBOL_IMG_OPEN)
+                last_open_index = len(result)
+                result.append(char)
+            elif all([char == '}', field[index-1] == '}',
+                      inside_img, not inside_eq]):
+                inside_img = False
+                result = result[:-1]  # Pop last '}'
+
+                # Extract the filename from the top of the stack
+                filepath = ''.join(result[last_open_index:])
+                result = result[:last_open_index]
+
+                # Make sure media file exists in SRS media directory
+                srs_filepath = self.add_media_file(filepath)
+
+                # Add the corresponding Mnemosyne filename and end img tag
+                result.append(srs_filepath)
+                result.append(self.SYMBOL_IMG_CLOSE)
+
+            elif char == "\\" and field[index+1] == '$':
+                escaped = True
+                continue
+            else:
+                result.append(char)
+
+            escaped = False
+
+        # If single {{ was converted, roll it back
+        if inside_eq:
+            result[last_open_index] = '{{'
+
+        return ''.join(result)
+
     def process_all(self, fields):
-        for method in (self.process_matheq, self.process_bold):
+        for method in (self.process_matheq, self.process_bold, self.process_img):
             fields = {
                 key: method(value)
                 for key, value in fields.items()
@@ -150,6 +203,8 @@ class AnkiProxy(SRSProxy):
     SYMBOL_EQ_CLOSE = "[/$]"
     SYMBOL_B_OPEN = "<b>"
     SYMBOL_B_CLOSE = "</b>"
+    SYMBOL_IMG_OPEN = "<img src=\""
+    SYMBOL_IMG_CLOSE = "\">"
 
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
@@ -261,6 +316,8 @@ class MnemosyneProxy(SRSProxy):
     SYMBOL_EQ_CLOSE = "</$>"
     SYMBOL_B_OPEN = "<b>"
     SYMBOL_B_CLOSE = "</b>"
+    SYMBOL_IMG_OPEN = "<img src=\""
+    SYMBOL_IMG_CLOSE = "\">"
 
 
     def __init__(self, path=None):
