@@ -148,7 +148,7 @@ class SRSProxy(object):
                 inside_eq = not inside_eq
             elif ''.join(field[index-7:index]) == '{{file:' and not inside_eq:
                 inside_img = True
-                result = result[:index-7]
+                result = result[:-7]
                 result.append(self.SYMBOL_IMG_OPEN)
                 last_open_index = len(result)
                 result.append(char)
