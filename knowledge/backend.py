@@ -6,12 +6,10 @@ import basehash
 import uuid
 
 from pony import orm
-from knowledge import config
-from knowledge import errors
+from knowledge import config, errors, constants
 
-ALPHABET = '123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 db = orm.Database('sqlite', config.DB_FILE, create_db=True)
-translator = basehash.base(ALPHABET)
+translator = basehash.base(constants.ALPHABET)
 
 class Mapping(db.Entity):
     knowledge_id = orm.PrimaryKey(str)
