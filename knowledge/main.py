@@ -188,5 +188,48 @@ def close_questions():
     buffer_proxy.obtain()
 
     for number in range(len(buffer_proxy)):
-        if re.search(regexp.QUESTION, buffer_proxy[number]) is not None:
-            utils.close_fold(number)
+        if re.search(k.regexp.QUESTION, buffer_proxy[number]) is not None:
+            k.utils.close_fold(number)
+
+@k.errors.pretty_exception_handler
+def paste_image():
+    """
+    Takes an image from the clipboard, pastes it into the .media directory
+    and inserts a link to it into the buffer.
+    """
+
+    command = 'xclip -selection clipboard -t image/png -o'
+    stdout, stderr, code = k.utils.run(shlex.split(command))
+
+    if code != 0:
+        raise k.errors.KnowledgeException(f"Image could not be pasted: {stderr}")
+
+    translator = basehash.base(k.constants.ALPHABET)
+    identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
+
+    file_basedir = os.path.dirname(k.utils.get_absolute_filepath())
+    filepath = os.path.join(
+        file_basedir,
+        '.media',
+        identifier + '.png'
+    )
+
+    # Create the .media directory
+    media_basedir = os.path.dirname(filepath)
+    if not os.path.exists(media_basedir):
+        os.mkdir(media_basedir)
+
+    # Write out the file
+    with open(filepath, 'wb') as f:
+        f.write(stdout)
+
+    column = k.utils.get_current_column_number()
+    modified_line = ''.join([
+        vim.current.line[:column],
+        '{{file:',
+        os.path.relpath(filepath, start=file_basedir),
+        '}}',
+        vim.current.line[column:]
+    ])
+
+    vim.current.line = modified_line
