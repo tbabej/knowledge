@@ -4,30 +4,38 @@ import functools
 import operator
 import os
 import re
+import shlex
 import sys
+import uuid
 import vim
+
+import basehash
 
 # Insert the knowledge on the python path
 BASE_DIR = vim.eval("s:plugin_path")
 sys.path.insert(0, BASE_DIR)
 
-from knowledge import config, errors, utils, regexp
+# Different vim plugins share python namespace, avoid imports
+# using common names such as 'errors' or 'utils' using shortname
+# for the whole module
+import knowledge as k
+
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
 from knowledge.wikinote import WikiNote, Header
 
 
 def get_proxy():
-    if config.SRS_PROVIDER == 'Anki':
-        return AnkiProxy(config.DATA_DIR)
-    elif config.SRS_PROVIDER == 'Mnemosyne':
-        return MnemosyneProxy(config.DATA_DIR)
-    elif config.SRS_PROVIDER is None:
-        raise errors.KnowledgeException(
+    if k.config.SRS_PROVIDER == 'Anki':
+        return AnkiProxy(k.config.DATA_DIR)
+    elif k.config.SRS_PROVIDER == 'Mnemosyne':
+        return MnemosyneProxy(k.config.DATA_DIR)
+    elif k.config.SRS_PROVIDER is None:
+        raise k.errors.KnowledgeException(
             "Variable knowledge_srs_provider has to have "
             "one of the following values: Anki, Mnemosyne"
         )
     else:
-        raise errors.KnowledgeException(
+        raise k.errors.KnowledgeException(
             "SRS provider '{0}' is not supported."
             .format(config.SRS_PROVIDER)
         )
@@ -128,7 +136,7 @@ def autodeleted_proxy():
         del proxy
 
 
-@errors.pretty_exception_handler
+@k.errors.pretty_exception_handler
 def create_notes(update=False):
     """
     Loops over current buffer and adds any new notes to Anki.
@@ -170,7 +178,7 @@ def create_notes(update=False):
         buffer_proxy.push()
 
 
-@errors.pretty_exception_handler
+@k.errors.pretty_exception_handler
 def close_questions():
     """
     Loops over the current buffer and closes any SRSQuestion regions.
