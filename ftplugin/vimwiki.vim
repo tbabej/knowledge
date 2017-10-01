@@ -40,3 +40,7 @@ augroup END
 " Global update commands
 command! KnowledgeBufferSave :py3 create_notes(update=True)
 command! KnowledgeCloseQuestions :py3 close_questions()
+command! KnowledgePasteImage :py3 paste_image()
+
+" Leader-related mappings.
+nmap <silent><buffer> <Leader>kp :KnowledgePasteImage<CR>
