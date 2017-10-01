@@ -1,3 +1,4 @@
+import subprocess
 import vim
 
 def string_to_args(line):
@@ -134,3 +135,25 @@ def decode_bytes(var):
         }
 
     return var
+
+def run(args):
+    child = subprocess.Popen(
+        [str(arg) for arg in args],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    stdout, stderr = child.communicate()
+    code = child.returncode
+
+    return stdout, stderr, code
+
+def get_absolute_filepath():
+    return vim.eval('expand("%:p")')
+
+def get_current_line_number():
+    row, column = vim.current.window.cursor
+    return row - 1
+
+def get_current_column_number():
+    row, column = vim.current.window.cursor
+    return column
