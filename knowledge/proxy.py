@@ -5,7 +5,7 @@ import sys
 import time
 
 from knowledge.errors import KnowledgeException, FactNotFoundException
-from knowledge import config
+from knowledge import config, utils
 
 
 class SRSProxy(object):
@@ -374,10 +374,18 @@ class MnemosyneProxy(SRSProxy):
         from mnemosyne.libmnemosyne.utils import copy_file_to_dir, contract_path
         media_dir = self.mnemo.database().media_dir()
 
+        # Make sure the path is proper absolute filesystem path
         filename_expanded = os.path.expanduser(filename)
+        if os.path.isabs(filename_expanded):
+            filename_abs = filename_expanded
+        else:
+            filename_abs = os.path.join(
+                os.path.dirname(utils.get_absolute_filepath()),
+                filename_expanded
+            )
 
-        copy_file_to_dir(filename_expanded, media_dir)
-        return contract_path(filename_expanded, media_dir)
+        copy_file_to_dir(filename_abs, media_dir)
+        return contract_path(filename_abs, media_dir)
 
     def add_note(self, deck, model, fields, tags=None):
         """
