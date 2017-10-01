@@ -224,12 +224,17 @@ def paste_image():
         f.write(stdout)
 
     column = k.utils.get_current_column_number()
-    modified_line = ''.join([
-        vim.current.line[:column],
+    vim_file_link = ''.join([
         '{{file:',
         os.path.relpath(filepath, start=file_basedir),
-        '}}',
+        '}}'
+    ])
+
+    modified_line = ''.join([
+        vim.current.line[:column],
+        vim_file_link,
         vim.current.line[column:]
     ])
 
     vim.current.line = modified_line
+    vim.current.window.cursor = vim.current.window.cursor[0], column + len(vim_file_link)
