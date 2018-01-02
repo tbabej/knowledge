@@ -231,9 +231,9 @@ def paste_image():
     ])
 
     modified_line = ''.join([
-        vim.current.line[:column],
+        vim.current.line[:(column+1)],
         vim_file_link,
-        vim.current.line[column:]
+        vim.current.line[(column+1):]
     ])
 
     vim.current.line = modified_line
