@@ -18,6 +18,12 @@ endif
 " Determine the plugin path
 let s:plugin_path = escape(expand('<sfile>:p:h:h'), '\')
 
+" Determine if this is a knowledge file
+let s:extension = expand('%:e')
+if exists("g:knowledge_extension") && s:extension != g:knowledge_extension
+    finish
+endif
+
 " Run the measure parts first, if desired
 if exists("g:knowledge_measure_coverage")
   execute 'py3file ' . s:plugin_path . '/knowledge/coverage.py'
