@@ -105,9 +105,10 @@ class IntegrationTest(object):
         scriptnames = self.client.command('scriptnames').splitlines()
         expected_loaded_files = [
             'vimwiki/autoload/vimwiki/base.vim',
+            'vimwiki/autoload/vimwiki/path.vim',
             'vimwiki/ftplugin/vimwiki.vim',
             'vimwiki/autoload/vimwiki/u.vim',
-            'vimwiki/syntax/omnipresent_syntax.vim',
+            'vimwiki/autoload/vimwiki/vars.vim',
             'vimwiki/syntax/vimwiki.vim',
             'knowledge/ftplugin/vimwiki.vim',
         ]
