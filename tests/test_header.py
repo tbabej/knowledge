@@ -1,4 +1,4 @@
-from tests.base import IntegrationTest
+from tests.test_base import IntegrationTest
 
 
 class TestCreateBasicNoteUnderHeader(IntegrationTest):

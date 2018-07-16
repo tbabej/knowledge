@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from tests.base import IntegrationTest
+from tests.test_base import IntegrationTest
 
 
 class TestCreateBasicNote(IntegrationTest):
