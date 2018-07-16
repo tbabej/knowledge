@@ -174,6 +174,27 @@ class IntegrationTest(object):
         if self.notes:
             import sys
             from mnemosyne.script import Mnemosyne
+
+            from pony import orm
+
+            know_db = orm.Database('sqlite', self.db_file)
+
+            class Mapping(know_db.Entity):
+                knowledge_id = orm.PrimaryKey(str)
+                fact_id = orm.Required(str)
+
+            know_db.generate_mapping()
+
+            @orm.db_session
+            def backend_get(knowledge_id):
+                mapping = Mapping.get(knowledge_id=knowledge_id)
+
+                # If mapping not found in the local database, raise an exception
+                if mapping is None:
+                    raise errors.MappingNotFoundException(knowledge_id)
+
+                return mapping.fact_id
+
             mnemosyne = Mnemosyne(self.dir)
             db = mnemosyne.database()
 
@@ -182,9 +203,16 @@ class IntegrationTest(object):
                 for line in self.read_buffer()
             ])
 
-            facts = [
-                db.fact(identifier.group('identifier'), is_id_internal=False)
+            # We need to translate the identifiers to Mnemosyne identifiers
+            # using backend
+            translated_identifiers = [
+                backend_get(identifier.group('identifier'))
                 for identifier in identifiers
+            ]
+
+            facts = [
+                db.fact(identifier, is_id_internal=False)
+                for identifier in translated_identifiers
             ]
 
             for index, fact in enumerate(facts):
