@@ -37,6 +37,7 @@ class IntegrationTest(object):
 
     def setup_db(self):
         self.dir = tempfile.mkdtemp(dir='/tmp/')
+        self.db_file = os.path.join(self.dir, 'knowledge.db')
         shutil.copyfile("tests/mnemosyne-empty.db",
                         os.path.join(self.dir, "default.db"))
 
@@ -52,6 +53,7 @@ class IntegrationTest(object):
 
     def configure_global_varialbes(self):
         self.command('let g:knowledge_data_dir="{0}"'.format(self.dir))
+        self.command('let g:knowledge_db_file="{0}"'.format(self.db_file))
         self.command('let g:knowledge_srs_provider="Mnemosyne"')
         self.command('let g:knowledge_measure_coverage="yes"')
 
