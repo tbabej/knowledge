@@ -103,15 +103,17 @@ class SRSProxy(object):
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
         result = []
-        escaped = False
+        escaped_eq = False
+        escaped_bold = False
         inside_eq = False
         inside_bold = False
         last_open_index = 0
 
         for index, char in enumerate(field):
-            if char == '$' and not escaped:
+            if char == '$' and not escaped_eq:
                 inside_eq = not inside_eq
-            elif char == '*' and not (inside_eq or index == 0):
+                result.append(char)
+            elif char == '*' and not (inside_eq or escaped_bold):
                 if not inside_bold:
                     last_open_index = len(result)
                     result.append(self.SYMBOL_B_OPEN)
@@ -119,16 +121,22 @@ class SRSProxy(object):
                 else:
                     result.append(self.SYMBOL_B_CLOSE)
                     inside_bold = False
+            elif index == len(field) - 1:
+                # Last character on the line can be just added
+                # since we know from above it's not a valid *
+                result.append(char)
             elif char == "\\" and field[index+1] == '$':
-                escaped = True
+                escaped_eq = True
                 continue
+            elif char == "\n" and field[index+1] == '*':
+                escaped_bold = True
             else:
                 result.append(char)
 
             escaped = False
 
         # If single * was converted, roll it back
-        if inside_eq:
+        if inside_bold:
             result[last_open_index] = '*'
 
         return ''.join(result)
