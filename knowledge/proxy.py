@@ -168,22 +168,17 @@ class SRSProxy(object):
                 result.append(srs_filepath)
                 result.append(self.SYMBOL_IMG_CLOSE)
 
-            elif char == "\\" and field[index+1] == '$':
-                escaped = True
-                continue
             else:
                 result.append(char)
 
-            escaped = False
-
         # If single {{ was converted, roll it back
-        if inside_eq:
+        if inside_img:
             result[last_open_index] = '{{'
 
         return ''.join(result)
 
     def process_all(self, fields):
-        for method in (self.process_matheq, self.process_bold, self.process_img):
+        for method in (self.process_bold, self.process_matheq, self.process_img):
             fields = {
                 key: method(value)
                 for key, value in fields.items()
