@@ -76,6 +76,10 @@ class SRSProxy(object):
                     last_open_index = len(result)
                     result.append(self.SYMBOL_EQ_OPEN)
                     inside_eq = True
+            elif index == len(field) - 1:
+                # Last character on the line can be just added
+                # since we know from above it's not a valid $
+                result.append(char)
             elif char == "\\" and field[index+1] == '$':
                 escaped = True
                 continue
