@@ -19,7 +19,7 @@ class TestCreateBasicNoteUnderHeader(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life questions\n\nThis is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -45,7 +45,7 @@ class TestCreateClozeNoteUnderHeader(IntegrationTest):
 
     notes = [
         dict(
-            text="The visible spectrum is between [390 to 700] nm.",
+            text="Life questions\n\nThe visible spectrum is between [390 to 700] nm.",
             tags=['Physics']
         )
     ]
@@ -72,7 +72,7 @@ class TestCreateBasicNoteUnderHeaderWithSubdeck(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life questions\n\nThis is a question',
             back='And this is the answer',
             tags=['Life::Questions']
         )
@@ -104,7 +104,7 @@ class TestCreateBasicNoteUnderNestedHeadersOverriden(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life\n\nThis is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -132,7 +132,7 @@ class TestTokenInterpretedAsDeckByDefault(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life questions\n\nThis is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -160,7 +160,7 @@ class TestHeaderExtraTag(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life questions\n\nThis is a question',
             back='And this is the answer',
             tags=['Life', 'extra']
         )
@@ -192,7 +192,7 @@ class TestHeaderStacking(IntegrationTest):
 
     notes = [
         dict(
-            front='This is a question',
+            front='Life questions\n\nThis is a question',
             back='And this is the answer',
             tags=['Math::Goniometric', 'formulas']
         )
