@@ -117,7 +117,7 @@ class WikiNote(object):
 
         # Inject heading into the question
         if self.data.get('heading'):
-            questionlines.insert(0, self.data.get('heading') + '\n')
+            questionlines.insert(0, self.data.get('heading').strip() + '\n')
 
         self.fields.update({
             'Front': '\n'.join(questionlines),
@@ -171,7 +171,7 @@ class WikiNote(object):
 
         # Inject heading into the question
         if self.data.get('heading'):
-            textlines = self.data.get('heading') + '\n\n' + textlines
+            textlines = self.data.get('heading').strip() + '\n\n' + textlines
 
         self.fields.update({
             'Text': textlines
