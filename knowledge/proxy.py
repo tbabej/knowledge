@@ -150,22 +150,17 @@ class SRSProxy(object):
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
         result = []
-        escaped = False
-        inside_eq = False
         inside_img = False
         last_open_index = 0
 
         for index, char in enumerate(field):
-            if char == '$' and not escaped:
-                inside_eq = not inside_eq
-            elif ''.join(field[index-7:index]) == '{{file:' and not inside_eq:
+            if ''.join(field[index-7:index]) == '{{file:' and not inside_eq:
                 inside_img = True
                 result = result[:-7]
                 result.append(self.SYMBOL_IMG_OPEN)
                 last_open_index = len(result)
                 result.append(char)
-            elif all([char == '}', field[index-1] == '}',
-                      inside_img, not inside_eq]):
+            elif inside_img and field[index-1:index+1] == '}}':
                 inside_img = False
                 result = result[:-1]  # Pop last '}'
 
@@ -179,13 +174,12 @@ class SRSProxy(object):
                 # Add the corresponding Mnemosyne filename and end img tag
                 result.append(srs_filepath)
                 result.append(self.SYMBOL_IMG_CLOSE)
-
             else:
                 result.append(char)
 
         # If single {{ was converted, roll it back
         if inside_img:
-            result[last_open_index] = '{{'
+            result[last_open_index] = '{{file:'
 
         return ''.join(result)
 
