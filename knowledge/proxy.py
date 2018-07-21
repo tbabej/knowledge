@@ -130,10 +130,13 @@ class SRSProxy(object):
                 continue
             elif char == "\n" and field[index+1] == '*':
                 escaped_bold = True
+                result.append(char)
+                continue
             else:
                 result.append(char)
 
-            escaped = False
+            escaped_bold = False
+            escaped_eq = False
 
         # If single * was converted, roll it back
         if inside_bold:
