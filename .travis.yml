@@ -19,10 +19,8 @@ install:
   - pushd /tmp
   - wget https://github.com/mnemosyne-proj/mnemosyne/archive/2.6.zip
   - unzip 2.6.zip
-  - pushd mnemosyne-2.6/
-  - cd mnemosyne/pyqt_ui
+  - pushd mnemosyne-2.6
   - sudo make install-system
-  - cd -
   # Install Mnemosyne libraries both system-wide and to virtualenv
   - sudo python setup.py install
   - sudo ls /home/travis/virtualenv/
