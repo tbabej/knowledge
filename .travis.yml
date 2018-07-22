@@ -32,6 +32,8 @@ install:
   - popd
   - mnemosyne --version
   # Setup Gvim
+  - sudo add-apt-repository ppa:pi-rho/dev -y
+  - sudo apt-get update -qq
   - sudo apt-get install -qq vim-gnome
   - gvim --version
   # Setup vimwiki
