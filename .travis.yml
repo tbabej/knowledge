@@ -16,9 +16,9 @@ install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libicu52 libqt4-sql-sqlite python-cherrypy3 python-matplotlib python-qt4 python-qt4-sql pyqt4-dev-tools
   - pushd /tmp
-  - wget https://github.com/tbabej/mnemosyne/archive/master.zip
-  - unzip master.zip
-  - pushd mnemosyne-master/mnemosyne/
+  - wget https://github.com/mnemosyne-proj/mnemosyne/archive/2.6.zip
+  - unzip 2.6.zip
+  - pushd mnemosyne-2.6/
   - cd mnemosyne/pyqt_ui
   - sudo make
   - cd -
