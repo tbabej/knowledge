@@ -26,7 +26,6 @@ install:
   - pyrcc5 -o mnemosyne_rc.py mnemosyne.qrc
   - popd
   # Install Mnemosyne libraries both system-wide and to virtualenv
-  - sudo python setup.py install
   - sudo ls /home/travis/virtualenv/
   - sudo /home/travis/virtualenv/python3.6.3/bin/python setup.py install
   - popd
