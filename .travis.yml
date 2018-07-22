@@ -25,7 +25,7 @@ install:
   # Install Mnemosyne libraries both system-wide and to virtualenv
   - sudo python setup.py install
   - sudo ls /home/travis/virtualenv/
-  - sudo /home/travis/virtualenv/python3.6.6/bin/python setup.py install
+  - sudo /home/travis/virtualenv/python3.6.3/bin/python setup.py install
   - popd
   - popd
   - mnemosyne --version
