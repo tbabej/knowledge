@@ -14,7 +14,7 @@ install:
   - sudo pip install pytest pytest-cov coveralls vimrunner
   # Setup Mnemosyne
   - sudo apt-get update -qq
-  - sudo apt-get install -qq libicu52 libqt4-sql-sqlite python-cherrypy3 python-matplotlib python-qt4 python-qt4-sql pyqt4-dev-tools
+  - sudo apt-get install -qq libicu52 python-cherrypy3 python-matplotlib python3-pyqt5 pyqt5-dev-tools python3-nose python3-decorator python3-webob python3-matplotlib
   - pushd /tmp
   - wget https://github.com/mnemosyne-proj/mnemosyne/archive/2.6.zip
   - unzip 2.6.zip
