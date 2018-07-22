@@ -2,7 +2,7 @@ sudo: required
 dist: trusty
 language: python
 python:
-  - "2.7"
+  - "3.6"
 before_install:
   # Setup virtual framebuffer
   - export DISPLAY=:99.0
@@ -24,7 +24,8 @@ install:
   - cd -
   # Install Mnemosyne libraries both system-wide and to virtualenv
   - sudo python setup.py install
-  - sudo /home/travis/virtualenv/python2.7.10/bin/python setup.py install
+  - sudo ls /home/travis/virtualenv/
+  - sudo /home/travis/virtualenv/python3.6.6/bin/python setup.py install
   - popd
   - popd
   - mnemosyne --version
