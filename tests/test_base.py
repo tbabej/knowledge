@@ -26,6 +26,10 @@ class IntegrationTest(object):
     def inject_log_fixture(self, request):
         setattr(self, 'log', request.getfixturevalue('failure_log'))
 
+    def post_mortem(self):
+        messages = self.command('messages', silent=False)
+        self.log(messages)
+
     def add_plugin(self, name):
         plugin_base = os.path.expanduser('~/.vim/bundle/')
         plugin_path = os.path.join(plugin_base, name)

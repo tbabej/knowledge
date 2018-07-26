@@ -9,6 +9,17 @@ def pytest_runtest_makereport(item, call):
     return rep
 
 
+def pytest_exception_interact(node, call, report):
+    """
+    If an exception was raised (such as AssertError) call the post_mortem
+    method of the class, if it exists.
+    """
+
+    if report.failed:
+        print(node.parent._obj)
+        node.parent._obj.post_mortem()
+
+
 @pytest.yield_fixture
 def failure_log(request):
     messages = []
