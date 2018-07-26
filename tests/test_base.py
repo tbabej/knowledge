@@ -6,6 +6,8 @@ import six
 import shutil
 import subprocess
 import tempfile
+
+import pytest
 import vimrunner
 
 from time import sleep
@@ -19,6 +21,10 @@ class IntegrationTest(object):
     vimoutput = None
     notes = None
     tasks = []
+
+    @pytest.fixture(autouse=True)
+    def inject_log_fixture(self, request):
+        setattr(self, 'log', request.getfixturevalue('failure_log'))
 
     def add_plugin(self, name):
         plugin_base = os.path.expanduser('~/.vim/bundle/')
