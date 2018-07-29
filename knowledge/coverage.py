@@ -1,17 +1,20 @@
 import os
+import atexit
+import coverage
 
-from knowledge import config
+class CoverageSaver(object):
 
-# Start measuring coverage if in testing
-if config.MEASURE_COVERAGE:
-    import atexit
-    import coverage
-    coverage_path = os.path.expanduser('~/knowledge-coverage/.coverage.{0}'.format(os.getpid()))
-    cov = coverage.coverage(data_file=coverage_path)
-    cov.start()
+    def __init__(self, cov):
+        self.cov = cov
 
-    def save_coverage():
-        cov.stop()
-        cov.save()
+    def __call__(self):
+        self.cov.stop()
+        self.cov.save()
 
-    atexit.register(save_coverage)
+
+coverage_path = os.path.expanduser('~/knowledge-coverage/.coverage.{0}'.format(os.getpid()))
+cov = coverage.coverage(data_file=coverage_path)
+cov.start()
+
+saver = CoverageSaver(cov)
+atexit.register(saver)
