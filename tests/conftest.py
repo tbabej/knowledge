@@ -14,7 +14,7 @@ def failure_log(request):
     messages = []
     yield messages.append
     item = request.node
-    if item.rep_call.failed:
+    if 'rep_call' in dir(item) and item.rep_call.failed:
         print(f'\nAdditional details: {item.nodeid}')
         for message in messages:
             print (f"- {message}")
