@@ -126,13 +126,6 @@ class IntegrationTest(object):
             elif not any([scriptfile in line for line in scriptnames]):
                 return False
 
-        # Assert only note about Bram being maintainer is in messages
-        bramline = u'Messages maintainer: Bram Moolenaar <Bram@vim.org>'
-        if not soft:
-            assert self.client.command('messages') == bramline
-        elif not self.client.command('messages') == bramline:
-            return False
-
         # Success in the sanity check
         return True
 
