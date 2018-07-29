@@ -1,5 +1,7 @@
 sudo: required
 language: python
+python:
+  - "3.6"
 services:
   - docker
 before_install:
@@ -7,15 +9,17 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 install:
+  # Install coverage dependencies
+  - sudo pip3 install coverage coveralls
   # Build the docker container
   - pushd $TRAVIS_BUILD_DIR
   - mkdir ~/knowledge-coverage
   - docker build -t test_knowledge .
 script:
   - sudo docker run --security-opt label=type:container_runtime_t -v "$HOME/.Xauthority:/root/.Xauthority:rw" -v "$HOME/knowledge-coverage:/root/knowledge-coverage:rw" --net host -e DISPLAY -it test_knowledge
+after_success:
   - ls ~/knowledge-coverage
   - mv ~/knowledge-coverage/.coverage.* . || echo ok
   - coverage combine
   - coverage report
-after_success:
   - coveralls
