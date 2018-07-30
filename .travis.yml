@@ -10,7 +10,7 @@ before_install:
   - sh -e /etc/init.d/xvfb start
 install:
   # Install coverage dependencies
-  - sudo pip install coverage coveralls
+  - pip install coverage coveralls
   # Build the docker container
   - pushd $TRAVIS_BUILD_DIR
   - mkdir ~/knowledge-coverage
