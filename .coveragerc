@@ -1,2 +1,6 @@
 [report]
 omit = /usr/*,/tmp/*,*/tests/*,*/__init__.py,*/knowledge/coverage.py
+[paths]
+source =
+    .
+    /root/.vim/bundle/knowledge
