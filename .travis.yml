@@ -16,7 +16,7 @@ install:
   - mkdir ~/knowledge-coverage
   - docker build -t test_knowledge .
 script:
-  - sudo docker run --security-opt label=type:container_runtime_t -v "$HOME/.Xauthority:/root/.Xauthority:rw" -v "$HOME/knowledge-coverage:/root/knowledge-coverage:rw" -v "$PWD:/root/.vim/bundle/knowledge" --net host -e DISPLAY -it test_knowledge
+  - make test
 after_success:
   - ls /tmp/knowledge-coverage
   - mv /tmp/knowledge-coverage/.coverage.* . || echo ok
