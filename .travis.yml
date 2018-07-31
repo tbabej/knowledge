@@ -13,7 +13,6 @@ install:
   - pip install coverage coveralls
   # Build the docker container
   - pushd $TRAVIS_BUILD_DIR
-  - mkdir ~/knowledge-coverage
   - docker-compose build
 script:
   - make test
