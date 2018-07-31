@@ -14,7 +14,7 @@ install:
   # Build the docker container
   - pushd $TRAVIS_BUILD_DIR
   - mkdir ~/knowledge-coverage
-  - docker build -t test_knowledge .
+  - docker-compose build
 script:
   - make test
 after_success:
