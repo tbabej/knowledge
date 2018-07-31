@@ -1,3 +1,3 @@
 test:
-	- mkdir /tmp/knowledge-coverage
+	- mkdir -p /tmp/knowledge-coverage
 	- docker-compose up

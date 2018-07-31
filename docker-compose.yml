@@ -4,7 +4,7 @@ services:
     build: .
     volumes:
       - "$HOME/.Xauthority:/root/.Xauthority:rw"
-      - "$HOME/knowledge-coverage:/root/knowledge-coverage:rw"
+      - "/tmp/knowledge-coverage:/root/knowledge-coverage:rw"
       - ".:/root/.vim/bundle/knowledge:rw"
     network_mode: "host"
     environment:

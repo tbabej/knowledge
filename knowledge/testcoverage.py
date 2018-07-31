@@ -12,7 +12,7 @@ class CoverageSaver(object):
         self.cov.save()
 
 
-coverage_path = os.path.expanduser('~/knowledge-coverage/.coverage.{0}'.format(os.getpid()))
+coverage_path = '/tmp/knowledge-coverage/.coverage.{0}'.format(os.getpid())
 cov = coverage.coverage(data_file=coverage_path)
 cov.start()
 

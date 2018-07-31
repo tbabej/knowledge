@@ -18,8 +18,8 @@ install:
 script:
   - sudo docker run --security-opt label=type:container_runtime_t -v "$HOME/.Xauthority:/root/.Xauthority:rw" -v "$HOME/knowledge-coverage:/root/knowledge-coverage:rw" -v "$PWD:/root/.vim/bundle/knowledge" --net host -e DISPLAY -it test_knowledge
 after_success:
-  - ls ~/knowledge-coverage
-  - mv ~/knowledge-coverage/.coverage.* . || echo ok
+  - ls /tmp/knowledge-coverage
+  - mv /tmp/knowledge-coverage/.coverage.* . || echo ok
   - coverage combine
   - coverage report
   - coveralls
