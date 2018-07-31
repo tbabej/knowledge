@@ -1,0 +1,13 @@
+version: '3'
+services:
+  tests:
+    build: .
+    volumes:
+      - "$HOME/.Xauthority:/root/.Xauthority:rw"
+      - "$HOME/knowledge-coverage:/root/knowledge-coverage:rw"
+      - ".:/root/.vim/bundle/knowledge:rw"
+    network_mode: "host"
+    environment:
+      - DISPLAY
+    security_opt:
+      - label=type:container_runtime_t
