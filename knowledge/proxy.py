@@ -266,7 +266,7 @@ class AnkiProxy(SRSProxy):
             pass
 
         self.collection.addNote(note)
-        return note.id
+        return str(note.id)
 
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         # Get the fact from Anki
