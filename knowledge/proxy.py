@@ -219,6 +219,7 @@ class AnkiProxy(SRSProxy):
         self.Note = anki.notes.Note
 
     def cleanup(self):
+        self.collection.close()
         del self.collection
         del self.Note
 
