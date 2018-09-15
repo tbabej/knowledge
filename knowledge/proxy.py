@@ -157,7 +157,7 @@ class SRSProxy(object):
         last_open_index = 0
 
         for index, char in enumerate(field):
-            if ''.join(field[index-7:index]) == '{{file:' and not inside_eq:
+            if ''.join(field[index-7:index]) == '{{file:':
                 inside_img = True
                 result = result[:-7]
                 result.append(self.SYMBOL_IMG_OPEN)
