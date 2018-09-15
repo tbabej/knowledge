@@ -277,6 +277,23 @@ class AnkiProxy(SRSProxy):
         del self.collection
         del self.Note
 
+    def add_media_file(self, filename):
+        """
+        Adds a new media file to the media directory.
+        """
+
+        # Make sure the path is proper absolute filesystem path
+        filename_expanded = os.path.expanduser(filename)
+        if os.path.isabs(filename_expanded):
+            filename_abs = filename_expanded
+        else:
+            filename_abs = os.path.join(
+                os.path.dirname(utils.get_absolute_filepath()),
+                filename_expanded
+            )
+
+        return self.collection.media.addFile(filename_abs)
+
     def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new note of the given model to the given deck.
