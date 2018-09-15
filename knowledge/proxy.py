@@ -186,6 +186,39 @@ class SRSProxy(object):
 
         return ''.join(result)
 
+    def process_cloze(self, field):
+        """
+        Process a field and make sure that cloze syntax gets converted.
+        """
+
+        if not getattr(self, 'SYMBOL_CLOZE_OPEN', None):
+            return field
+
+        # Use list to store the string to avoid unnecessary
+        # work with copying string once per each letter during buildup
+        result = []
+        last_open_index = 0
+        cloze_count = 0
+        cloze_open = False
+
+        for index, char in enumerate(field):
+            if char == '[' and not cloze_open:
+                last_open_index = index
+                cloze_open = True
+                cloze_count += 1
+                result.append("{{{{c{count}::".format(count=cloze_count))
+            elif char == ']' and cloze_open:
+                result.append("}}")
+                cloze_open = False
+            else:
+                result.append(char)
+
+        # If single [ was converted, roll it back
+        if cloze_open:
+            result[last_open_index] = '['
+
+        return ''.join(result)
+
     def process_all(self, fields):
         for method in (self.process_bold, self.process_matheq, self.process_img):
             fields = {
@@ -210,6 +243,8 @@ class AnkiProxy(SRSProxy):
     SYMBOL_B_CLOSE = "</b>"
     SYMBOL_IMG_OPEN = "<img src=\""
     SYMBOL_IMG_CLOSE = "\">"
+    SYMBOL_CLOZE_OPEN = "{{{{c{cloze}::"
+    SYMBOL_CLOZE_CLOSE = "}}"
 
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
