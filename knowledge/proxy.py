@@ -203,6 +203,7 @@ class AnkiProxy(SRSProxy):
 
     DEFAULT_DECK = "Knowledge"
     DEFAULT_MODEL = "Basic"
+    CLOSE_MODEL = "Cloze"
     SYMBOL_EQ_OPEN = "[$]"
     SYMBOL_EQ_CLOSE = "[/$]"
     SYMBOL_B_OPEN = "<b>"
