@@ -219,8 +219,26 @@ class SRSProxy(object):
 
         return ''.join(result)
 
+    def process_newlines(self, field):
+        """
+        If symbol for the new line is defined, replace \n with it.
+        """
+
+        if not getattr(self, 'SYMBOL_NEWLINE', None):
+            return field
+
+        return field.replace('\n', self.SYMBOL_NEWLINE)
+
     def process_all(self, fields):
-        for method in (self.process_bold, self.process_matheq, self.process_img):
+        methods = (
+            self.process_cloze,
+            self.process_bold,
+            self.process_matheq,
+            self.process_img,
+            self.process_newlines,
+        )
+
+        for method in methods:
             fields = {
                 key: method(value)
                 for key, value in fields.items()
@@ -245,6 +263,7 @@ class AnkiProxy(SRSProxy):
     SYMBOL_IMG_CLOSE = "\">"
     SYMBOL_CLOZE_OPEN = "{{{{c{cloze}::"
     SYMBOL_CLOZE_CLOSE = "}}"
+    SYMBOL_NEWLINE = "<br>"
 
     def __init__(self, path):
         sys.path.insert(0, "/usr/share/anki")
