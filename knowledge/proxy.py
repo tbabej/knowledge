@@ -144,6 +144,56 @@ class SRSProxy(object):
 
         return ''.join(result)
 
+    def process_italic(self, field):
+        """
+        Process a field and make sure that text enclosed in star characters is
+        depicted in italic. Ignores enumeration and latex environments.
+        """
+
+        # Use list to store the string to avoid unnecessary
+        # work with copying string once per each letter during buildup
+        result = []
+        escaped_eq = False
+        escaped_italic = False
+        inside_eq = False
+        inside_italic = False
+        last_open_index = 0
+
+        for index, char in enumerate(field):
+            if char == '$' and not escaped_eq:
+                inside_eq = not inside_eq
+                result.append(char)
+            elif char == '_' and not (inside_eq or escaped_italic):
+                if not inside_italic:
+                    last_open_index = len(result)
+                    result.append(self.SYMBOL_I_OPEN)
+                    inside_italic = True
+                else:
+                    result.append(self.SYMBOL_I_CLOSE)
+                    inside_italic = False
+            elif index == len(field) - 1:
+                # Last character on the line can be just added
+                # since we know from above it's not a valid *
+                result.append(char)
+            elif char == "\\" and field[index+1] == '$':
+                escaped_eq = True
+                continue
+            elif char == "\n" and field[index+1] == '_':
+                escaped_italic = True
+                result.append(char)
+                continue
+            else:
+                result.append(char)
+
+            escaped_italic = False
+            escaped_eq = False
+
+        # If single * was converted, roll it back
+        if inside_italic:
+            result[last_open_index] = '_'
+
+        return ''.join(result)
+
     def process_img(self, field):
         """
         Process a field and make sure that image links included in questions
@@ -233,6 +283,7 @@ class SRSProxy(object):
         methods = (
             self.process_cloze,
             self.process_bold,
+            self.process_italic,
             self.process_matheq,
             self.process_img,
             self.process_newlines,
@@ -259,6 +310,8 @@ class AnkiProxy(SRSProxy):
     SYMBOL_EQ_CLOSE = "[/$]"
     SYMBOL_B_OPEN = "<b>"
     SYMBOL_B_CLOSE = "</b>"
+    SYMBOL_I_OPEN = "<i>"
+    SYMBOL_I_CLOSE = "</i>"
     SYMBOL_IMG_OPEN = "<img src=\""
     SYMBOL_IMG_CLOSE = "\">"
     SYMBOL_CLOZE_OPEN = "{{{{c{cloze}::"
@@ -393,6 +446,8 @@ class MnemosyneProxy(SRSProxy):
     SYMBOL_EQ_CLOSE = "</$>"
     SYMBOL_B_OPEN = "<b>"
     SYMBOL_B_CLOSE = "</b>"
+    SYMBOL_I_OPEN = "<i>"
+    SYMBOL_I_CLOSE = "</i>"
     SYMBOL_IMG_OPEN = "<img src=\""
     SYMBOL_IMG_CLOSE = "\">"
 
