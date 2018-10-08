@@ -1,2 +1,3 @@
 basehash
 pony
+# xclip - via system manager

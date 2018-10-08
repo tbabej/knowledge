@@ -198,12 +198,6 @@ def paste_image():
     and inserts a link to it into the buffer.
     """
 
-    command = 'xclip -selection clipboard -t image/png -o'
-    stdout, stderr, code = k.utils.run(shlex.split(command))
-
-    if code != 0:
-        raise k.errors.KnowledgeException(f"Image could not be pasted: {stderr}")
-
     translator = basehash.base(k.constants.ALPHABET)
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
@@ -219,9 +213,20 @@ def paste_image():
     if not os.path.exists(media_basedir):
         os.mkdir(media_basedir)
 
-    # Write out the file
-    with open(filepath, 'wb') as f:
-        f.write(stdout)
+    if sys.platform == 'linux':
+        command = 'xclip -selection clipboard -t image/png -o'
+    elif sys.platform == 'darwin':
+        command = f'pbpaste {filepath}'
+
+    stdout, stderr, code = k.utils.run(shlex.split(command))
+
+    if code != 0:
+        raise k.errors.KnowledgeException(f"Image could not be pasted: {stderr}")
+
+    # For linux, the output is on stdout so we need to write out the file
+    if sys.platform == 'linux':
+        with open(filepath, 'wb') as f:
+            f.write(stdout)
 
     column = k.utils.get_current_column_number()
     vim_file_link = ''.join([

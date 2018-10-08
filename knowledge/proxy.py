@@ -319,7 +319,7 @@ class AnkiProxy(SRSProxy):
     SYMBOL_NEWLINE = "<br>"
 
     def __init__(self, path):
-        sys.path.insert(0, "/usr/share/anki")
+        sys.path.insert(0, "/home/tbabej/Installed/anki")
         import anki
 
         self.collection = anki.storage.Collection(path, lock=False)
