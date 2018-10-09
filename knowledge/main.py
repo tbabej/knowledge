@@ -216,7 +216,7 @@ def paste_image():
     if sys.platform == 'linux':
         command = 'xclip -selection clipboard -t image/png -o'
     elif sys.platform == 'darwin':
-        command = f'pbpaste {filepath}'
+        command = f'pngpaste {filepath}'
 
     stdout, stderr, code = k.utils.run(shlex.split(command))
 
