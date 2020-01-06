@@ -413,10 +413,15 @@ class AnkiProxy(SRSProxy):
         cur_deck = note.model()['did']
         cur_tags = set(note.tags)
 
-        # Bail out if no change is proposed
-        deck = self.collection.decks.byName(deck)
-        deck_id = deck['id'] if deck is not None else None
+        deck_name = deck.replace('.', '::')
+        deck = self.collection.decks.byName(deck_name)
+        if deck is None:
+            self.collection.decks.id(deck_name)
+            deck = self.collection.decks.byName(deck_name)
 
+        deck_id = deck['id']
+
+        # Bail out if no change is proposed
         if all([cur_deck == deck_id, cur_tags == tags, cur_data == fields]):
             return
 
@@ -425,7 +430,17 @@ class AnkiProxy(SRSProxy):
             note[key] = fields[key]
 
         note.tags = list(tags)
-        note.model()['did'] = deck_id
+
+        if cur_deck != deck_id:
+            # Updating deck is done directly via DB, see Anki internals in
+            # browser.py::Browser._setDeck
+            card_ids = self.collection.db.list(f"SELECT id FROM cards WHERE nid = {identifier}")
+            result = self.collection.db.execute(
+                f"UPDATE cards SET usn={self.collection.usn()}, "
+                f"mod={int(time.time())}, "
+                f"did={deck_id} "
+                f"WHERE id IN ({','.join(map(str, card_ids))})",
+            )
 
         # Push the changes, doesn't get saved without it
         note.flush()
@@ -582,6 +597,7 @@ class MnemosyneProxy(SRSProxy):
                                         "cards assigned".format(identifier))
 
         # Convert the deck name to the tag
+        # TODO: Modifying the deck will not cause the old deck tag to disappear
         tags = (tags or set())
         if deck is not None:
             tags.add(deck.replace('.', '::'))
