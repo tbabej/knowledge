@@ -331,6 +331,14 @@ class WikiNote(object):
     def knowledge_id_assigned(self):
         return self.data.get('id') is not None
 
+    @property
+    def proxy_id(self):
+        """
+        Return the identifier of the note in the backend of the SRS provider.
+        """
+
+        return backend.get(self.data['id'])
+
     def save(self):
         if self.created:
             self._update()
@@ -351,9 +359,8 @@ class WikiNote(object):
                 self.update_identifier()
 
     def _update(self):
-        proxy_id = backend.get(self.data['id'])
         self.proxy.update_note(
-            identifier=proxy_id,
+            identifier=self.proxy_id,
             fields=self.fields,
             deck=self.data['deck'],
             model=self.data['model'],
