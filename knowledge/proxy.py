@@ -128,7 +128,7 @@ class SRSProxy(object):
             elif char == "\\" and field[index+1] == '$':
                 escaped_eq = True
                 continue
-            elif char == "\n" and field[index+1] == '*':
+            elif char == "\n" and field[index+1:index+3] == '* ':
                 escaped_bold = True
                 result.append(char)
                 continue
