@@ -178,6 +178,45 @@ def create_notes():
 
 
 @k.errors.pretty_exception_handler
+def note_info():
+    buffer_proxy = BufferProxy(vim.current.buffer)
+    buffer_proxy.obtain()
+
+    with autodeleted_proxy() as srs_proxy:
+        note, processed = WikiNote.from_line(
+            buffer_proxy,
+            k.utils.get_current_line_number(),
+            srs_proxy,
+            heading=None,
+            tags=None,
+            deck=None,
+            model=None,
+        )
+
+        data = srs_proxy.note_info(note.proxy_id)
+
+    content = f"""
+    Added:        {data['added'].strftime('%Y-%m-%d')}
+    First review: {data['first_review'].strftime('%Y-%m-%d') if data['first_review'] else 'N/A'}
+    Last review:  {data['last_review'].strftime('%Y-%m-%d') if data['last_review'] else 'N/A'}
+    Due:          {data['due'].strftime('%Y-%m-%d') if data['due'] else 'N/A'}
+    Interval:     {data['interval'] if data['interval'] else 'N/A'}
+    Ease:         {data['ease']}%
+    Reviews:      {data['reviews']}
+    Lapses:       {data['lapses']}
+    Average time: {data['average_time']}
+    Total time:   {data['total_time']}
+    Card type:    {data['card_type']}
+    Note type:    {data['note_type']}
+    Deck:         {data['deck']}
+    Note ID:      {data['note_id']}
+    Card ID:      {data['card_id']}
+    """
+
+    print(content)
+
+
+@k.errors.pretty_exception_handler
 def close_questions():
     """
     Loops over the current buffer and closes any SRSQuestion regions.
