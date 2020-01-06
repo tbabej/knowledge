@@ -4,6 +4,8 @@ import re
 import sys
 import time
 
+from datetime import datetime
+
 from knowledge.errors import KnowledgeException, FactNotFoundException
 from knowledge import config, utils
 
@@ -447,6 +449,56 @@ class AnkiProxy(SRSProxy):
 
     def commit(self):
         self.collection.save()
+
+    def note_info(self, identifier):
+        """
+        Obtain information about the note.
+        """
+
+        # Get the fact from Anki
+        try:
+            note = self.Note(self.collection, id=identifier)
+        except TypeError:
+            # Anki raises TypeError in case ID is not found
+            raise FactNotFoundException("Fact with ID '{0}' could not be found"
+                                        .format(identifier))
+
+        card = note.cards()[0]
+
+        first_review = self.collection.db.scalar(f"SELECT min(id) FROM revlog WHERE cid={card.id}")
+        last_review = self.collection.db.scalar(f"SELECT max(id) FROM revlog WHERE cid={card.id}")
+
+        average_time = None
+        total_time = None
+        due = None
+
+        num_revisions, total_time = self.collection.db.first(
+            f"SELECT count(), sum(time)/1000 FROM revlog WHERE cid={card.id}"
+        )
+
+        if card.type in (1, 2):  # TODO: Document these type values with ENUM
+            if card.queue in (2,3):
+                due = time.time() + (card.due - self.collection.sched.today) * 86400
+            else:
+                due = card.due
+
+        return {
+            'added': datetime.fromtimestamp(card.id / 1000),
+            'first_review': datetime.fromtimestamp(first_review / 1000) if first_review else None,
+            'last_review': datetime.fromtimestamp(last_review / 1000) if last_review else None,
+            'ease': card.factor / 10.0,
+            'reviews': card.reps,
+            'lapses': card.lapses,
+            'card_type': card.template()['name'],
+            'note_type': card.model()['name'],
+            'deck': self.collection.decks.name(card.did),
+            'note_id': card.nid,
+            'card_id': card.id,
+            'total_time': total_time,
+            'average_time': (total_time / num_revisions) if num_revisions else None,
+            'due': datetime.fromtimestamp(due),
+            'interval': card.ivl * 86400 if card.queue == 2 else None
+        }
 
 
 class MnemosyneProxy(SRSProxy):
