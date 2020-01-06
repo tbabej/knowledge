@@ -137,7 +137,7 @@ def autodeleted_proxy():
 
 
 @k.errors.pretty_exception_handler
-def create_notes(update=False):
+def create_notes():
     """
     Loops over current buffer and adds any new notes to Anki.
     """
@@ -165,8 +165,7 @@ def create_notes(update=False):
                 header, processed = Header.from_line(buffer_proxy, line_number)
                 if header is not None:
                     stack.push(header)
-
-            elif not note.created or update:
+            else:
                 note.save()
 
             line_number += processed

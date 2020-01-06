@@ -44,7 +44,7 @@ augroup knowledge
 augroup END
 
 " Global update commands
-command! KnowledgeBufferSave :py3 create_notes(update=True)
+command! KnowledgeBufferSave :py3 create_notes()
 command! KnowledgeCloseQuestions :py3 close_questions()
 command! KnowledgePasteImage :py3 paste_image()
 
