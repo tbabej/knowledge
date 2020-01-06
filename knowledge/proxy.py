@@ -56,6 +56,12 @@ class SRSProxy(object):
         Make sure that proxy instance has been deinitialized.
         """
 
+    @abc.abstractmethod
+    def note_info(self, identifier):
+        """
+        Obtain information about the note.
+        """
+
     def process_matheq(self, field):
         # Process any latex expressions:
         #   - substitute latex keyword not followed by a space
