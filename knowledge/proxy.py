@@ -382,8 +382,7 @@ class AnkiProxy(SRSProxy):
         # Set the deck and tags
         note.model()['did'] = deck['id']
 
-        if tags:
-            note.tags = tags
+        note.tags = set(tags) if tags else set()
 
         # Fill in all the fields
         for key in fields:
@@ -401,6 +400,8 @@ class AnkiProxy(SRSProxy):
         return str(note.id)
 
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
+        tags = tags or set()
+
         # Get the fact from Anki
         try:
             note = self.Note(self.collection, id=identifier)
