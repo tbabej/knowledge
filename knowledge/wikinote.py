@@ -66,7 +66,7 @@ class WikiNote(object):
 
         self.data.update({
             'line': number,
-            'tags': set(tags),
+            'tags': set(tags) | set(['knowledge']),
             'model': model,
             'deck': deck,
             'heading': heading,
