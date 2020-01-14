@@ -21,7 +21,6 @@ class Header(object):
         self = cls()
         self.data.update({
             'header_start': match.group('header_start'),
-            'header_end': match.group('header_end'),
             'name': match.group('name'),
         })
 

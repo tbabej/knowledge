@@ -31,7 +31,7 @@ NOTE_HEADLINE = {
         '@'                       # Divider @
         '(?P<metadata>[^=@]*?)'   # Metadata string
         '\s*'                     # Any whitespace
-        '(?P<header_end>[=]+)'    # Heading ending
+        '([=]+)'                  # Heading ending
     ),
     'markdown': re.compile(
         '^'                       # Starts at the begging of the line
