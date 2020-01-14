@@ -3,6 +3,9 @@ import re
 from knowledge import config, utils, regexp, backend, errors
 
 
+MARKUP_SYNTAX = utils.get_var('knowledge_syntax', 'default')
+
+
 class Header(object):
 
     def __init__(self):
@@ -10,7 +13,7 @@ class Header(object):
 
     @classmethod
     def from_line(cls, buffer_proxy, number):
-        match = re.search(regexp.NOTE_HEADLINE, buffer_proxy[number])
+        match = re.search(regexp.NOTE_HEADLINE[MARKUP_SYNTAX], buffer_proxy[number])
 
         if not match:
             return None, 1
