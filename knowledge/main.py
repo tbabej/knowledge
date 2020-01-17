@@ -1,13 +1,18 @@
 from __future__ import print_function
 import contextlib
+import datetime
 import functools
 import operator
 import os
 import re
 import shlex
+import subprocess
 import sys
+import tempfile
 import uuid
 import vim
+from pathlib import Path
+
 
 import basehash
 
@@ -281,3 +286,73 @@ def paste_image():
 
     vim.current.line = modified_line
     vim.current.window.cursor = vim.current.window.cursor[0], column + len(vim_file_link)
+
+
+def convert_to_pdf():
+    preamble = '\n'.join([
+       '---',
+       'title: "{}"',
+       'author: [Tomas Babej]',
+       f'date: "{datetime.date.today().strftime("%Y-%m-%d")}"',
+       'lang: "en"',
+       'page-background: "/home/tbabej/background1.pdf"',
+       'page-background-opacity: 0.1',
+       'caption-justification: "centering"',
+       'footnotes-pretty: true',
+       'classoption: [oneside]',
+       'header-includes:',
+       '- |',
+       '  ```{=latex}',
+       r'  \usepackage{awesomebox}',
+       r'  \usepackage{sectsty}',
+       r'  \newcounter{question}[section]',
+       r'  \addtocounter{section}{1}',
+       r'  \sectionfont{\fontsize{21}{24}\selectfont\centering}',
+       r'  \subsectionfont{\fontsize{15}{18}\selectfont\centering}',
+       r'  \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}',
+       r'  \newenvironment{questionblock}[0]{',
+       r'      \begingroup',
+       r'      \setlength{\aweboxleftmargin}{0.09\linewidth}',
+       r'      \setlength{\aweboxcontentwidth}{0.91\linewidth}',
+       r'      \setlength{\aweboxsignraise}{1mm}',
+       r'      \definecolor{abvrulecolor}{RGB}{221,221,216}',
+       r'      \addtocounter{question}{1}',
+       r'      \begin{awesomeblock}[abvrulecolor][][\textbf{Question \thesection.\thequestion}]{2pt}{\fontsize{20}{2}\selectfont\faQuestion}{violet}',
+       r'  }{',
+       r'      \end{awesomeblock}',
+       r'      \endgroup',
+       r'  }',
+       '  ```',
+       'pandoc-latex-environment:',
+       '  noteblock: [note]',
+       '  tipblock: [tip]',
+       '  warningblock: [warning]',
+       '  cautionblock: [caution]',
+       '  importantblock: [important]',
+       '  questionblock: [question]',
+       '...'
+    ])
+
+    substitutions = [
+        lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
+        lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
+        lambda l: re.sub(r':\[', r'[', l),
+    ]
+
+    lines = vim.current.buffer[:]
+    for substitution in substitutions:
+        lines = [substitution(line) for line in lines]
+
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
+        f.write(preamble + '\n\n' + '\n'.join(lines))
+        f.flush()
+        output = subprocess.check_output([
+            'pandoc',
+            f.name,
+            '-f', 'markdown',
+            '-o', 'output.pdf',
+            '--template', 'eisvogel',
+            '--filter', 'pandoc-latex-environment',
+            '--listings'
+        ])
+        print(output)
