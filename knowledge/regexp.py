@@ -19,9 +19,10 @@ QUESTION = re.compile(
     .format(prefixes='|'.join(config.QUESTION_PREFIXES))
 )
 
-# Marks do not start on a 4-space indented lines, and are not preceded by a '* '
-CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))(?<!\[)\[.+')
-CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>.*)\s*$', re.MULTILINE)
+# Marks do not start on a 4-space indented lines, and are not preceded by
+# a '* ' (items), '!' (images), another '[' or ':' (wikilinks)
+CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))(?<!:)(?<!\[)(?<!\!)\[.+')
+CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>[A-Za-z0-9]{11})\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = {
     'default': re.compile(
