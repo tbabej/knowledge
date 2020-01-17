@@ -323,13 +323,6 @@ def convert_to_pdf():
        r'      \endgroup',
        r'  }',
        '  ```',
-       'pandoc-latex-environment:',
-       '  noteblock: [note]',
-       '  tipblock: [tip]',
-       '  warningblock: [warning]',
-       '  cautionblock: [caution]',
-       '  importantblock: [important]',
-       '  questionblock: [question]',
        '...'
     ])
 
@@ -352,7 +345,6 @@ def convert_to_pdf():
             '-f', 'markdown',
             '-o', 'output.pdf',
             '--template', 'eisvogel',
-            '--filter', 'pandoc-latex-environment',
             '--listings'
         ])
         print(output)
