@@ -207,3 +207,18 @@ def get_current_line_number():
 def get_current_column_number():
     row, column = vim.current.window.cursor
     return column
+
+def get_text_identifiers():
+    """
+    Detect all the Knowledge identifiers present in the directory.
+    """
+
+    REGEX = r'@(?P<identifier>[A-Za-z0-9]{11})'
+
+    def find_matches():
+        for path in glob.iglob('**/*.knw', recursive=True):
+            with open(path, 'r') as f:
+                yield from re.finditer(REGEX, f.read())
+
+    data = [match.group('identifier') for match in find_matches()]
+    return data
