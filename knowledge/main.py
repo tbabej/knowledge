@@ -371,6 +371,7 @@ def convert_to_pdf():
     for substitution in substitutions:
         lines = [substitution(line) for line in lines]
 
+    output_filepath = re.sub(r'\.[^/]+$', '.pdf', full_path)
     with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
         f.write(preamble + '\n\n' + '\n'.join(lines))
         f.flush()
@@ -378,8 +379,8 @@ def convert_to_pdf():
             'pandoc',
             f.name,
             '-f', 'markdown',
-            '-o', 'output.pdf',
+            '-o', output_filepath,
             '--template', 'eisvogel',
             '--listings'
         ])
-        print(output)
+        print(f"Converted to: {output_filepath}")
