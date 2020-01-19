@@ -18,8 +18,8 @@ import basehash
 import yaml
 
 # Insert the knowledge on the python path
-BASE_DIR = vim.eval("s:plugin_path")
-sys.path.insert(0, BASE_DIR)
+KNOWLEDGE_BASE_DIR = vim.eval("s:knowledge_plugin_path")
+sys.path.insert(0, KNOWLEDGE_BASE_DIR)
 
 # Different vim plugins share python namespace, avoid imports
 # using common names such as 'errors' or 'utils' using shortname

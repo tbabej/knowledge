@@ -16,7 +16,7 @@ if exists("g:knowledge_disable")
 endif
 
 " Determine the plugin path
-let s:plugin_path = escape(expand('<sfile>:p:h:h'), '\')
+let s:knowledge_plugin_path = escape(expand('<sfile>:p:h:h'), '\')
 
 " Determine if this is a knowledge file
 let s:extension = expand('%:e')
@@ -26,11 +26,11 @@ endif
 
 " Run the measure parts first, if desired
 if exists("g:knowledge_measure_coverage")
-  execute 'py3file ' . s:plugin_path . '/knowledge/testcoverage.py'
+  execute 'py3file ' . s:knowledge_plugin_path . '/knowledge/testcoverage.py'
 endif
 
 " Execute the main body of taskwiki source
-execute 'py3file ' . s:plugin_path . '/knowledge/main.py'
+execute 'py3file ' . s:knowledge_plugin_path . '/knowledge/main.py'
 
 augroup knowledge
     autocmd!
