@@ -12,8 +12,9 @@ for s:i in range(1,6)
 endfor
 
 " Define Close region
-" Close must not start on a indented line (code listings)
-syn region Close start=/\(^    .*\)\@<!\[\(\[\)\@!/ end=/\]\|\n\n/ containedin=VimwikiEqIn,VimwikiEqInT,VimwikiMath contains=texMathSymbol,texGreek,VimwikiEqIn,@Spell keepend
+" Close must not start on a indented line (code listings) or be preceded by a
+" ! symbol (Markdown image links)
+syn region Close start=/\(^    .*\)\@<!\(\!\|:\)\@<!\[\(\[\)\@!/ end=/\]\((\)\@!\|\n\n/ containedin=VimwikiEqIn,VimwikiEqInT,VimwikiMath contains=texMathSymbol,texGreek,VimwikiEqIn,@Spell keepend
 highlight Close term=underline cterm=underline
 
 set fo+=l
