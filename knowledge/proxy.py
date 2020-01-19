@@ -38,6 +38,13 @@ class SRSProxy(object):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_identifiers(self):
+        """
+        Returns a set of the SRS identifiers of all the knowledge-generated
+        cards.
+        """
+
+    @abc.abstractmethod
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         """
         Updates the given fact. If the fact could not be found,
@@ -354,6 +361,17 @@ class AnkiProxy(SRSProxy):
             )
 
         return self.collection.media.addFile(filename_abs)
+
+    def get_identifiers(self):
+        """
+        Returns a set of the SRS identifiers of all the knowledge-generated
+        cards.
+        """
+
+        return set([
+            str(identifier)
+            for identifier in self.collection.findNotes('tag:knowledge')
+        ])
 
     def add_note(self, deck, model, fields, tags=None):
         """
