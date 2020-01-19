@@ -300,9 +300,25 @@ def convert_to_pdf():
         lines = lines[lines.index('...') + 1:]
 
     # Detect author and last commit date if in a git repository
+    full_path = k.utils.get_absolute_filepath()
+    parent_dir = os.path.dirname(full_path)
+    filename = os.path.basename(full_path)
+
     try:
-        cmd_result = k.utils.run(['git', 'show', 'HEAD', '-s', '--pretty=format:%an:%at'])
-        author, timestamp = cmd_result[0].decode('utf-8').split(':')
+        output = subprocess.check_output(
+            ['git', 'log', '-n', '1', '-s', '--pretty=format:%an:%at', filename],
+            cwd=parent_dir
+        )
+
+        # If this particular file is not git-tracked, fall back to the latest
+        # commit overall
+        if not output:
+            output = subprocess.check_output(
+                ['git', 'show', 'HEAD', '-s', '--pretty=format:%an:%at'],
+                cwd=parent_dir
+            )
+
+        author, timestamp = output.decode('utf-8').split(':')
         data['author'] = author
         data['date'] = datetime.datetime.fromtimestamp(int(timestamp))
     except Exception:
