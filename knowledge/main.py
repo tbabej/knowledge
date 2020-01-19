@@ -382,6 +382,7 @@ def convert_to_pdf():
        '...'
     ])
 
+    # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
         lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
@@ -390,6 +391,23 @@ def convert_to_pdf():
 
     for substitution in substitutions:
         lines = [substitution(line) for line in lines]
+
+    # Detect and reformat question blocks
+    question_blocks = []
+    for start in range(len(lines)):
+        if k.regexp.QUESTION.match(lines[start]):
+            for end in range(start + 1, len(lines)):
+                if not lines[end].startswith('- '):
+                    lines[start] = r"\textit{" + lines[start] + r"}\newline"
+                    question_blocks.append((start, end))
+                    break
+                else:
+                    lines[end] = lines[end][2:]
+
+    # Add questionblock environment fences
+    for index, (start, end) in enumerate(question_blocks):
+        lines.insert(start + index * 2, r"\begin{questionblock}")
+        lines.insert(end+1 + index * 2, r"\end{questionblock}")
 
     output_filepath = re.sub(r'\.[^/]+$', '.pdf', full_path)
     with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
