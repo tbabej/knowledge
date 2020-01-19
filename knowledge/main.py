@@ -15,6 +15,7 @@ from pathlib import Path
 
 
 import basehash
+import yaml
 
 # Insert the knowledge on the python path
 BASE_DIR = vim.eval("s:plugin_path")
@@ -289,9 +290,19 @@ def paste_image():
 
 
 def convert_to_pdf():
+    lines = vim.current.buffer[:]
+    data = {}
+
+    # Detect YAML preamble if present
+    if lines[0].strip() == '---' and lines.index('...') != -1:
+        preamble = lines[:lines.index('...') + 1]
+        data.update(yaml.safe_load('\n'.join(preamble)))
+        lines = lines[lines.index('...') + 1:]
+
+    # Generate the preamble
     preamble = '\n'.join([
        '---',
-       'title: "{}"',
+       f'title: "{data.get("title", "Title missing")}"',
        'author: [Tomas Babej]',
        f'date: "{datetime.date.today().strftime("%Y-%m-%d")}"',
        'lang: "en"',
@@ -332,7 +343,6 @@ def convert_to_pdf():
         lambda l: re.sub(r':\[', r'[', l),
     ]
 
-    lines = vim.current.buffer[:]
     for substitution in substitutions:
         lines = [substitution(line) for line in lines]
 
