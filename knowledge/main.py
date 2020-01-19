@@ -347,8 +347,8 @@ def convert_to_pdf():
     # Generate the preamble
     preamble = '\n'.join([
        '---',
-       f'title: "{data.get("title", "Title missing")}"',
-       f'author: [{data.get("author")}]',
+       f'title: "{data.get("title", filename)}"',
+       f'author: [{data.get("author", "")}]',
        f'date: "{data.get("date", datetime.date.today()).strftime("%Y-%m-%d")}"',
        'lang: "en"',
        'page-background: "/home/tbabej/background1.pdf"',
