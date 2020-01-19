@@ -299,12 +299,21 @@ def convert_to_pdf():
         data.update(yaml.safe_load('\n'.join(preamble)))
         lines = lines[lines.index('...') + 1:]
 
+    # Detect author and last commit date if in a git repository
+    try:
+        cmd_result = k.utils.run(['git', 'show', 'HEAD', '-s', '--pretty=format:%an:%at'])
+        author, timestamp = cmd_result[0].decode('utf-8').split(':')
+        data['author'] = author
+        data['date'] = datetime.datetime.fromtimestamp(int(timestamp))
+    except Exception:
+        pass
+
     # Generate the preamble
     preamble = '\n'.join([
        '---',
        f'title: "{data.get("title", "Title missing")}"',
-       'author: [Tomas Babej]',
-       f'date: "{datetime.date.today().strftime("%Y-%m-%d")}"',
+       f'author: [{data.get("author")}]',
+       f'date: "{data.get("date", datetime.date.today()).strftime("%Y-%m-%d")}"',
        'lang: "en"',
        'page-background: "/home/tbabej/background1.pdf"',
        'page-background-opacity: 0.1',
