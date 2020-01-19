@@ -400,7 +400,7 @@ def convert_to_pdf():
         if k.regexp.QUESTION.match(lines[start]):
             for end in range(start + 1, len(lines)):
                 if not lines[end].startswith('- '):
-                    lines[start] = r"\textbf{Q \thesection.\thequestion}. \textit{" + lines[start].replace('Q: ', '') + r"}\newline"
+                    lines[start] = r"\textbf{Q \thesection.\thequestion.} \textit{" + lines[start].replace('Q: ', '') + r"}\newline"
                     question_blocks.append((start, end))
                     break
                 else:
