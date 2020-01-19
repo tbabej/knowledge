@@ -223,6 +223,26 @@ def note_info():
 
 
 @k.errors.pretty_exception_handler
+def diagnose():
+    """
+    Run a set of diagnostics procedures to ensure health of the knowledge base.
+    """
+
+    # Check 1: Discover "stale" cards in the SRS application
+    note_ids_in_repo = set([
+        k.backend.get(identifier)
+        for identifier in k.utils.get_text_identifiers()
+    ])
+
+    with autodeleted_proxy() as srs_proxy:
+        note_ids_in_srs = srs_proxy.get_identifiers()
+
+    print(f"IDs detected in repo: {len(note_ids_in_repo)}")
+    print(f"IDs detected in srs: {len(note_ids_in_srs)}")
+    print(f"IDs redundant: {note_ids_in_srs - note_ids_in_repo}")
+
+
+@k.errors.pretty_exception_handler
 def close_questions():
     """
     Loops over the current buffer and closes any SRSQuestion regions.

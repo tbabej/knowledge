@@ -48,6 +48,7 @@ command! KnowledgeBufferSave :py3 create_notes()
 command! KnowledgeCloseQuestions :py3 close_questions()
 command! KnowledgePasteImage :py3 paste_image()
 command! KnowledgeNoteInfo :py3 note_info()
+command! KnowledgeDiag :py3 diagnose()
 
 " Leader-related mappings.
 nmap <silent><buffer> <Leader>kp :KnowledgePasteImage<CR>
