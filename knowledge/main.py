@@ -359,6 +359,8 @@ def convert_to_pdf():
        'header-includes:',
        '- |',
        '  ```{=latex}',
+       r'  \definecolor{default-linkcolor}{HTML}{0052A5}',
+       r'  \hypersetup{colorlinks=true,linkcolor=default-linkcolor,filecolor=default-linkcolor}',
        r'  \usepackage{awesomebox}',
        r'  \usepackage{sectsty}',
        r'  \newcounter{question}[section]',
