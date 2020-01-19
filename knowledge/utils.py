@@ -134,7 +134,11 @@ def close_fold(line):
     fold_closed = (vim.eval("foldclosed({0})".format(line)) != '-1')
 
     if not fold_closed:
-        vim.command("{0}foldclose".format(line))
+        # Do not sprinkle errors if closing the fold fails for whatever reason
+        try:
+            vim.command(f"{line}foldclose")
+        except Exception:
+            pass
 
 
 def is_list_item(buffer_proxy, number):
