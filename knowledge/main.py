@@ -319,6 +319,13 @@ def convert_to_pdf():
         data.update(yaml.safe_load('\n'.join(preamble)))
         lines = lines[lines.index('...') + 1:]
 
+    # Determine the path to the default background
+    default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'assets/default-background.pdf')
+    if not os.path.exists(default_background):
+        print(f"Path {default_background} does not exist")
+    else:
+        print(f"Path {default_background} exists")
+
     # Detect author and last commit date if in a git repository
     full_path = k.utils.get_absolute_filepath()
     parent_dir = os.path.dirname(full_path)
@@ -351,7 +358,7 @@ def convert_to_pdf():
        f'author: [{data.get("author", "")}]',
        f'date: "{data.get("date", datetime.date.today()).strftime("%Y-%m-%d")}"',
        'lang: "en"',
-       'page-background: "/home/tbabej/background1.pdf"',
+       f'page-background: "{data.get("background", default_background)}"',
        'page-background-opacity: 0.1',
        'caption-justification: "centering"',
        'footnotes-pretty: true',
