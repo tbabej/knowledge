@@ -46,3 +46,4 @@ NOTE_HEADLINE = {
 }
 
 NUMLIST_MARK = re.compile(r'^(\d+\.)+ ')
+EXTENSION = re.compile(r'\.[^/]+$')

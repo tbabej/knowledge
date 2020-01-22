@@ -347,10 +347,13 @@ def convert_to_pdf():
     except Exception:
         pass
 
+    # Determine a default title
+    default_title = f"Notes on {k.regexp.EXTENSION.sub('', filename).replace('_', ' ')}"
+
     # Generate the preamble
     preamble = '\n'.join([
        '---',
-       f'title: "{data.get("title", filename)}"',
+       f'title: "{data.get("title", default_title)}"',
        f'author: [{data.get("author", "")}]',
        f'date: "{data.get("date", datetime.date.today()).strftime("%Y-%m-%d")}"',
        'lang: "en"',
@@ -416,7 +419,7 @@ def convert_to_pdf():
         lines.insert(start + index * 2, r"\begin{questionblock}")
         lines.insert(end+1 + index * 2, r"\end{questionblock}")
 
-    output_filepath = re.sub(r'\.[^/]+$', '.pdf', full_path)
+    output_filepath = k.regexp.EXTENSION.sub('.pdf', full_path)
     with tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False) as f:
         f.write(preamble + '\n\n' + '\n'.join(lines))
         f.flush()
