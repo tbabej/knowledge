@@ -431,4 +431,5 @@ def convert_to_pdf():
             '--template', 'eisvogel',
             '--listings'
         ])
-        print(f"Converted to: {output_filepath}")
+
+    subprocess.call(['xdg-open', output_filepath])
