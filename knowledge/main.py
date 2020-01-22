@@ -321,10 +321,6 @@ def convert_to_pdf():
 
     # Determine the path to the default background
     default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'assets/default-background.pdf')
-    if not os.path.exists(default_background):
-        print(f"Path {default_background} does not exist")
-    else:
-        print(f"Path {default_background} exists")
 
     # Detect author and last commit date if in a git repository
     full_path = k.utils.get_absolute_filepath()
