@@ -360,6 +360,7 @@ def convert_to_pdf():
        f'page-background: "{data.get("background", default_background)}"',
        'page-background-opacity: 0.1',
        'caption-justification: "centering"',
+       r'code-block-font-size: \scriptsize',
        'footnotes-pretty: true',
        'classoption: [oneside]',
        'header-includes:',
@@ -390,6 +391,30 @@ def convert_to_pdf():
        r'  }',
        '  ```',
        '...'
+       '',  # Followed by a post-amble (dumped after \begin{document})
+       r'',
+       r'\lstdefinestyle{knowledge_text_override}{',
+       r'    language         = python,',
+       r'    basicstyle       = \color{listing-text-color}\linespread{1.0}\fontsize{8}{10}\selectfont\ttfamily{},',
+       r'    xleftmargin      = 5em,',
+       r'    framexleftmargin = 0.4em,',
+       r'    xrightmargin     = 5em,',
+       r'}',
+       r'\lstdefinestyle{knowledge_question_override}{',
+       r'    language         = python,',
+       r'    basicstyle       = \color{listing-text-color}\linespread{1.0}\fontsize{8}{10}\selectfont\ttfamily{},',
+       r'    xleftmargin      = 0.7em,',
+       r'    framexleftmargin = 0.4em,',
+       r'    xrightmargin     = 6em,',
+       r'    aboveskip        = -0.7em,',
+       r'    belowskip        = -1em,',
+       r'    abovecaptionskip = -1em,',
+       r'    belowcaptionskip = -1em,',
+       r'}',
+       r'\lstdefinestyle{knowledge_text}{style=eisvogel_listing_style,style=knowledge_text_override}',
+       r'\lstdefinestyle{knowledge_question}{style=eisvogel_listing_style,style=knowledge_question_override}',
+       r'\lstset{style=knowledge_text}',
+       r''
     ])
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
@@ -397,6 +422,9 @@ def convert_to_pdf():
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
         lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
         lambda l: re.sub(r':\[', r'[', l),
+        lambda l: re.sub(r'^- \`\`\`\w+', r'- \\begin{lstlisting}[style=knowledge_question]', l),
+        lambda l: re.sub(r'^- \`\`\`\s*$', r'- \\end{lstlisting}', l),
+        lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l)
     ]
 
     for substitution in substitutions:
