@@ -6,6 +6,10 @@ import time
 
 from datetime import datetime
 
+import pygments
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
+
 from knowledge.errors import KnowledgeException, FactNotFoundException
 from knowledge import config, utils
 
@@ -294,6 +298,19 @@ class SRSProxy(object):
 
         return field.replace('\n', self.SYMBOL_NEWLINE)
 
+    def process_code(self, field):
+        """
+        Pygmetize the code examples that are present (determined by the backtick syntax).
+        """
+        formatter = HtmlFormatter(noclasses=True, nobackground=True, style="friendly")
+        pygmentizer = lambda s: pygments.highlight(s, PythonLexer(), formatter)
+
+        # Replace single and triple backticks, triple first
+        triple_backticks_replaced = re.sub(r'^\`\`\`([^\`]+)\`\`\`', lambda m: pygmentizer(m.group(1)), field)
+        single_backticks_replaced = re.sub(r'\`([^\`]+)\`', lambda m: pygmentizer(m.group(1)), triple_backticks_replaced)
+
+        return single_backticks_replaced
+
     def process_all(self, fields):
         methods = (
             self.process_cloze,
@@ -301,6 +318,7 @@ class SRSProxy(object):
             self.process_italic,
             self.process_matheq,
             self.process_img,
+            self.process_code,
             self.process_newlines,
         )
 
