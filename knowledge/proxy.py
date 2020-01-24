@@ -298,16 +298,31 @@ class SRSProxy(object):
 
         return field.replace('\n', self.SYMBOL_NEWLINE)
 
+    @staticmethod
+    def _pygmentizer(string, language=None):
+        """
+        Return HTML-formatted version of the string.
+        """
+
+        formatter = HtmlFormatter(noclasses=True, nobackground=True, style="friendly")
+        try:
+            lexer = pygments.lexers.get_lexer_by_name(language)
+        except pygments.util.ClassNotFound:
+            lexer = pygments.lexers.get_lexer_by_name('python3')
+
+        return pygments.highlight(string, lexer, formatter)
+
     def process_code(self, field):
         """
         Pygmetize the code examples that are present (determined by the backtick syntax).
         """
-        formatter = HtmlFormatter(noclasses=True, nobackground=True, style="friendly")
-        pygmentizer = lambda s: pygments.highlight(s, PythonLexer(), formatter)
+
+        SINGLE_BACKTICK_CODE = re.compile(r'\`([^\`]+)\`')
+        TRIPLE_BACKTICK_CODE = re.compile(r'^\`\`\`(\w*)([^\`]+)\`\`\`')
 
         # Replace single and triple backticks, triple first
-        triple_backticks_replaced = re.sub(r'^\`\`\`([^\`]+)\`\`\`', lambda m: pygmentizer(m.group(1)), field)
-        single_backticks_replaced = re.sub(r'\`([^\`]+)\`', lambda m: pygmentizer(m.group(1)), triple_backticks_replaced)
+        triple_backticks_replaced = TRIPLE_BACKTICK_CODE.sub(lambda m: self._pygmentizer(m.group(2), m.group(1)), field)
+        single_backticks_replaced = SINGLE_BACKTICK_CODE.sub(lambda m: self._pygmentizer(m.group(1)), triple_backticks_replaced)
 
         return single_backticks_replaced
 
