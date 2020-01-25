@@ -12,17 +12,20 @@ for s:i in range(1,6)
 endfor
 
 " Define Close region
-" Close must not start on a indented line (code listings) or be preceded by a
-" ! symbol (Markdown image links)
-syn region Close start=/\(^    .*\)\@<!\(\!\|:\)\@<!\[\(\[\)\@!/ end=/\]\((\)\@!\|\n\n/ containedin=VimwikiEqIn,VimwikiEqInT,VimwikiMath contains=texMathSymbol,texGreek,VimwikiEqIn,@Spell keepend
+" Close must not start on a indented line (code listings), it must be preceded
+" by a whitespace character (or start of the line) and closes on a single '}'
+" character
+syn region Close start=/\(^    .*\)\@<!\(^\|\s\)\@<={/ end=/\(}\)\@<!}\(}\)\@!\|\n\n/ containedin=VimwikiEqIn,VimwikiEqInT,VimwikiMath contains=texMathSymbol,texGreek,VimwikiEqIn,@Spell keepend
 highlight Close term=underline cterm=underline
 
 set fo+=l
 set nowrap
 
 " Make sure the borders and meta information is concealed
-execute 'syn match CloseBorder containedin=Close contained /\[\|\]/'.s:conceal
-execute 'syn match CloseMeta containedin=Close contained /:[^:\$]\+\ze\]/'.s:conceal
+execute 'syn match CloseBorder containedin=Close contained /{\|}/'.s:conceal
+
+" Hidden part of the close (the hint)
+execute 'syn match CloseMeta containedin=Close contained /:[^:\$]\+\ze}\(}\)\@!/'.s:conceal
 
 " Conceal the fact identifiers
 execute 'syn match FactIdentifier /\v\@[0-9a-zA-Z]{10,22}$/'.s:conceal
