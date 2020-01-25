@@ -54,3 +54,4 @@ command! KnowledgeExportPDF :py3 convert_to_pdf()
 " Leader-related mappings.
 nmap <silent><buffer> <Leader>kp :KnowledgePasteImage<CR>
 nmap <silent><buffer> <Leader>ki :KnowledgeNoteInfo<CR>
+nmap <silent><buffer> <Leader>ke :KnowledgeExportPDF<CR>
