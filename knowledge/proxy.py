@@ -271,12 +271,12 @@ class SRSProxy(object):
         cloze_open = False
 
         for index, char in enumerate(field):
-            if char == '[' and not cloze_open:
+            if char == '{' and re.match(r'\s', field[index-1]) and not cloze_open:
                 last_open_index = index
                 cloze_open = True
                 cloze_count += 1
                 result.append("{{{{c{count}::".format(count=cloze_count))
-            elif char == ']' and cloze_open:
+            elif char == '}' and cloze_open:
                 result.append("}}")
                 cloze_open = False
             else:
@@ -284,7 +284,7 @@ class SRSProxy(object):
 
         # If single [ was converted, roll it back
         if cloze_open:
-            result[last_open_index] = '['
+            result[last_open_index] = '{'
 
         return ''.join(result)
 

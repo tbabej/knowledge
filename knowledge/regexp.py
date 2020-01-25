@@ -20,8 +20,8 @@ QUESTION = re.compile(
 )
 
 # Marks do not start on a 4-space indented lines, and are not preceded by
-# a '* ' (items), '!' (images), another '[' or ':' (wikilinks)
-CLOSE_MARK = re.compile('^(?!    ).*(?<!(\* ))(?<!:)(?<!\[)(?<!\!)\[.+')
+# a another '{' or ':' (wikilinks)
+CLOSE_MARK = re.compile('^(?!    ).* \{[^\{]+')
 CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>[A-Za-z0-9]{11})\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = {
