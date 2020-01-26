@@ -319,6 +319,8 @@ def convert_to_pdf():
         data.update(yaml.safe_load('\n'.join(preamble)))
         lines = lines[lines.index('...') + 1:]
 
+    text = '\n'.join(lines)
+
     # Determine the path to the default background
     default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'assets/default-background.pdf')
 
@@ -416,6 +418,16 @@ def convert_to_pdf():
        r'\lstset{style=knowledge_text}',
        r''
     ])
+
+    text_substitutions = [
+        lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
+        lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t)
+    ]
+
+    for substitution in text_substitutions:
+        text = substitution(text)
+
+    lines = text.splitlines()
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
