@@ -421,7 +421,8 @@ def convert_to_pdf():
 
     text_substitutions = [
         lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
-        lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t)
+        lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
+        lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
     ]
 
     for substitution in text_substitutions:
@@ -434,8 +435,6 @@ def convert_to_pdf():
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
         lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
         lambda l: re.sub(r':\[', r'[', l),
-        lambda l: re.sub(r'^- \`\`\`\w+', r'- \\begin{lstlisting}[style=knowledge_question]', l),
-        lambda l: re.sub(r'^- \`\`\`\s*$', r'- \\end{lstlisting}', l),
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l)
     ]
 
