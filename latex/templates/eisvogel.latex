@@ -1,6 +1,6 @@
 %%
-% Copyright (c) 2017 - 2019, Pascal Wagler;
-% Copyright (c) 2014 - 2019, John MacFarlane
+% Copyright (c) 2017 - 2020, Pascal Wagler;
+% Copyright (c) 2014 - 2020, John MacFarlane
 %
 % All rights reserved.
 %
@@ -60,7 +60,7 @@ $endif$
 $if(papersize)$
   $papersize$paper,
 $else$
-  a4paper,
+  paper=a4,
 $endif$
 $if(beamer)$
   ignorenonframetext,
@@ -74,7 +74,7 @@ $endif$
 $for(classoption)$
   $classoption$$sep$,
 $endfor$
-,tablecaptionabove
+,captions=tableheading
 ]{$if(beamer)$$documentclass$$else$$if(book)$scrbook$else$scrartcl$endif$$endif$}
 $if(beamer)$
 $if(background-image)$
@@ -360,7 +360,7 @@ $else$
 \usepackage{footnotebackref}
 $endif$
 $if(graphics)$
-\usepackage{graphicx,grffile}
+\usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
 \def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
