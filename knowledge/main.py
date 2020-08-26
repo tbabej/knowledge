@@ -459,7 +459,7 @@ def convert_to_pdf():
         lines.insert(end+1 + index * 2, r"\end{questionblock}")
 
     tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))
-    output_filepath = tmpdir / k.regexp.EXTENSION.sub('.pdf', filename)
+    output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.pdf', filename))
 
     with open(tmpdir / 'source.md', 'w') as f:
         f.write(preamble + '\n\n' + '\n'.join(lines))
