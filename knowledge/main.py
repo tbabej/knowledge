@@ -322,7 +322,7 @@ def convert_to_pdf():
     text = '\n'.join(lines)
 
     # Determine the path to the default background
-    default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'assets/default-background.pdf')
+    default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/backgrounds/default-background.pdf')
 
     # Detect author and last commit date if in a git repository
     full_path = k.utils.get_absolute_filepath()
@@ -459,6 +459,7 @@ def convert_to_pdf():
         lines.insert(end+1 + index * 2, r"\end{questionblock}")
 
     tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))
+    pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.pdf', filename))
 
     with open(tmpdir / 'source.md', 'w') as f:
@@ -469,6 +470,7 @@ def convert_to_pdf():
             f.name,
             '-f', 'markdown',
             '-o', output_filepath,
+            '--data-dir', pandoc_data_dir,
             '--template', 'eisvogel',
             '--listings'
         ])
