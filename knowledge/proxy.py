@@ -367,10 +367,15 @@ class AnkiProxy(SRSProxy):
     SYMBOL_NEWLINE = "<br>"
 
     def __init__(self, path):
-        sys.path.insert(0, "/home/tbabej/Installed/anki")
-        import anki
+        try:
+            import anki
+        except ImportError:
+            raise KnowledgeException(
+                "Could not import anki module. "
+                "Make sure 'anki' and 'ankirspy' libraries are installed."
+            )
 
-        self.collection = anki.storage.Collection(path, lock=False)
+        self.collection = anki.collection.Collection(path)
         self.Note = anki.notes.Note
 
     def cleanup(self):
