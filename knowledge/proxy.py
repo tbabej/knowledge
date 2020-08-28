@@ -378,6 +378,18 @@ class AnkiProxy(SRSProxy):
         del self.collection
         del self.Note
 
+    def _note_by_id(self, identifier):
+        """
+        Obtain a Note object that corresponds to the given identifier.
+        """
+
+        # Get the fact from Anki
+        try:
+            return self.Note(self.collection, id=int(identifier))
+        except anki.rsbackend.NotFoundError:
+            raise FactNotFoundException("Fact with ID '{0}' could not be found"
+                                        .format(identifier))
+
     def add_media_file(self, filename):
         """
         Adds a new media file to the media directory.
@@ -453,16 +465,11 @@ class AnkiProxy(SRSProxy):
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         tags = tags or set()
 
-        # Get the fact from Anki
-        try:
-            note = self.Note(self.collection, id=identifier)
-        except TypeError:
-            # Anki raises TypeError in case ID is not found
-            raise FactNotFoundException("Fact with ID '{0}' could not be found"
-                                        .format(identifier))
-
         # Pre-process data in fields
         fields = self.process_all(fields)
+
+        # Obtain the note object from Anki DB
+        note = self._note_by_id(identifier)
 
         # Generate current card data, deck and tags
         cur_data = {
@@ -513,14 +520,8 @@ class AnkiProxy(SRSProxy):
         Obtain information about the note.
         """
 
-        # Get the fact from Anki
-        try:
-            note = self.Note(self.collection, id=identifier)
-        except TypeError:
-            # Anki raises TypeError in case ID is not found
-            raise FactNotFoundException("Fact with ID '{0}' could not be found"
-                                        .format(identifier))
-
+        # Obtain the note and the corresponding card
+        note = self._note_by_id(identifier)
         card = note.cards()[0]
 
         first_review = self.collection.db.scalar(f"SELECT min(id) FROM revlog WHERE cid={card.id}")
