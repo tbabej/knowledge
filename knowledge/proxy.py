@@ -555,7 +555,7 @@ class AnkiProxy(SRSProxy):
             'card_id': card.id,
             'total_time': total_time,
             'average_time': (total_time / num_revisions) if num_revisions else None,
-            'due': datetime.fromtimestamp(due),
+            'due': datetime.fromtimestamp(due) if due is not None else None,
             'interval': card.ivl * 86400 if card.queue == 2 else None
         }
 
