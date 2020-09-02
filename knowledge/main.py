@@ -378,15 +378,15 @@ def convert_to_pdf():
        r'  \sectionfont{\fontsize{21}{24}\selectfont\centering}',
        r'  \subsectionfont{\fontsize{15}{18}\selectfont\centering}',
        r'  \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}',
-       r'  \newenvironment{questionblock}[0]{',
+       r'  \newenvironment{questionblock}[3]{',
        r'      \begingroup',
        r'      \vskip -3.5mm',
-       r'      \setlength{\aweboxleftmargin}{0.09\linewidth}',
-       r'      \setlength{\aweboxcontentwidth}{0.91\linewidth}',
-       r'      \setlength{\aweboxsignraise}{-5mm}',
+       r'      \setlength{\aweboxleftmargin}{0.08\linewidth}',
+       r'      \setlength{\aweboxcontentwidth}{0.92\linewidth}',
+       r'      \setlength{\aweboxsignraise}{#3 mm}',
        r'      \definecolor{abvrulecolor}{RGB}{221,221,216}',
        r'      \addtocounter{question}{1}',
-       r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{20}{2}\selectfont\faQuestion}{violet}',
+       r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#2}{2}\selectfont #1}{violet}',
        r'  }{',
        r'      \end{awesomeblock}',
        r'      \endgroup',
@@ -471,7 +471,9 @@ def convert_to_pdf():
 
     # Add questionblock environment fences
     for index, (start, end) in enumerate(question_blocks):
-        lines.insert(start + index * 2, r"\begin{questionblock}")
+        # Determine the icon for the questionblock
+        icon = k.utils.detect_icon('\n'.join(lines[start + index * 2: end + index * 2 + 1]))
+        lines.insert(start + index * 2, f"\\begin{{questionblock}}{{{icon.command}}}{{{icon.fontsize}}}{{{icon.raise_mm}}}")
         lines.insert(end+1 + index * 2, r"\end{questionblock}")
 
     tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))

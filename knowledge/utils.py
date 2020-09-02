@@ -1,3 +1,4 @@
+import dataclasses
 import glob
 import re
 import subprocess
@@ -226,3 +227,37 @@ def get_text_identifiers():
 
     data = [match.group('identifier') for match in find_matches()]
     return data
+
+
+@dataclasses.dataclass
+class LatexIcon:
+    command: str
+    fontsize: int = 20
+    raise_mm: int = -3
+
+# Font awesome indicators in text
+ICON_INDICATORS = {
+    re.compile(r'lstlisting'): LatexIcon(r'\faIcon{code}', fontsize=16, raise_mm=-2),
+    re.compile(r'Git[^H]'):    LatexIcon(r'\faIcon{git-alt}'),
+    re.compile(r'Java'):       LatexIcon(r'\faIcon{java}'),
+    re.compile(r'Python'):     LatexIcon(r'\faIcon{python}', fontsize=21),
+    re.compile(r'Linux'):      LatexIcon(r'\faIcon{linux}'),
+    re.compile(r'NodeJS'):     LatexIcon(r'\faIcon{node-js}'),
+    re.compile(r'Swift'):      LatexIcon(r'\faIcon{swift}'),
+    re.compile(r'language=[Jj]ava'):   LatexIcon(r'\faIcon{java}'),
+    re.compile(r'language=[Pp]ython'): LatexIcon(r'\faIcon{python}'),
+}
+
+def detect_icon(text):
+    """
+    Find a suitable font awesome icon for the text string. Defaults to
+    faQuestion.
+    """
+
+    icon = LatexIcon(r'\faIcon{question}', fontsize=19)
+
+    for regexp, value in ICON_INDICATORS.items():
+        if regexp.search(text):
+            icon = value
+
+    return icon
