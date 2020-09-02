@@ -372,6 +372,7 @@ def convert_to_pdf():
        r'  \hypersetup{colorlinks=true,linkcolor=default-linkcolor,filecolor=default-linkcolor}',
        r'  \usepackage{awesomebox}',
        r'  \usepackage{sectsty}',
+       r'  \usepackage{ocgx}',
        r'  \newcounter{question}[section]',
        r'  \addtocounter{section}{1}',
        r'  \sectionfont{\fontsize{21}{24}\selectfont\centering}',
@@ -447,11 +448,21 @@ def convert_to_pdf():
         if k.regexp.QUESTION.match(lines[start]):
             for end in range(start + 1, len(lines)):
                 if not lines[end].startswith('- '):
-                    lines[start] = r"\textbf{Q \thesection.\thequestion.} \textit{" + lines[start].replace('Q: ', '') + r"}\newline"
+                    lines[start] = (
+                        "\switchocg"
+                            "{Q\\thesection.\\thequestion}"  # identifier of the OCG block to toggle
+                            "{""\\textbf{Q \\thesection.\\thequestion.} \\textit{" + lines[start].replace('Q: ', '') + "}}"
+                        "\\newline\n"
+                        "\\begin{ocg}"
+                            "{Ans\\thesection.\\thequestion}" # OCG name (not used anywhere as far as I can tell)
+                            "{Q\\thesection.\\thequestion}"  # identifier of the OCG block
+                            "{0}"  # not visible by default
+                    )
                     question_blocks.append((start, end))
                     break
                 else:
                     lines[end] = lines[end][2:]
+            lines[end-1] += "\n\\end{ocg}"
 
     # Add questionblock environment fences
     for index, (start, end) in enumerate(question_blocks):
