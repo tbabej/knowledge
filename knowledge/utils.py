@@ -117,7 +117,7 @@ def args_to_kwargs(args):
             key, value = arg.split(':', 1)
             # Ignore anything which is not one-word string of alpha chars
             if key.isalpha():
-                output[key] = value if value is not "" else None
+                output[key] = value if value != "" else None
         # Tag addition
         elif arg.startswith('+'):
             value = arg[1:]
