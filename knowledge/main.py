@@ -421,9 +421,14 @@ def convert_to_pdf():
     ])
 
     text_substitutions = [
+        # Add extra line to have lists recognized as md lists
         lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
+        # Add extra line to have enumerations recognized
         lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
+        # Convert code blocks to lstlisting in a given language
         lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
+        # Markup clozes as italics
+        lambda t: re.sub(r'^(?!    )(?P<before>[^\n]*) \{(?P<cloze>[^\{\}]+)\}', r'\g<before> _\g<cloze>_', t, flags=re.MULTILINE)
     ]
 
     for substitution in text_substitutions:
