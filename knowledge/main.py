@@ -374,6 +374,7 @@ def convert_to_pdf():
        r'  \usepackage{sectsty}',
        r'  \usepackage{ocgx}',
        r'  \newcounter{question}[section]',
+       r'  \newcounter{enumcounter}[section]',
        r'  \newcounter{clozecounter}[section]',
        r'  \addtocounter{section}{1}',
        r'  \sectionfont{\fontsize{21}{24}\selectfont\centering}',
@@ -384,6 +385,13 @@ def convert_to_pdf():
        r'      \switchocg{C\thesection.\theclozecounter}{... }',
        r'      \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}',
        r'      #1',
+       r'      \end{ocg}',
+       r'  }',
+       r'  \newcommand{\knowledgeEnum}[1]{',
+       r'      \addtocounter{enumcounter}{1}',
+       r'      \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}',
+       r'      \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}',
+       r'      \hskip 1em #1',
        r'      \end{ocg}',
        r'  }',
        r'  \newenvironment{questionblock}[3]{',
@@ -451,7 +459,8 @@ def convert_to_pdf():
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
         lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
         lambda l: re.sub(r':\[', r'[', l),
-        lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l)
+        lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
+        lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
     ]
 
     for substitution in substitutions:
