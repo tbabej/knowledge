@@ -374,10 +374,18 @@ def convert_to_pdf():
        r'  \usepackage{sectsty}',
        r'  \usepackage{ocgx}',
        r'  \newcounter{question}[section]',
+       r'  \newcounter{clozecounter}[section]',
        r'  \addtocounter{section}{1}',
        r'  \sectionfont{\fontsize{21}{24}\selectfont\centering}',
        r'  \subsectionfont{\fontsize{15}{18}\selectfont\centering}',
        r'  \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}',
+       r'  \newcommand{\knowledgeCloze}[1]{',
+       r'      \addtocounter{clozecounter}{1}',
+       r'      \switchocg{C\thesection.\theclozecounter}{... }',
+       r'      \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}',
+       r'      #1',
+       r'      \end{ocg}',
+       r'  }',
        r'  \newenvironment{questionblock}[3]{',
        r'      \begingroup',
        r'      \vskip -3.5mm',
@@ -430,7 +438,7 @@ def convert_to_pdf():
         # Convert code blocks to lstlisting in a given language
         lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
         # Markup clozes as italics
-        lambda t: re.sub(r'^(?!    )(?P<before>[^\n]*) \{(?P<cloze>[^\{\}]+)\}', r'\g<before> _\g<cloze>_', t, flags=re.MULTILINE)
+        lambda t: re.sub(r'^(?!    )(?P<before>[^\n]*) \{(?P<cloze>[^\{\}]+)\}', r'\g<before>\\knowledgeCloze{\g<cloze>}', t, flags=re.MULTILINE)
     ]
 
     for substitution in text_substitutions:
