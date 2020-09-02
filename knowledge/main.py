@@ -388,6 +388,7 @@ def convert_to_pdf():
        r'      \end{ocg}',
        r'  }',
        r'  \newcommand{\knowledgeEnum}[1]{',
+       r'      \tightlist',  # Redundant, but works
        r'      \addtocounter{enumcounter}{1}',
        r'      \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}',
        r'      \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}',
