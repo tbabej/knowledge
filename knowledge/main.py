@@ -377,7 +377,6 @@ def convert_to_pdf():
        r'  \usepackage{etoolbox}',
        r'  \def\allocgs{}',
        r'  \newcommand{\printocg}[1]{#1 }',
-       r'  \AtEndDocument{\switchocg{\forlistloop{\printocg}{\allocgs}}{Toggle all content}}',
        r'  \newcounter{question}[section]',
        r'  \newcounter{enumcounter}[section]',
        r'  \newcounter{clozecounter}[section]',
