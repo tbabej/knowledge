@@ -504,7 +504,7 @@ def convert_to_pdf():
                             "{""\\textbf{Q \\thesection.\\thequestion.} \\textit{" + lines[start].replace('Q: ', '') + "}}"
                         "\\newline\n"
                         "\\begin{ocg}"
-                            "{Ans\\thesection.\\thequestion}" # OCG name (not used anywhere as far as I can tell)
+                            "{AnsQ\\thesection.\\thequestion}" # OCG name (not used anywhere as far as I can tell)
                             "{Q\\thesection.\\thequestion}"  # identifier of the OCG block
                             "{0}"  # not visible by default
                     )
