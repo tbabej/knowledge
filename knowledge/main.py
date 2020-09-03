@@ -446,15 +446,31 @@ def convert_to_pdf():
         lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
         # Add extra line to have enumerations recognized
         lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
-        # Convert code blocks to lstlisting in a given language
-        lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
         # Markup clozes as italics
-        lambda t: re.sub(r'^(?!    )(?P<before>[^\n]*) \{(?P<cloze>[^\{\}]+)\}', r'\g<before>\\knowledgeCloze{\g<cloze>}', t, flags=re.MULTILINE)
+        lambda t: re.sub(r'\{(?P<cloze>[^\{\}]+)\}', r'\\knowledgeCloze{\g<cloze>}', t, flags=re.MULTILINE),
+        # Convert code blocks to lstlisting in a given language, because pandoc cannot do it with "- " prefix
+        lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
     ]
 
-    for substitution in text_substitutions:
-        text = substitution(text)
+    # Find verbosity blocks
+    lines = text.splitlines()
+    fences = [0] + [i for i in range(len(lines)) if lines[i].startswith('```')] + [len(lines)]
 
+    process = True
+    processed_text_parts = []
+    for i in range(len(fences) - 1):
+        block_start = fences[i]
+        block_end = fences[i + 1]
+        part = '\n'.join(lines[block_start:block_end])
+
+        if process:
+            for substitution in text_substitutions:
+                part = substitution(part)
+
+        processed_text_parts.append(part)
+        process = not process
+
+    text = '\n'.join(processed_text_parts)
     lines = text.splitlines()
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
