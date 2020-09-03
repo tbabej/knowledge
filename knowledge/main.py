@@ -373,6 +373,10 @@ def convert_to_pdf():
        r'  \usepackage{awesomebox}',
        r'  \usepackage{sectsty}',
        r'  \usepackage{ocgx2}',
+       r'  \usepackage{etoolbox}',
+       r'  \def\allocgs{}',
+       r'  \newcommand{\printocg}[1]{#1 }',
+       r'  \AtEndDocument{\switchocg{\forlistloop{\printocg}{\allocgs}}{Toggle all content}}',
        r'  \newcounter{question}[section]',
        r'  \newcounter{enumcounter}[section]',
        r'  \newcounter{clozecounter}[section]',
@@ -384,6 +388,7 @@ def convert_to_pdf():
        r'  \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}',
        r'  \newcommand{\knowledgeCloze}[1]{',
        r'      \addtocounter{clozecounter}{1}',
+       r'      \listxadd{\allocgs}{C\thesection.\theclozecounter}',  # Expandable (listXadd) version extremely important here
        r'      \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}',
        r'      \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}',
        r'      \kern-\dotslength#1',
@@ -392,6 +397,7 @@ def convert_to_pdf():
        r'  \newcommand{\knowledgeEnum}[1]{',
        r'      \tightlist',  # Redundant, but works
        r'      \addtocounter{enumcounter}{1}',
+       r'      \listxadd{\allocgs}{E\thesection.\theenumcounter}',  # Expandable (listXadd) version extremely important here
        r'      \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}',
        r'      \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}',
        r'      \hskip 1em #1',
@@ -405,6 +411,7 @@ def convert_to_pdf():
        r'      \setlength{\aweboxsignraise}{#3 mm}',
        r'      \definecolor{abvrulecolor}{RGB}{221,221,216}',
        r'      \addtocounter{question}{1}',
+       r'      \listxadd{\allocgs}{Q\thesection.\thequestion}',  # Expandable (listXadd) version extremely important here
        r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#2}{2}\selectfont #1}{violet}',
        r'  }{',
        r'      \end{awesomeblock}',
