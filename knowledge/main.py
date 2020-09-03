@@ -389,6 +389,7 @@ def convert_to_pdf():
        r'          \node[anchor=north east, xshift=-0.4cm, yshift=-1.0cm] at (current page.north east){',
        r'              \hideocg{\forlistloop{\printocg}{\allocgs}}{\fontsize{8}{2}\selectfont \faEyeSlash \kern1pt hide}};',
        r'      \end{tikzpicture}',
+       r'      \global\def\allocgs{}',
        r'  }',
        r'  \newlength{\dotslength}',
        r'  \settowidth{\dotslength}{~...}',
