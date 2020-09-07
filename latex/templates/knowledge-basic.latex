@@ -442,20 +442,20 @@ $endif$
 }
 
 \newlength{\dotslength}
-\settowidth{\dotslength}{~...}
+\settowidth{\dotslength}{...}
 \sectionfont{\fontsize{21}{24}\selectfont\centering}
 \subsectionfont{\fontsize{15}{18}\selectfont\centering}
 \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}
 
-\newcommand{\knowledgeCloze}[1]{
-    \addtocounter{clozecounter}{1}
-    \listxadd{\allocgs}{C\thesection.\theclozecounter}% Expandable (listXadd) version extremely important here
-    \iftoggle{interactive}{
-        \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}
-        \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}
-        \kern-\dotslength#1
-        \end{ocg}
-    }{#1}
+\newcommand{\knowledgeCloze}[1]{%
+\addtocounter{clozecounter}{1}%
+\listxadd{\allocgs}{C\thesection.\theclozecounter}% Expandable (listXadd) version extremely important here
+\iftoggle{interactive}{%
+\begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}%
+\begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}%
+\kern-\dotslength\kern1pt #1%
+\end{ocg}%
+}{#1}%
 }
 
 \newcommand{\knowledgeEnum}[1]{
