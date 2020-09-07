@@ -103,10 +103,7 @@ class HeaderStack(object):
         keys = sorted(self.headers.keys(), reverse=True)
         for key in keys:
             model = self.headers[key].data.get('model')
-            if model is not None:
-                return model
-
-
+            if model is not None: return model 
 class BufferProxy(object):
 
     def __init__(self, buffer_object):
@@ -312,6 +309,7 @@ def paste_image():
 def convert_to_pdf():
     lines = vim.current.buffer[:]
     data = {}
+    interactive = True
 
     # Detect YAML preamble if present
     if lines[0].strip() == '---' and lines.index('...') != -1:
@@ -381,13 +379,17 @@ def convert_to_pdf():
        r'  \newcounter{questioncounter}[section]',
        r'  \newcounter{enumcounter}[section]',
        r'  \newcounter{clozecounter}[section]',
+       r'  \newtoggle{interactive}',
+       r'  \toggletrue{interactive}' if interactive else r'  \togglefalse{interactive}',
        r'  \addtocounter{section}{1}',
        r'  \newcommand{\knowledgeControls}[0]{',
-       r'      \fontsize{8}{2}\selectfont',
-       r'      \transparent{0.6}',
-       r'      \showocg{\forlistloop{\printocg}{\allocgs}}{\faClipboardCheck \kern2pt show} {\fontsize{9}{2}\selectfont /}',
-       r'      \hideocg{\forlistloop{\printocg}{\allocgs}}{\kern1pt \faEyeSlash \kern1pt hide}',
-       r'      \global\def\allocgs{}',
+       r'      \iftoggle{interactive}{',
+       r'          \fontsize{8}{2}\selectfont',
+       r'          \transparent{0.6}',
+       r'          \showocg{\forlistloop{\printocg}{\allocgs}}{\faClipboardCheck \kern2pt show} {\fontsize{9}{2}\selectfont /}',
+       r'          \hideocg{\forlistloop{\printocg}{\allocgs}}{\kern1pt \faEyeSlash \kern1pt hide}',
+       r'          \global\def\allocgs{}',
+       r'      }{}',
        r'  }',
        r'  \newlength{\dotslength}',
        r'  \settowidth{\dotslength}{~...}',
@@ -397,19 +399,25 @@ def convert_to_pdf():
        r'  \newcommand{\knowledgeCloze}[1]{',
        r'      \addtocounter{clozecounter}{1}',
        r'      \listxadd{\allocgs}{C\thesection.\theclozecounter}',  # Expandable (listXadd) version extremely important here
-       r'      \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}',
-       r'      \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}',
-       r'      \kern-\dotslength#1',
-       r'      \end{ocg}',
+       r'      \iftoggle{interactive}{',
+       r'          \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}',
+       r'          \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}',
+       r'          \kern-\dotslength#1',
+       r'          \end{ocg}',
+       r'      }{#1}',
        r'  }',
        r'  \newcommand{\knowledgeEnum}[1]{',
        r'      \tightlist',  # Redundant, but works
        r'      \addtocounter{enumcounter}{1}',
        r'      \listxadd{\allocgs}{E\thesection.\theenumcounter}',  # Expandable (listXadd) version extremely important here
-       r'      \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}',
-       r'      \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}',
-       r'      \hskip 1em #1',
-       r'      \end{ocg}',
+       r'      \iftoggle{interactive}{',
+       r'          \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}',
+       r'          \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}',
+       r'          \hskip 1em #1',
+       r'          \end{ocg}',
+       r'      }{',
+       r'          #1'
+       r'      }',
        r'  }',
        r'  \newenvironment{knowledgeQuestion}[4]{',
        r'      \begingroup',
@@ -421,10 +429,14 @@ def convert_to_pdf():
        r'      \addtocounter{questioncounter}{1}',
        r'      \listxadd{\allocgs}{Q\thesection.\thequestioncounter}',
        r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#3}{2}\selectfont #2}{violet}',
-       r'      \switchocg{Q\thesection.\thequestioncounter}{\textbf{Q \thesection.\thequestioncounter.} \textit{#1}} \newline',
-       r'      \begin{ocg}{AnsQ\thesection.\thequestioncounter}{Q\thesection.\thequestioncounter}{0}',
+       r'      \iftoggle{interactive}{',
+       r'          \switchocg{Q\thesection.\thequestioncounter}{\textbf{Q \thesection.\thequestioncounter.} \textit{#1}} \newline',
+       r'          \begin{ocg}{AnsQ\thesection.\thequestioncounter}{Q\thesection.\thequestioncounter}{0}',
+       r'      }{',
+       r'          \textbf{Q \thesection.\thequestioncounter.} \textit{#1} \newline',
+       r'      }',
        r'  }{',
-       r'      \end{ocg}',
+       r'      \iftoggle{interactive}{\end{ocg}}{}',
        r'      \end{awesomeblock}',
        r'      \endgroup',
        r'      \vskip -3.5mm',
