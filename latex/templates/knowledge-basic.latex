@@ -1,6 +1,7 @@
 %%
 % Copyright (c) 2017 - 2020, Pascal Wagler;
 % Copyright (c) 2014 - 2020, John MacFarlane
+% Copyright (c) 2020 - 2020, Tomas Babej
 %
 % All rights reserved.
 %
@@ -34,10 +35,8 @@
 %%
 
 %%
-% This is the Eisvogel pandoc LaTeX template.
-%
-% For usage information and examples visit the official GitHub page:
-% https://github.com/Wandmalfarbe/pandoc-latex-template
+% This is the Knowledge pandoc LaTeX template, based on Eisvogel[1] template.
+% [1] https://github.com/Wandmalfarbe/pandoc-latex-template
 %%
 
 % Options for packages loaded elsewhere
@@ -410,9 +409,88 @@ $endif$
 \usepackage{float}
 \floatplacement{figure}{$if(float-placement-figure)$$float-placement-figure$$else$H$endif$}
 
+\definecolor{default-linkcolor}{HTML}{0052A5}
+\hypersetup{colorlinks=true,linkcolor=default-linkcolor,filecolor=default-linkcolor}
+\usepackage{awesomebox}
+\usepackage{sectsty}
+\usepackage{ocgx2}
+\usepackage{etoolbox}
+\usepackage{transparent}
+
+\def\allocgs{}
+\newcommand{\printocg}[1]{#1 }
+\newcounter{questioncounter}[section]
+\newcounter{enumcounter}[section]
+\newcounter{clozecounter}[section]
+\newtoggle{interactive}
+\addtocounter{section}{1}
+
+\newcommand{\knowledgeControls}[0]{
+    \iftoggle{interactive}{
+        \fontsize{8}{2}\selectfont
+        \transparent{0.6}
+        \showocg{\forlistloop{\printocg}{\allocgs}}{\faClipboardCheck \kern2pt show} {\fontsize{9}{2}\selectfont /}
+        \hideocg{\forlistloop{\printocg}{\allocgs}}{\kern1pt \faEyeSlash \kern1pt hide}
+        \global\def\allocgs{}
+    }{}
+}
+
+\newlength{\dotslength}
+\settowidth{\dotslength}{~...}
+\sectionfont{\fontsize{21}{24}\selectfont\centering}
+\subsectionfont{\fontsize{15}{18}\selectfont\centering}
+\subsubsectionfont{\fontsize{12}{15}\selectfont\centering}
+
+\newcommand{\knowledgeCloze}[1]{
+    \addtocounter{clozecounter}{1}
+    \listxadd{\allocgs}{C\thesection.\theclozecounter}% Expandable (listXadd) version extremely important here
+    \iftoggle{interactive}{
+        \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}
+        \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}
+        \kern-\dotslength#1
+        \end{ocg}
+    }{#1}
+}
+
+\newcommand{\knowledgeEnum}[1]{
+    \tightlist% Redundant, but works
+    \addtocounter{enumcounter}{1}
+    \listxadd{\allocgs}{E\thesection.\theenumcounter}% Expandable (listXadd) version extremely important here
+    \iftoggle{interactive}{
+        \switchocg{E\thesection.\theenumcounter}{\hskip -2em ~~~}
+        \begin{ocg}{AnsE\thesection.\theenumcounter}{E\thesection.\theenumcounter}{0}
+        \hskip 1em #1
+        \end{ocg}
+    }{#1}
+}
+
+\newenvironment{knowledgeQuestion}[4]{
+    \begingroup
+    \vskip -3.5mm
+    \setlength{\aweboxleftmargin}{0.08\linewidth}
+    \setlength{\aweboxcontentwidth}{0.92\linewidth}
+    \setlength{\aweboxsignraise}{#4 mm}
+    \definecolor{abvrulecolor}{RGB}{221,221,216}
+    \addtocounter{questioncounter}{1}
+    \listxadd{\allocgs}{Q\thesection.\thequestioncounter}
+    \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#3}{2}\selectfont #2}{violet}
+    \iftoggle{interactive}{
+        \switchocg{Q\thesection.\thequestioncounter}{\textbf{Q \thesection.\thequestioncounter.} \textit{#1}} \newline
+        \begin{ocg}{AnsQ\thesection.\thequestioncounter}{Q\thesection.\thequestioncounter}{0}
+    }{
+        \textbf{Q \thesection.\thequestioncounter.} \textit{#1} \newline
+    }
+}{
+    \iftoggle{interactive}{\end{ocg}}{}
+    \end{awesomeblock}
+    \endgroup
+    \vskip -3.5mm
+}
+
 $for(header-includes)$
 $header-includes$
 $endfor$
+
 $if(lang)$
 \ifxetex
   $if(mainfont)$
@@ -753,7 +831,30 @@ $if(listings)$
   {…}{{\ldots}}1 {≥}{{>=}}1 {≤}{{<=}}1 {„}{{\glqq}}1 {“}{{\grqq}}1
   {”}{{''}}1
 }
-\lstset{style=eisvogel_listing_style}
+
+\lstdefinestyle{knowledge_text_override}{
+    language         = python,
+    basicstyle       = \color{listing-text-color}\linespread{1.0}\fontsize{8}{10}\selectfont\ttfamily{},
+    xleftmargin      = 5em,
+    framexleftmargin = 0.4em,
+    aboveskip        = 0.8em,
+    belowskip        = 0.4em,
+    xrightmargin     = 5em,
+}
+\lstdefinestyle{knowledge_question_override}{
+    language         = python,
+    basicstyle       = \color{listing-text-color}\linespread{1.0}\fontsize{8}{10}\selectfont\ttfamily{},
+    xleftmargin      = 0.7em,
+    framexleftmargin = 0.4em,
+    xrightmargin     = 6em,
+    aboveskip        = -0.7em,
+    belowskip        = -2em,
+    abovecaptionskip = -1em,
+    belowcaptionskip = -1em,
+}
+\lstdefinestyle{knowledge_text}{style=eisvogel_listing_style,style=knowledge_text_override}
+\lstdefinestyle{knowledge_question}{style=eisvogel_listing_style,style=knowledge_question_override}
+\lstset{style=knowledge_text}
 
 %
 % Java (Java SE 12, 2019-06-22)
