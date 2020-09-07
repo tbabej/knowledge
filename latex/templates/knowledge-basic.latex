@@ -221,10 +221,10 @@ $endif$
 $endif$
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-\IfFileExists{microtype.sty}{% use microtype if available
-  \usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
-  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
+%\IfFileExists{microtype.sty}{% use microtype if available
+%  \usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
+%  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+%}{}
 $if(indent)$
 $else$
 \makeatletter
@@ -416,6 +416,39 @@ $endif$
 \usepackage{ocgx2}
 \usepackage{etoolbox}
 \usepackage{transparent}
+\usepackage{censor}
+\usepackage{xcolor}
+
+\censorruledepth=-.3ex
+\censorruleheight=.05ex
+\newlength\maxkern
+\setlength{\maxkern}{.14ex}
+\newlength\nextcharwidth
+
+\makeatletter
+\renewcommand\@cenword[1]{%
+  \setlength{\nextcharwidth}{\widthof{#1}}%
+  \censorrule{\nextcharwidth}%
+  \kern -\nextcharwidth%
+  \color{white}%
+  \kern -.5\maxkern #1\kern .5\maxkern%
+  \kern -\nextcharwidth%
+  \kern -\maxkern #1\kern \maxkern%
+  \kern -\nextcharwidth%
+  \kern .5\maxkern #1\kern -.5\maxkern%
+  \kern -\nextcharwidth%
+  \kern \maxkern #1\kern -\maxkern%
+  \kern -\nextcharwidth%
+  \color{black}%
+  #1%
+}
+
+\long\def\blackout#1{%
+  \def~{-}%
+  \protected@edef\save@arg{#1}%
+  \expandafter\censor@Block\save@arg\stringend\let~\sv@tilde%
+}
+\makeatother
 
 \def\allocgs{}
 \newcommand{\printocg}[1]{#1 }
@@ -453,9 +486,9 @@ $endif$
 \iftoggle{interactive}{%
 \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}%
 \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}%
-\kern-\dotslength\kern1pt #1%
+\kern-\dotslength\kern1pt \blackout{#1}%
 \end{ocg}%
-}{#1}%
+}{\blackout{#1}}%
 }
 
 \newcommand{\knowledgeEnum}[1]{
