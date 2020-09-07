@@ -458,7 +458,7 @@ $endif$
 \addtocounter{section}{1}
 
 \newtoggle{interactive}
-$if(footnotes-pretty)$
+$if(interactive)$
 \toggletrue{interactive}
 $else$
 \togglefalse{interactive}
