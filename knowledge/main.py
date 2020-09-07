@@ -411,17 +411,20 @@ def convert_to_pdf():
        r'      \hskip 1em #1',
        r'      \end{ocg}',
        r'  }',
-       r'  \newenvironment{questionblock}[3]{',
+       r'  \newenvironment{knowledgeQuestion}[4]{',
        r'      \begingroup',
        r'      \vskip -3.5mm',
        r'      \setlength{\aweboxleftmargin}{0.08\linewidth}',
        r'      \setlength{\aweboxcontentwidth}{0.92\linewidth}',
-       r'      \setlength{\aweboxsignraise}{#3 mm}',
+       r'      \setlength{\aweboxsignraise}{#4 mm}',
        r'      \definecolor{abvrulecolor}{RGB}{221,221,216}',
        r'      \addtocounter{question}{1}',
-       r'      \listxadd{\allocgs}{Q\thesection.\thequestion}',  # Expandable (listXadd) version extremely important here
-       r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#2}{2}\selectfont #1}{violet}',
+       r'      \listxadd{\allocgs}{Q\thesection.\thequestion}',
+       r'      \begin{awesomeblock}[abvrulecolor]{2pt}{\fontsize{#3}{2}\selectfont #2}{violet}',
+       r'      \switchocg{Q\thesection.\thequestion}{\textbf{Q \thesection.\thequestion.} \textit{#1}} \newline',
+       r'      \begin{ocg}{AnsQ\thesection.\thequestion}{Q\thesection.\thequestion}{0}',
        r'  }{',
+       r'      \end{ocg}',
        r'      \end{awesomeblock}',
        r'      \endgroup',
        r'      \vskip -3.5mm',
@@ -501,33 +504,17 @@ def convert_to_pdf():
         lines = [substitution(line) for line in lines]
 
     # Detect and reformat question blocks
-    question_blocks = []
     for start in range(len(lines)):
         if k.regexp.QUESTION.match(lines[start]):
             for end in range(start + 1, len(lines)):
                 if not lines[end].startswith('- '):
-                    lines[start] = (
-                        "\switchocg"
-                            "{Q\\thesection.\\thequestion}"  # identifier of the OCG block to toggle
-                            "{""\\textbf{Q \\thesection.\\thequestion.} \\textit{" + lines[start].replace('Q: ', '') + "}}"
-                        "\\newline\n"
-                        "\\begin{ocg}"
-                            "{AnsQ\\thesection.\\thequestion}" # OCG name (not used anywhere as far as I can tell)
-                            "{Q\\thesection.\\thequestion}"  # identifier of the OCG block
-                            "{0}"  # not visible by default
-                    )
-                    question_blocks.append((start, end))
+                    lines[start] = f'\\begin{{knowledgeQuestion}}{{{lines[start].replace("Q: ", "")}}}'
                     break
                 else:
                     lines[end] = lines[end][2:]
-            lines[end-1] += "\n\\end{ocg}"
-
-    # Add questionblock environment fences
-    for index, (start, end) in enumerate(question_blocks):
-        # Determine the icon for the questionblock
-        icon = k.utils.detect_icon('\n'.join(lines[start + index * 2: end + index * 2 + 1]))
-        lines.insert(start + index * 2, f"\\begin{{questionblock}}{{{icon.command}}}{{{icon.fontsize}}}{{{icon.raise_mm}}}")
-        lines.insert(end+1 + index * 2, r"\end{questionblock}")
+            icon = k.utils.detect_icon('\n'.join(lines[start:end+1]))
+            lines[start] += f"{{{icon.command}}}{{{icon.fontsize}}}{{{icon.raise_mm}}}"
+            lines[end-1] += '\n\\end{knowledgeQuestion}'
 
     tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
