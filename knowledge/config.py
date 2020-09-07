@@ -25,3 +25,4 @@ QUESTION_PREFIXES = utils.decode_bytes(vim.vars.get(
 ))
 
 GLUED_LATEX_COMMANDS = utils.decode_bytes(vim.vars.get('knowledge_glued_latex_commands', []))
+PDF_UNDERLINE_CLOZE = utils.decode_bytes(vim.vars.get('knowledge_pdf_underline_cloze', 1))

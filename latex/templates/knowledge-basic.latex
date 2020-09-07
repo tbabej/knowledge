@@ -458,10 +458,17 @@ $endif$
 \addtocounter{section}{1}
 
 \newtoggle{interactive}
-$if(interactive)$
+$if(knowledge-interactive)$
 \toggletrue{interactive}
 $else$
 \togglefalse{interactive}
+$endif$
+
+\newtoggle{underline}
+$if(knowledge-underline)$
+\toggletrue{underline}
+$else$
+\togglefalse{underline}
 $endif$
 
 \newcommand{\knowledgeControls}[0]{
@@ -486,9 +493,9 @@ $endif$
 \iftoggle{interactive}{%
 \begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}%
 \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}%
-\kern-\dotslength\kern1pt \blackout{#1}%
+    \kern-\dotslength\kern1pt \iftoggle{underline}{\blackout{#1}}{#1}%
 \end{ocg}%
-}{\blackout{#1}}%
+}{\iftoggle{underline}{\blackout{#1}}{#1}}%
 }
 
 \newcommand{\knowledgeEnum}[1]{

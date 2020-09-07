@@ -348,6 +348,7 @@ def convert_to_pdf(interactive=False):
 
     # Determine a default title
     default_title = f"Notes on {k.regexp.EXTENSION.sub('', filename).replace('_', ' ')}"
+    underline = k.config.PDF_UNDERLINE_CLOZE
 
     # Generate the preamble
     preamble = '\n'.join([
@@ -362,7 +363,8 @@ def convert_to_pdf(interactive=False):
        r'code-block-font-size: \scriptsize',
        'footnotes-pretty: true',
        'classoption: [oneside]',
-       f'interactive: {"true" if interactive else "false"}',
+       f'knowledge-interactive: {"true" if interactive else "false"}',
+       f'knowledge-underline: {"true" if underline else "false"}',
        r'header-center: \knowledgeControls',
        '...',
        ''
