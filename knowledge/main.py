@@ -306,10 +306,9 @@ def paste_image():
     vim.current.window.cursor = vim.current.window.cursor[0], column + len(vim_file_link)
 
 
-def convert_to_pdf():
+def convert_to_pdf(interactive=False):
     lines = vim.current.buffer[:]
     data = {}
-    interactive = True
 
     # Detect YAML preamble if present
     if lines[0].strip() == '---' and lines.index('...') != -1:
