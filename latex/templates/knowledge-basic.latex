@@ -422,8 +422,14 @@ $endif$
 \newcounter{questioncounter}[section]
 \newcounter{enumcounter}[section]
 \newcounter{clozecounter}[section]
-\newtoggle{interactive}
 \addtocounter{section}{1}
+
+\newtoggle{interactive}
+$if(footnotes-pretty)$
+\toggletrue{interactive}
+$else$
+\togglefalse{interactive}
+$endif$
 
 \newcommand{\knowledgeControls}[0]{
     \iftoggle{interactive}{

@@ -363,12 +363,8 @@ def convert_to_pdf():
        r'code-block-font-size: \scriptsize',
        'footnotes-pretty: true',
        'classoption: [oneside]',
+       f'interactive: {"true" if interactive else "false"}',
        r'header-center: \knowledgeControls',
-       'header-includes:',
-       '- |',
-       '  ```{=latex}',
-       r'  \toggletrue{interactive}' if interactive else r'  \togglefalse{interactive}',
-       '  ```',
        '...',
        ''
     ])
