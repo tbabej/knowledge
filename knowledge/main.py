@@ -358,7 +358,7 @@ def convert_to_pdf(interactive=False):
        f'date: "{data.get("date", datetime.date.today()).strftime("%Y-%m-%d")}"',
        'lang: "en"',
        f'page-background: "{data.get("background", default_background)}"',
-       'page-background-opacity: 0.1',
+       'page-background-opacity: 0.05',
        'caption-justification: "centering"',
        r'code-block-font-size: \scriptsize',
        'footnotes-pretty: true',
