@@ -296,7 +296,7 @@ $endif$
 $else$
 $if(beamer)$
 $else$
-\usepackage[margin=2.5cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
+\usepackage[margin=2.5cm,marginparwidth=1.7cm,marginparsep=0.4cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
 $endif$
 $endif$
 $if(logo)$
@@ -526,15 +526,19 @@ $endif$
     \vskip -3.5mm
 }
 
+\newlength{\heightofnote}%
+
 \newcommand{\knowledgeHint}[1]{%
 \switchocg{M\thepage.\thehintcounter}{%
 \textsuperscript{*\thehintcounter}}%
 \marginpar{%
-\fontsize{9}{8}%
+\fontsize{7}{9}%
 \selectfont%
 \raggedright%
+\hyphenpenalty=0%
 \baselineskip=3pt%
-\vskip -2pt%
+\settoheight{\heightofnote}{\parbox{1.7cm}{\textsuperscript{\thehintcounter}#1}}%
+\vskip -\heightofnote%
 \begin{ocmd}[H\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}%
 \begin{ocg}{AnsM\thepage.\thehintcounter}{M\thepage.\thehintcounter}{0}%
 \textsuperscript{\thehintcounter}%
@@ -681,7 +685,7 @@ $if(titlepage-background)$
 $endif$
 $if(geometry)$
 $else$
-\usepackage[margin=2.5cm,includehead=true,includefoot=true,centering]{geometry}
+\usepackage[margin=2.5cm,marginparwidth=1.7cm,marginparsep=0.4cm,includehead=true,includefoot=true,centering]{geometry}
 $endif$
 $endif$
 
