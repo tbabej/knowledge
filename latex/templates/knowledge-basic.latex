@@ -418,9 +418,11 @@ $endif$
 \usepackage{transparent}
 \usepackage{censor}
 \usepackage{xcolor}
+\usepackage{contour}
 
-\censorruledepth=-.3ex
+\censorruledepth=-.25ex
 \censorruleheight=.05ex
+\contourlength{.12ex}
 \newlength\maxkern
 \setlength{\maxkern}{.14ex}
 \newlength\nextcharwidth
@@ -430,17 +432,7 @@ $endif$
   \setlength{\nextcharwidth}{\widthof{#1}}%
   \censorrule{\nextcharwidth}%
   \kern -\nextcharwidth%
-  \color{white}%
-  \kern -.5\maxkern #1\kern .5\maxkern%
-  \kern -\nextcharwidth%
-  \kern -\maxkern #1\kern \maxkern%
-  \kern -\nextcharwidth%
-  \kern .5\maxkern #1\kern -.5\maxkern%
-  \kern -\nextcharwidth%
-  \kern \maxkern #1\kern -\maxkern%
-  \kern -\nextcharwidth%
-  \color{black}%
-  #1%
+  \contour{white}{#1}%
 }
 
 \long\def\blackout#1{%
