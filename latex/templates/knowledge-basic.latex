@@ -483,8 +483,8 @@ $endif$
 \addtocounter{clozecounter}{1}%
 \listxadd{\allocgs}{C\thesection.\theclozecounter}% Expandable (listXadd) version extremely important here
 \iftoggle{interactive}{%
-\ifstrempty{#2}{\settowidth{\dotslength}{...}}{\settowidth{\dotslength}{...\textsuperscript{*\thehintcounter}}\addtocounter{hintcounter}{1}}%
-\begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...\ifstrempty{#2}{}{\knowledgeHint{#2}}}\end{ocmd}%
+    \ifstrempty{#2}{\settowidth{\dotslength}{...}}{\addtocounter{hintcounter}{1}\settowidth{\dotslength}{...\textsuperscript{*\thehintcounter}}}%
+\begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\ifstrempty{#2}{}{\knowledgeHint{#2}}\end{ocmd}%
 \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}%
     \kern-\dotslength\kern1pt \iftoggle{underline}{\blackout{#1}}{#1}%
 \end{ocg}%
