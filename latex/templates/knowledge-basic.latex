@@ -526,7 +526,8 @@ $endif$
     \vskip -3.5mm
 }
 
-\newcommand{\knowledgeHint}[1]{\switchocg{M\thepage.\thehintcounter}{%
+\newcommand{\knowledgeHint}[1]{%
+\switchocg{M\thepage.\thehintcounter}{%
 \textsuperscript{*\thehintcounter}}%
 \marginpar{%
 \fontsize{9}{8}%
@@ -534,10 +535,12 @@ $endif$
 \raggedright%
 \baselineskip=3pt%
 \vskip -2pt%
+\begin{ocmd}[H\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}%
 \begin{ocg}{AnsM\thepage.\thehintcounter}{M\thepage.\thehintcounter}{0}%
 \textsuperscript{\thehintcounter}%
 #1%
 \end{ocg}%
+\end{ocmd}%
 }%
 }
 
