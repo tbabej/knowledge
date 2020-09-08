@@ -447,6 +447,7 @@ $endif$
 \newcounter{questioncounter}[section]
 \newcounter{enumcounter}[section]
 \newcounter{clozecounter}[section]
+\newcounter{hintcounter}[page]
 \addtocounter{section}{1}
 
 \newtoggle{interactive}
@@ -474,16 +475,16 @@ $endif$
 }
 
 \newlength{\dotslength}
-\settowidth{\dotslength}{...}
 \sectionfont{\fontsize{21}{24}\selectfont\centering}
 \subsectionfont{\fontsize{15}{18}\selectfont\centering}
 \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}
 
-\newcommand{\knowledgeCloze}[1]{%
+\newcommand{\knowledgeCloze}[2]{%
 \addtocounter{clozecounter}{1}%
 \listxadd{\allocgs}{C\thesection.\theclozecounter}% Expandable (listXadd) version extremely important here
 \iftoggle{interactive}{%
-\begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...}\end{ocmd}%
+\ifstrempty{#2}{\settowidth{\dotslength}{...}}{\settowidth{\dotslength}{...\textsuperscript{*\thehintcounter}}\addtocounter{hintcounter}{1}}%
+\begin{ocmd}[D\thesection.\theclozecounter]{\AnyOff{C\thesection.\theclozecounter}}\switchocg{C\thesection.\theclozecounter}{...\ifstrempty{#2}{}{\knowledgeHint{#2}}}\end{ocmd}%
 \begin{ocg}{AnsC\thesection.\theclozecounter}{C\thesection.\theclozecounter}{0}%
     \kern-\dotslength\kern1pt \iftoggle{underline}{\blackout{#1}}{#1}%
 \end{ocg}%
@@ -523,6 +524,21 @@ $endif$
     \end{awesomeblock}
     \endgroup
     \vskip -3.5mm
+}
+
+\newcommand{\knowledgeHint}[1]{\switchocg{M\thepage.\thehintcounter}{%
+\textsuperscript{*\thehintcounter}}%
+\marginpar{%
+\fontsize{9}{8}%
+\selectfont%
+\raggedright%
+\baselineskip=3pt%
+\vskip -2pt%
+\begin{ocg}{AnsM\thepage.\thehintcounter}{M\thepage.\thehintcounter}{0}%
+\textsuperscript{\thehintcounter}%
+#1%
+\end{ocg}%
+}%
 }
 
 $for(header-includes)$
