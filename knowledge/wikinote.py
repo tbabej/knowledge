@@ -1,9 +1,8 @@
 import re
 
-from knowledge import config, utils, regexp, backend, errors
+import knowledge as k
 
-
-MARKUP_SYNTAX = utils.get_var('knowledge_syntax', 'default')
+MARKUP_SYNTAX = k.utils.get_var('knowledge_syntax', 'default')
 
 
 class Header(object):
@@ -13,7 +12,7 @@ class Header(object):
 
     @classmethod
     def from_line(cls, buffer_proxy, number):
-        match = re.search(regexp.NOTE_HEADLINE[MARKUP_SYNTAX], buffer_proxy[number])
+        match = re.search(k.regexp.NOTE_HEADLINE[MARKUP_SYNTAX], buffer_proxy[number])
 
         if not match:
             return None, 1
@@ -26,7 +25,7 @@ class Header(object):
 
         # Update the header data from the hidden config string
         metadata = match.group('metadata').strip()
-        self.data.update(utils.string_to_kwargs(metadata))
+        self.data.update(k.utils.string_to_kwargs(metadata))
 
         return self, 1
 
@@ -46,9 +45,9 @@ class WikiNote(object):
         positive, it will try to parse the note data out of the block.
         """
 
-        basic_question = re.search(regexp.QUESTION, buffer_proxy[number])
-        close_mark_present = re.search(regexp.CLOSE_MARK, buffer_proxy[number])
-        numlist_item = re.match(regexp.NUMLIST_MARK, buffer_proxy[number])
+        basic_question = re.search(k.regexp.QUESTION, buffer_proxy[number])
+        close_mark_present = re.search(k.regexp.CLOSE_MARK, buffer_proxy[number])
+        numlist_item = re.match(k.regexp.NUMLIST_MARK, buffer_proxy[number])
 
         if not any([basic_question, close_mark_present, numlist_item]):
             return None, 1
@@ -72,7 +71,7 @@ class WikiNote(object):
         })
 
         if close_mark_present:
-            if utils.is_list_item(buffer_proxy, number):
+            if k.utils.is_list_item(buffer_proxy, number):
                 line_shift = self.parse_close_list_item()
             else:
                 line_shift = self.parse_close()
@@ -89,7 +88,7 @@ class WikiNote(object):
         question = match.group('question').strip()
 
         # Strip the question prefixes that should be ignored
-        for prefix in config.QUESTION_OMITTED_PREFIXES:
+        for prefix in k.config.QUESTION_OMITTED_PREFIXES:
             if question.startswith(prefix):
                 question = question.lstrip(prefix).strip()
                 break
@@ -165,10 +164,10 @@ class WikiNote(object):
 
         # Look for the identifier on any line
         textlines = '\n'.join(lines)
-        match = re.search(regexp.CLOSE_IDENTIFIER, textlines)
+        match = re.search(k.regexp.CLOSE_IDENTIFIER, textlines)
         if match:
             # If present, do not include it in the field, and save it
-            textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
+            textlines = re.sub(k.regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
         # Inject heading into the question
@@ -236,10 +235,10 @@ class WikiNote(object):
 
         # Look for the identifier on any line
         textlines = '\n'.join(lines)
-        match = re.search(regexp.CLOSE_IDENTIFIER, textlines)
+        match = re.search(k.regexp.CLOSE_IDENTIFIER, textlines)
         if match:
             # If present, do not include it in the field, and save it
-            textlines = re.sub(regexp.CLOSE_IDENTIFIER, '', textlines)
+            textlines = re.sub(k.regexp.CLOSE_IDENTIFIER, '', textlines)
             self.data['id'] = match.group('identifier')
 
         # Inject heading into the question
@@ -273,7 +272,7 @@ class WikiNote(object):
 
         # Add a hint about the item number to the question
         current_line = self.buffer_proxy[(self.data['line'])]
-        numlist_mark = re.match(regexp.NUMLIST_MARK, current_line).group()
+        numlist_mark = re.match(k.regexp.NUMLIST_MARK, current_line).group()
         questionlines.append(numlist_mark)
 
         # Now the lower part of the paragraph
@@ -281,7 +280,7 @@ class WikiNote(object):
         lines_inspected_forward = 1
 
         for line in self.buffer_proxy[(self.data['line']+1):]:
-            if re.match(regexp.NUMLIST_MARK, line):
+            if re.match(k.regexp.NUMLIST_MARK, line):
                 # Start of the new item, let's terminate here
                 break
             elif line.startswith('  '):
@@ -298,15 +297,15 @@ class WikiNote(object):
         # Look for the identifier on any line among the scope of this item
         answerlines = '\n'.join(answerlines)
 
-        match = re.search(regexp.CLOSE_IDENTIFIER, answerlines)
+        match = re.search(k.regexp.CLOSE_IDENTIFIER, answerlines)
         if match:
             # If present, do not include it in the field, and save it
-            answerlines = re.sub(regexp.CLOSE_IDENTIFIER, '', answerlines)
+            answerlines = re.sub(k.regexp.CLOSE_IDENTIFIER, '', answerlines)
             self.data['id'] = match.group('identifier')
 
         # Also remove any identifier from the question
         questionlines = '\n'.join(questionlines)
-        questionlines = re.sub(regexp.CLOSE_IDENTIFIER, '', questionlines)
+        questionlines = re.sub(k.regexp.CLOSE_IDENTIFIER, '', questionlines)
 
         # Inject heading into the question
         if self.data.get('heading'):
@@ -325,8 +324,8 @@ class WikiNote(object):
             return False
         else:
             try:
-                return backend.get(self.data.get('id')) is not None
-            except errors.MappingNotFoundException:
+                return k.backend.get(self.data.get('id')) is not None
+            except k.errors.MappingNotFoundException:
                 return False
 
     @property
@@ -339,7 +338,7 @@ class WikiNote(object):
         Return the identifier of the note in the backend of the SRS provider.
         """
 
-        return backend.get(self.data['id'])
+        return k.backend.get(self.data['id'])
 
     def save(self):
         if self.created:
@@ -355,9 +354,9 @@ class WikiNote(object):
 
         if obtained_id:
             if self.knowledge_id_assigned:
-                backend.assign(obtained_id, self.data.get('id'))
+                k.backend.assign(obtained_id, self.data.get('id'))
             else:
-                self.data['id'] = backend.put(obtained_id)
+                self.data['id'] = k.backend.put(obtained_id)
                 self.update_identifier()
 
     def _update(self):
