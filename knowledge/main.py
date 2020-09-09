@@ -424,6 +424,11 @@ def convert_to_pdf(interactive=False):
                     break
                 else:
                     lines[end] = lines[end][2:]
+            else:
+                # If we did not break, the question extends until the end of
+                # the file, and we need to wrap up
+                lines[start] = f'\\begin{{knowledgeQuestion}}{{{lines[start].replace("Q: ", "")}}}'
+
             icon = k.utils.detect_icon('\n'.join(lines[start:end+1]))
             lines[start] += f"{{{icon.command}}}{{{icon.fontsize}}}{{{icon.raise_mm}}}"
             lines[end-1] += '\n\\end{knowledgeQuestion}'
