@@ -407,6 +407,8 @@ def convert_to_pdf(interactive=False):
     substitutions = [
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
         lambda l: re.sub(k.regexp.CLOSE_IDENTIFIER, r'', l),
+        lambda l: re.sub(r'\s*#((?P<source>[A-Z]):)?[0-9a-fA-F]{8}\s*$', '', l),
+        lambda l: re.sub(r'^(?P<header_start>[#]+)([^#\|\[\{]*)(\|(\|)?[^#\|]*)$', r'\1\2', l),
         lambda l: re.sub(r':\[', r'[', l),
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
         lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
