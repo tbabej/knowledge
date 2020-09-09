@@ -13,10 +13,6 @@ import uuid
 import vim
 from pathlib import Path
 
-
-import basehash
-import yaml
-
 # Insert the knowledge on the python path
 KNOWLEDGE_BASE_DIR = vim.eval("s:knowledge_plugin_path")
 sys.path.insert(0, KNOWLEDGE_BASE_DIR)
@@ -259,6 +255,7 @@ def paste_image():
     and inserts a link to it into the buffer.
     """
 
+    import basehash
     translator = basehash.base(k.constants.ALPHABET)
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
@@ -311,6 +308,7 @@ def convert_to_pdf(interactive=False):
     data = {}
 
     # Detect YAML preamble if present
+    import yaml  # lazy import
     if lines[0].strip() == '---' and lines.index('...') != -1:
         preamble = lines[:lines.index('...') + 1]
         data.update(yaml.safe_load('\n'.join(preamble)))
