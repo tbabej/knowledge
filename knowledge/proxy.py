@@ -275,9 +275,9 @@ class SRSProxy(object):
                 last_open_index = index
                 cloze_open = True
                 cloze_count += 1
-                result.append("{{{{c{count}::".format(count=cloze_count))
+                result.append(self.SYMBOL_CLOZE_OPEN.format(count=cloze_count))
             elif char == '}' and cloze_open:
-                result.append("}}")
+                result.append(self.SYMBOL_CLOZE_CLOSE)
                 cloze_open = False
             else:
                 result.append(char)
@@ -581,6 +581,8 @@ class MnemosyneProxy(SRSProxy):
     SYMBOL_I_CLOSE = "</i>"
     SYMBOL_IMG_OPEN = "<img src=\""
     SYMBOL_IMG_CLOSE = "\">"
+    SYMBOL_CLOZE_OPEN = "["
+    SYMBOL_CLOZE_CLOSE = "]"
 
 
     def __init__(self, path=None):
