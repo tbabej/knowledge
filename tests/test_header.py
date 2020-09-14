@@ -34,13 +34,13 @@ class TestCreateClozeNoteUnderHeader(IntegrationTest):
     viminput = """
     === Life questions @ deck:Physics ===
 
-    The visible spectrum is between [390 to 700] nm.
+    The visible spectrum is between {390 to 700} nm.
     """
 
     vimoutput = """
     === Life questions @ deck:Physics ===
 
-    The visible spectrum is between [390 to 700] nm. {identifier}
+    The visible spectrum is between {390 to 700} nm. {identifier}
     """
 
     notes = [

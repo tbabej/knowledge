@@ -4,11 +4,11 @@ from tests.test_base import IntegrationTest
 class TestCreateClozeNote(IntegrationTest):
 
     viminput = """
-    The circumference of Earth is approximately [6378] km.
+    The circumference of Earth is approximately {6378} km.
     """
 
     vimoutput = """
-    The circumference of Earth is approximately [6378] km. {identifier}
+    The circumference of Earth is approximately {6378} km. {identifier}
     """
 
     notes = [
@@ -25,12 +25,12 @@ class TestCreateClozeNoteParagraph(IntegrationTest):
 
     viminput = """
     The circumference of Earth is
-    approximately [6378] km.
+    approximately {6378} km.
     """
 
     vimoutput = """
     The circumference of Earth is {identifier}
-    approximately [6378] km.
+    approximately {6378} km.
     """
 
     notes = [
@@ -49,14 +49,14 @@ class TestCreateClozeNoteLongParagraph(IntegrationTest):
     The circumference of Earth,
     the third planet in the Solar System
     by its distance from the Sun (the central star of the system)
-    is approximately [6378] km.
+    is approximately {6378} km.
     """
 
     vimoutput = """
     The circumference of Earth, {identifier}
     the third planet in the Solar System
     by its distance from the Sun (the central star of the system)
-    is approximately [6378] km.
+    is approximately {6378} km.
     """
 
     notes = [
@@ -75,13 +75,13 @@ class TestCreateClozeNoteLongParagraph(IntegrationTest):
 class TestCreateMultilineClozeNote(IntegrationTest):
 
     viminput = """
-    First law: The orbit of a planet is [an ellipse with the Sun at one of the two
-    foci]
+    First law: The orbit of a planet is {an ellipse with the Sun at one of the two
+    foci}
     """
 
     vimoutput = """
-    First law: The orbit of a planet is [an ellipse with the Sun at one of the two {identifier}
-    foci]
+    First law: The orbit of a planet is {an ellipse with the Sun at one of the two {identifier}
+    foci}
     """
 
     notes = [
@@ -98,12 +98,12 @@ class TestCreateMultilineClozeNote(IntegrationTest):
 class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
 
     viminput = """
-    The circumference of Earth is approximately [6378] km.
+    The circumference of Earth is approximately {6378} km.
     """
 
     vimoutput = """
     The circumference of {identifier}
-    Earth is approximately [6378] km.
+    Earth is approximately {6378} km.
     """
 
     notes = [

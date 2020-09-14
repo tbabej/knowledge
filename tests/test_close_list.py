@@ -5,17 +5,17 @@ class TestCreateClozeItemNote(IntegrationTest):
 
     viminput = """
     List of capitols:
-    * England - [London]
-    * France - [Paris]
-    * Czech Republic - [Prague]
+    * England - {London}
+    * France - {Paris}
+    * Czech Republic - {Prague}
     """
 
 
     vimoutput = """
     List of capitols:
-    * England - [London] {identifier}
-    * France - [Paris] {identifier}
-    * Czech Republic - [Prague] {identifier}
+    * England - {London} {identifier}
+    * France - {Paris} {identifier}
+    * Czech Republic - {Prague} {identifier}
     """
 
     notes = [
@@ -38,17 +38,17 @@ class TestCreateMultiClozeItemNote(IntegrationTest):
 
     viminput = """
     List of capitols:
-    * [England] - [London]
-    * [France] - [Paris]
-    * [Czech Republic] - [Prague]
+    * {England} - {London}
+    * {France} - {Paris}
+    * {Czech Republic} - {Prague}
     """
 
 
     vimoutput = """
     List of capitols:
-    * [England] - [London] {identifier}
-    * [France] - [Paris] {identifier}
-    * [Czech Republic] - [Prague] {identifier}
+    * {England} - {London} {identifier}
+    * {France} - {Paris} {identifier}
+    * {Czech Republic} - {Prague} {identifier}
     """
 
     notes = [
@@ -74,20 +74,20 @@ class TestCreateMultiLineClozeItemNote(IntegrationTest):
 
     viminput = """
     List of assembler instructions:
-    * [mov eax, ebx] - [copies the data item referred
+    * {mov eax, ebx} - {copies the data item referred
       to by its second operand into the location
-      referred to by its first operand]
-    * [push eax] - [places its operand onto the top
-      of the hardware supported stack in memory]
+      referred to by its first operand}
+    * {push eax} - {places its operand onto the top
+      of the hardware supported stack in memory}
     """
 
     vimoutput = """
     List of assembler instructions:
-    * [mov eax, ebx] - [copies the data item referred {identifier}
+    * {mov eax, ebx} - {copies the data item referred {identifier}
       to by its second operand into the location
-      referred to by its first operand]
-    * [push eax] - [places its operand onto the top {identifier}
-      of the hardware supported stack in memory]
+      referred to by its first operand}
+    * {push eax} - {places its operand onto the top {identifier}
+      of the hardware supported stack in memory}
     """
 
     notes = [
