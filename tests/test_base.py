@@ -222,7 +222,7 @@ class IntegrationTest(object):
                 assert expected_fact.get('back') == fact.data.get('b')
 
                 cards = db.cards_from_fact(fact)
-                tags = expected_fact.get('tags') or ['__UNTAGGED__']
+                tags = (expected_fact.get('tags') or []) + ['knowledge']
                 assert set(tags) == set([tag.name for tag in cards[0].tags])
 
                 # Assert that expected number of cards have been generated
