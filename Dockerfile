@@ -1,5 +1,6 @@
 ARG PYTHON_VERSION=3.8
 ARG MNEMOSYNE_VERSION=master
+ARG ANKI_VERSION=2.1.33
 ARG VIM_VERSION=v8.2.0716
 ARG VIMWIKI_VERSION=master
 
@@ -66,7 +67,15 @@ RUN pip3 install -r requirements.txt && \
     pip3 install googletrans gtts && \
     python3 setup.py install
 
-# install runtime deps of vim/taskwarrior
+# Install Anki
+ARG ANKI_VERSION
+RUN pip install \
+    aqt==${ANKI_VERSION} \
+    anki==${ANKI_VERSION} \
+    ankirspy==${ANKI_VERSION} \
+    pyqt5 pyqtwebengine
+
+# install runtime deps of vim/knowledge
 RUN apt-get install -y libgtk-3-0
 ENV PATH=/opt/vim/bin:$PATH
 RUN vim --version
