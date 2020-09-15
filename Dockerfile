@@ -5,13 +5,15 @@ ARG VIMWIKI_VERSION=master
 
 FROM python:${PYTHON_VERSION}
 
-RUN apt-get update && apt-get install locales debconf && dpkg-reconfigure locales
+# Configure locale to ensure UTF-8 works correctly
+RUN apt-get update && apt-get -y install locales
 RUN echo "en_US UTF-8" >> /etc/locale.gen
 RUN locale-gen
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US.UTF-8
 
+# Install vim
 RUN apt-get update && apt-get -y install \
     gcc \
     git \
@@ -30,6 +32,7 @@ RUN ./configure --prefix=/opt/vim --enable-pythoninterp --enable-python3interp -
 RUN make -j$(nproc)
 RUN make install
 
+# Install test dependencies
 RUN apt-get install \
     git \
     gcc
