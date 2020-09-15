@@ -65,7 +65,7 @@ class IntegrationTest(object):
         self.command('let g:knowledge_srs_provider="Mnemosyne"')
         self.command('let g:knowledge_measure_coverage="yes"')
 
-    def setup(self):
+    def pretest_setup(self, proxy):
         self.setup_db()
         self.start_client()  # Start client with 3 chances
         self.configure_global_variables()
@@ -75,7 +75,7 @@ class IntegrationTest(object):
         self.client.edit(self.filepath)
         self.command('set filetype=vimwiki')
 
-    def teardown(self):
+    def posttest_teardown(self):
         self.client.quit()
         subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
         sleep(0.2)  # Killing takes some time
@@ -132,17 +132,24 @@ class IntegrationTest(object):
         return True
 
     @pytest.mark.parametrize("proxy", ["mnemosyne", "anki"])
-    def test_execute(self, proxy):
+    def test_execute(self, request, proxy):
         # First, run sanity checks
         success = False
 
+        # Add finalizer
+        request.addfinalizer(self.posttest_teardown)
+
+        # Run the setup
+        self.pretest_setup(proxy)
+
+        # Check if the setup was successful via sanity checks
         for i in range(5):
             if self.check_sanity(soft=True):
                 success = True
                 break
             else:
                 self.teardown()
-                self.setup()
+                self.setup(proxy)
 
         if not success:
             self.check_sanity(soft=False)
