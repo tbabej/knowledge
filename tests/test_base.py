@@ -12,7 +12,9 @@ import vimrunner
 
 from time import sleep
 
-server = vimrunner.Server()
+
+server_name = f"KnowledgeTaskServer-{os.getpid()}"
+server = vimrunner.Server(server_name)
 
 
 class IntegrationTest(object):
@@ -26,10 +28,10 @@ class IntegrationTest(object):
     def inject_log_fixture(self, request):
         setattr(self, 'log', request.getfixturevalue('failure_log'))
 
-    def add_plugin(self, name):
+    def add_plugin(self, name, *args):
         plugin_base = os.path.expanduser('~/.vim/bundle/')
         plugin_path = os.path.join(plugin_base, name)
-        self.client.add_plugin(plugin_path)
+        self.client.add_plugin(plugin_path, *args)
 
     def write_buffer(self, lines, position=0):
         result = self.client.write_buffer(position + 1, lines)
@@ -57,7 +59,7 @@ class IntegrationTest(object):
             else:
                 raise
 
-    def configure_global_varialbes(self):
+    def configure_global_variables(self):
         self.command('let g:knowledge_data_dir="{0}"'.format(self.dir))
         self.command('let g:knowledge_db_file="{0}"'.format(self.db_file))
         self.command('let g:knowledge_srs_provider="Mnemosyne"')
@@ -66,20 +68,17 @@ class IntegrationTest(object):
     def setup(self):
         self.setup_db()
         self.start_client()  # Start client with 3 chances
-        self.configure_global_varialbes()
-        self.add_plugin('knowledge')
-        self.add_plugin('vimwiki')
-        sleep(0.5)
+        self.configure_global_variables()
         self.filepath = os.path.join(self.dir, 'knowledge.txt')
+        self.add_plugin('knowledge')
+        self.add_plugin('vimwiki', 'plugin/vimwiki.vim')
         self.client.edit(self.filepath)
-        sleep(0.5)
-        self.command('set filetype=vimwiki', silent=None)  # TODO: fix these vimwiki loading errors
-        sleep(1)  # Give vim some time to load the scripts
+        self.command('set filetype=vimwiki')
 
     def teardown(self):
         self.client.quit()
-        subprocess.call(['killall', 'gvim'])
-        sleep(0.5)  # Killing takes some time
+        subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
+        sleep(0.2)  # Killing takes some time
         self.tasks = self.__class__.tasks  # Reset the task list
 
     def command(self, command, silent=True, regex=None, lines=None):
@@ -91,7 +90,10 @@ class IntegrationTest(object):
 
         # For silent commands, there should be no output
         if silent is not None:
-            assert silent == bool(not result)
+            if silent:
+                assert not result
+            else:
+                assert result
 
             # Multiline-evaluate the regex
             if regex:
