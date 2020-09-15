@@ -3,12 +3,18 @@ services:
   tests:
     build: .
     volumes:
-      - "$HOME/.Xauthority:/root/.Xauthority:rw"
-      - "/tmp/knowledge-coverage:/root/knowledge-coverage:rw"
       - ".:/root/.vim/bundle/knowledge:rw"
     network_mode: "host"
-    environment:
-      - DISPLAY
     security_opt:
       - label=type:container_runtime_t
     tty: true
+    environment:
+      COVERALLS_PARALLEL:
+      GITHUB_ACTIONS:
+      GITHUB_HEAD_REF:
+      GITHUB_REF:
+      GITHUB_RUN_ID:
+      GITHUB_RUN_NUMBER:
+      GITHUB_SHA:
+      GITHUB_TOKEN:
+      PYTEST_FLAGS: "-o cache_dir=/tmp/pytest-cache ${PYTEST_FLAGS:-}"
