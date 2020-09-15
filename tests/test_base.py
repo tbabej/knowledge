@@ -131,7 +131,8 @@ class IntegrationTest(object):
         # Success in the sanity check
         return True
 
-    def test_execute(self):
+    @pytest.mark.parametrize("proxy", ["mnemosyne", "anki"])
+    def test_execute(self, proxy):
         # First, run sanity checks
         success = False
 
@@ -173,9 +174,6 @@ class IntegrationTest(object):
             assert buffer_lines == lines
 
         if self.notes:
-            import sys
-            from mnemosyne.script import Mnemosyne
-
             from pony import orm
 
             know_db = orm.Database('sqlite', self.db_file)
@@ -196,9 +194,6 @@ class IntegrationTest(object):
 
                 return mapping.fact_id
 
-            mnemosyne = Mnemosyne(self.dir)
-            db = mnemosyne.database()
-
             identifiers = filter(lambda x: x is not None, [
                 re.search('@(?P<identifier>[^\s]+)\s*$', line)
                 for line in self.read_buffer()
@@ -211,30 +206,43 @@ class IntegrationTest(object):
                 for identifier in identifiers
             ]
 
-            facts = [
-                db.fact(identifier, is_id_internal=False)
-                for identifier in translated_identifiers
-            ]
+            if proxy == "mnemosyne":
+                from mnemosyne.script import Mnemosyne
 
-            for index, fact in enumerate(facts):
-                expected_fact = self.notes[index]
+                mnemosyne = Mnemosyne(self.dir)
+                db = mnemosyne.database()
 
-                assert expected_fact.get('text') == fact.data.get('text')
-                assert expected_fact.get('front') == fact.data.get('f')
-                assert expected_fact.get('back') == fact.data.get('b')
+                facts = [
+                    db.fact(identifier, is_id_internal=False)
+                    for identifier in translated_identifiers
+                ]
 
-                cards = db.cards_from_fact(fact)
-                tags = (expected_fact.get('tags') or []) + ['knowledge']
-                assert set(tags) == set([tag.name for tag in cards[0].tags])
+                for index, fact in enumerate(facts):
+                    expected_fact = self.notes[index]
 
-                # Assert that expected number of cards have been generated
-                assert len(db.cards_from_fact(fact)) == expected_fact.get('count', 1)
+                    text = expected_fact.get('text') or expected_fact.get('mnemosyne_text')
+                    back = expected_fact.get('back') or expected_fact.get('mnemosyne_back')
+                    front = expected_fact.get('front') or expected_fact.get('mnemosyne_front')
 
-            # Assert that all facts have been tested
-            assert len(facts) == len(self.notes)
+                    assert text == fact.data.get('text')
+                    assert front == fact.data.get('f')
+                    assert back == fact.data.get('b')
 
-            # Assert that all facts have been obtained
-            assert len(facts) == db.fact_count()
+                    cards = db.cards_from_fact(fact)
+                    tags = (expected_fact.get('tags') or []) + ['knowledge']
+                    assert set(tags) == set([tag.name for tag in cards[0].tags])
+
+                    # Assert that expected number of cards have been generated
+                    assert len(db.cards_from_fact(fact)) == expected_fact.get('count', 1)
+
+                # Assert that all facts have been tested
+                assert len(facts) == len(self.notes)
+
+                # Assert that all facts have been obtained
+                assert len(facts) == db.fact_count()
+
+            elif proxy == "anki":
+                pass
 
     def execute(self):
         pass
