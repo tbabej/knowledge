@@ -1,3 +1,4 @@
 basehash
 pony
+pygments
 # xclip - via system manager
