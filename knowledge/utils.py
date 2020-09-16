@@ -1,5 +1,7 @@
+import functools
 import dataclasses
 import glob
+import os
 import re
 import subprocess
 import vim
@@ -261,3 +263,17 @@ def detect_icon(text):
             icon = value
 
     return icon
+
+def preserve_cwd(method):
+    """
+    Decorator that ensures the current working directory is not altered.
+    """
+
+    @functools.wraps(method)
+    def wrapped_method(*args, **kwargs):
+        old_cwd = os.getcwd()
+        result = method(*args, **kwargs)
+        os.chdir(old_cwd)
+        return result
+
+    return wrapped_method

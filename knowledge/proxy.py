@@ -366,6 +366,7 @@ class AnkiProxy(SRSProxy):
     SYMBOL_CLOZE_CLOSE = "}}"
     SYMBOL_NEWLINE = "<br>"
 
+    @utils.preserve_cwd
     def __init__(self, path):
         try:
             import anki
@@ -378,6 +379,7 @@ class AnkiProxy(SRSProxy):
         self.collection = anki.collection.Collection(path)
         self.Note = anki.notes.Note
 
+    @utils.preserve_cwd
     def cleanup(self):
         self.collection.close()
         del self.collection
@@ -423,6 +425,7 @@ class AnkiProxy(SRSProxy):
             for identifier in self.collection.findNotes('tag:knowledge')
         ])
 
+    @utils.preserve_cwd
     def add_note(self, deck, model, fields, tags=None):
         """
         Adds a new note of the given model to the given deck.
@@ -467,6 +470,7 @@ class AnkiProxy(SRSProxy):
         self.collection.addNote(note)
         return str(note.id)
 
+    @utils.preserve_cwd
     def update_note(self, identifier, fields, deck=None, model=None, tags=None):
         tags = tags or set()
 
@@ -517,6 +521,7 @@ class AnkiProxy(SRSProxy):
         # Push the changes, doesn't get saved without it
         note.flush()
 
+    @utils.preserve_cwd
     def commit(self):
         self.collection.save()
 
