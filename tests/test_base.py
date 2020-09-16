@@ -22,7 +22,6 @@ class IntegrationTest(object):
     viminput = None
     vimoutput = None
     notes = None
-    tasks = []
 
     @pytest.fixture(autouse=True)
     def inject_log_fixture(self, request):
@@ -79,7 +78,6 @@ class IntegrationTest(object):
         self.client.quit()
         subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
         sleep(0.2)  # Killing takes some time
-        self.tasks = self.__class__.tasks  # Reset the task list
 
     def command(self, command, silent=True, regex=None, lines=None):
         result = self.client.command(command)
