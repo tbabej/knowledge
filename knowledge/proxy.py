@@ -362,7 +362,7 @@ class AnkiProxy(SRSProxy):
     SYMBOL_I_CLOSE = "</i>"
     SYMBOL_IMG_OPEN = "<img src=\""
     SYMBOL_IMG_CLOSE = "\">"
-    SYMBOL_CLOZE_OPEN = "{{{{c{cloze}::"
+    SYMBOL_CLOZE_OPEN = "{{{{c{count}::"
     SYMBOL_CLOZE_CLOSE = "}}"
     SYMBOL_NEWLINE = "<br>"
 
