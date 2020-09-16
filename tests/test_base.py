@@ -42,11 +42,20 @@ class IntegrationTest(object):
             six.text_type(end+1)
             ).splitlines()
 
-    def setup_db(self):
+    def setup_db(self, proxy):
         self.dir = tempfile.mkdtemp(dir='/tmp/')
+        self.srs_dir = os.path.join(self.dir, 'srs_data')
         self.db_file = os.path.join(self.dir, 'knowledge.db')
-        shutil.copyfile("tests/assets/mnemosyne-empty.db",
-                        os.path.join(self.dir, "default.db"))
+
+        # Ensure the directory for the SRS data exists
+        os.mkdir(self.srs_dir)
+
+        if proxy == "Mnemosyne":
+            self.srs_db = os.path.join(self.srs_dir, "default.db")
+            shutil.copyfile("tests/assets/mnemosyne-empty.db", self.srs_db)
+        elif proxy == "Anki":
+            self.srs_db = os.path.join(self.srs_dir, "collection.anki2")
+            shutil.copyfile("tests/assets/anki-empty.anki2", self.srs_db)
 
     def start_client(self, retry=3):
         try:
@@ -58,17 +67,17 @@ class IntegrationTest(object):
             else:
                 raise
 
-    def configure_global_variables(self):
-        self.command('let g:knowledge_data_dir="{0}"'.format(self.dir))
+    def configure_global_variables(self, proxy):
+        self.command('let g:knowledge_srs_db="{0}"'.format(self.srs_db))
         self.command('let g:knowledge_db_file="{0}"'.format(self.db_file))
-        self.command('let g:knowledge_srs_provider="Mnemosyne"')
+        self.command(f'let g:knowledge_srs_provider="{proxy}"')
         self.command('let g:knowledge_measure_coverage="yes"')
 
     def pretest_setup(self, proxy):
-        self.setup_db()
+        self.setup_db(proxy)
         self.start_client()  # Start client with 3 chances
-        self.configure_global_variables()
-        self.filepath = os.path.join(self.dir, 'knowledge.txt')
+        self.configure_global_variables(proxy)
+        self.filepath = os.path.join(self.dir, f'knowledge.txt')
         self.add_plugin('knowledge')
         self.add_plugin('vimwiki', 'plugin/vimwiki.vim')
         self.client.edit(self.filepath)
@@ -132,7 +141,7 @@ class IntegrationTest(object):
         # Success in the sanity check
         return True
 
-    @pytest.mark.parametrize("proxy", ["mnemosyne", "anki"])
+    @pytest.mark.parametrize("proxy", ["Anki", "Mnemosyne"])
     def test_execute(self, request, proxy):
         # First, run sanity checks
         success = False
@@ -214,10 +223,10 @@ class IntegrationTest(object):
                 for identifier in identifiers
             ]
 
-            if proxy == "mnemosyne":
+            if proxy == "Mnemosyne":
                 from mnemosyne.script import Mnemosyne
 
-                mnemosyne = Mnemosyne(self.dir)
+                mnemosyne = Mnemosyne(self.srs_dir)
                 db = mnemosyne.database()
 
                 facts = [
