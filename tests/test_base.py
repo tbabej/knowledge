@@ -83,6 +83,7 @@ class IntegrationTest(object):
 
     def command(self, command, silent=True, regex=None, lines=None):
         result = self.client.command(command)
+        self.log(result)
 
         # Specifying regex or lines cancels expectations of silence
         if regex or lines:
