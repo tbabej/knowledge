@@ -78,6 +78,7 @@ class IntegrationTest(object):
         if hasattr(self, 'client'):
             self.client.quit()
         subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
+        shutil.rmtree(self.dir)
         sleep(0.2)  # Killing takes some time
 
     def command(self, command, silent=True, regex=None, lines=None):
