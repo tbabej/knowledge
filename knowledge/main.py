@@ -28,9 +28,9 @@ from knowledge.wikinote import WikiNote, Header
 
 def get_proxy():
     if k.config.SRS_PROVIDER == 'Anki':
-        return AnkiProxy(k.config.DATA_DIR)
+        return AnkiProxy(k.config.SRS_DB)
     elif k.config.SRS_PROVIDER == 'Mnemosyne':
-        return MnemosyneProxy(k.config.DATA_DIR)
+        return MnemosyneProxy(os.path.dirname(k.config.SRS_DB))
     elif k.config.SRS_PROVIDER is None:
         raise k.errors.KnowledgeException(
             "Variable knowledge_srs_provider has to have "

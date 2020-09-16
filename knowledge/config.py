@@ -8,7 +8,7 @@ import os
 
 MEASURE_COVERAGE = utils.decode_bytes(vim.vars.get('knowledge_measure_coverage'))
 SRS_PROVIDER = utils.decode_bytes(vim.vars.get('knowledge_srs_provider'))
-DATA_DIR = utils.decode_bytes(vim.vars.get('knowledge_data_dir'))
+SRS_DB = utils.decode_bytes(vim.vars.get('knowledge_srs_db'))
 DB_FILE = utils.decode_bytes(vim.vars.get(
     'knowledge_db_file',
     os.path.expanduser("~/.knowledge.db")
