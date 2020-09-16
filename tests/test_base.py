@@ -75,7 +75,8 @@ class IntegrationTest(object):
         self.command('set filetype=vimwiki')
 
     def posttest_teardown(self):
-        self.client.quit()
+        if hasattr(self, 'client'):
+            self.client.quit()
         subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
         sleep(0.2)  # Killing takes some time
 
