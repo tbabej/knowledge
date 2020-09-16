@@ -46,7 +46,7 @@ class IntegrationTest(object):
     def setup_db(self):
         self.dir = tempfile.mkdtemp(dir='/tmp/')
         self.db_file = os.path.join(self.dir, 'knowledge.db')
-        shutil.copyfile("tests/mnemosyne-empty.db",
+        shutil.copyfile("tests/assets/mnemosyne-empty.db",
                         os.path.join(self.dir, "default.db"))
 
     def start_client(self, retry=3):
