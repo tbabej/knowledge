@@ -1,6 +1,3 @@
-[report]
-omit = /usr/*,/tmp/*,*/tests/*,*/__init__.py,*/knowledge/testcoverage.py
-[paths]
-source =
-    .
-    /root/.vim/bundle/knowledge
+[run]
+source = knowledge
+data_file = /tmp/knowledge-coverage/.coverage

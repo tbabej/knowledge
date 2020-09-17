@@ -24,11 +24,6 @@ if exists("g:knowledge_extension") && s:extension != g:knowledge_extension
     finish
 endif
 
-" Run the measure parts first, if desired
-if exists("g:knowledge_measure_coverage")
-  execute 'py3file ' . s:knowledge_plugin_path . '/knowledge/testcoverage.py'
-endif
-
 " Execute the main body of taskwiki source
 execute 'py3file ' . s:knowledge_plugin_path . '/knowledge/main.py'
 

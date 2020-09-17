@@ -71,7 +71,6 @@ class IntegrationTest(object):
         self.command('let g:knowledge_srs_db="{0}"'.format(self.srs_db))
         self.command('let g:knowledge_db_file="{0}"'.format(self.db_file))
         self.command(f'let g:knowledge_srs_provider="{proxy}"')
-        self.command('let g:knowledge_measure_coverage="yes"')
 
     def pretest_setup(self, proxy):
         self.current_directory = os.getcwd()

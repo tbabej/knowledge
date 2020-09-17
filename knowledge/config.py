@@ -6,7 +6,6 @@ from knowledge import utils
 import vim
 import os
 
-MEASURE_COVERAGE = utils.decode_bytes(vim.vars.get('knowledge_measure_coverage'))
 SRS_PROVIDER = utils.decode_bytes(vim.vars.get('knowledge_srs_provider'))
 SRS_DB = utils.decode_bytes(vim.vars.get('knowledge_srs_db'))
 DB_FILE = utils.decode_bytes(vim.vars.get(
