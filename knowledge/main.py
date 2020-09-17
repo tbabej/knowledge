@@ -102,7 +102,8 @@ class HeaderStack(object):
         keys = sorted(self.headers.keys(), reverse=True)
         for key in keys:
             model = self.headers[key].data.get('model')
-            if model is not None: return model 
+            if model is not None: return model
+
 class BufferProxy(object):
 
     def __init__(self, buffer_object):
