@@ -74,6 +74,7 @@ class IntegrationTest(object):
         self.command('let g:knowledge_measure_coverage="yes"')
 
     def pretest_setup(self, proxy):
+        self.current_directory = os.getcwd()
         self.setup_db(proxy)
         self.start_client()  # Start client with 3 chances
         self.configure_global_variables(proxy)
@@ -89,6 +90,8 @@ class IntegrationTest(object):
         subprocess.call(['pkill', '-f', f'gvim.*--servername {server_name}'])
         shutil.rmtree(self.dir)
         sleep(0.2)  # Killing takes some time
+        # Recover the working directory state, because sometimes Anki can mangle it
+        os.chdir(self.current_directory)
 
     def command(self, command, silent=True, regex=None, lines=None):
         result = self.client.command(command)
