@@ -22,7 +22,7 @@ class TestCreateBasicNoteUnderHeader(IntegrationTest):
             mnemosyne_front='Life questions\n\nThis is a question',
             anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
-            tags=['Life']
+            deck='Life',
         )
     ]
 
@@ -48,7 +48,7 @@ class TestCreateClozeNoteUnderHeader(IntegrationTest):
         dict(
             mnemosyne_text="Life questions\n\nThe visible spectrum is between [390 to 700] nm.",
             anki_text="Life questions<br><br>The visible spectrum is between {{c1::390 to 700}} nm.",
-            tags=['Physics']
+            deck='Physics',
         )
     ]
 
@@ -77,7 +77,7 @@ class TestCreateBasicNoteUnderHeaderWithSubdeck(IntegrationTest):
             mnemosyne_front='Life questions\n\nThis is a question',
             anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
-            tags=['Life::Questions']
+            deck='Life::Questions',
         )
     ]
 
@@ -110,7 +110,7 @@ class TestCreateBasicNoteUnderNestedHeadersOverriden(IntegrationTest):
             mnemosyne_front='Life\n\nThis is a question',
             anki_front='Life<br><br>This is a question',
             back='And this is the answer',
-            tags=['Life']
+            deck='Life',
         )
     ]
 
@@ -139,7 +139,7 @@ class TestTokenInterpretedAsDeckByDefault(IntegrationTest):
             mnemosyne_front='Life questions\n\nThis is a question',
             anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
-            tags=['Life']
+            deck='Life'
         )
     ]
 
@@ -168,7 +168,8 @@ class TestHeaderExtraTag(IntegrationTest):
             mnemosyne_front='Life questions\n\nThis is a question',
             anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
-            tags=['Life', 'extra']
+            tags=['extra'],
+            deck='Life',
         )
     ]
 
@@ -201,7 +202,8 @@ class TestHeaderStacking(IntegrationTest):
             mnemosyne_front='Life questions\n\nThis is a question',
             anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
-            tags=['Math::Goniometric', 'formulas']
+            tags=['formulas'],
+            deck='Math::Goniometric',
         )
     ]
 
