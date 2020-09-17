@@ -44,8 +44,11 @@ class TestCreateBasicMultilineNote(IntegrationTest):
     notes = [
         dict(
             front='This is a multiline question',
-            back="And this is the answer\n"
+            mnemosyne_back="And this is the answer\n"
                  "which spans over multiple lines\n"
+                 "and nobody minds.",
+            anki_back="And this is the answer<br>"
+                 "which spans over multiple lines<br>"
                  "and nobody minds."
         )
     ]
@@ -70,7 +73,9 @@ class TestCreateBasicUnicodeNote(IntegrationTest):
 
     notes = [
         dict(
-            front=u'Toto je otázka ktorá nemá úplne ľahkú odpoveď.\n'
+            mnemosyne_front=u'Toto je otázka ktorá nemá úplne ľahkú odpoveď.\n'
+                  u'Bude tento program fungovať aj s krásnou diakritikou?',
+            anki_front=u'Toto je otázka ktorá nemá úplne ľahkú odpoveď.<br>'
                   u'Bude tento program fungovať aj s krásnou diakritikou?',
             back=u'Veruže bude, prečo by nefungoval?',
         )
@@ -95,7 +100,8 @@ class TestCreateBasicMathNote(IntegrationTest):
     notes = [
         dict(
             front='State the Pythagorean theorem',
-            back='<$>c^2 = a^2 + b^2</$>',
+            mnemosyne_back='<$>c^2 = a^2 + b^2</$>',
+            anki_back='[$]c^2 = a^2 + b^2[/$]',
         )
     ]
 

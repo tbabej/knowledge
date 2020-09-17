@@ -19,7 +19,8 @@ class TestCreateBasicNoteUnderHeader(IntegrationTest):
 
     notes = [
         dict(
-            front='Life questions\n\nThis is a question',
+            mnemosyne_front='Life questions\n\nThis is a question',
+            anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -45,7 +46,8 @@ class TestCreateClozeNoteUnderHeader(IntegrationTest):
 
     notes = [
         dict(
-            text="Life questions\n\nThe visible spectrum is between [390 to 700] nm.",
+            mnemosyne_text="Life questions\n\nThe visible spectrum is between [390 to 700] nm.",
+            anki_text="Life questions<br><br>The visible spectrum is between {{c1::390 to 700}} nm.",
             tags=['Physics']
         )
     ]
@@ -72,7 +74,8 @@ class TestCreateBasicNoteUnderHeaderWithSubdeck(IntegrationTest):
 
     notes = [
         dict(
-            front='Life questions\n\nThis is a question',
+            mnemosyne_front='Life questions\n\nThis is a question',
+            anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
             tags=['Life::Questions']
         )
@@ -104,7 +107,8 @@ class TestCreateBasicNoteUnderNestedHeadersOverriden(IntegrationTest):
 
     notes = [
         dict(
-            front='Life\n\nThis is a question',
+            mnemosyne_front='Life\n\nThis is a question',
+            anki_front='Life<br><br>This is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -132,7 +136,8 @@ class TestTokenInterpretedAsDeckByDefault(IntegrationTest):
 
     notes = [
         dict(
-            front='Life questions\n\nThis is a question',
+            mnemosyne_front='Life questions\n\nThis is a question',
+            anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
             tags=['Life']
         )
@@ -160,7 +165,8 @@ class TestHeaderExtraTag(IntegrationTest):
 
     notes = [
         dict(
-            front='Life questions\n\nThis is a question',
+            mnemosyne_front='Life questions\n\nThis is a question',
+            anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
             tags=['Life', 'extra']
         )
@@ -192,7 +198,8 @@ class TestHeaderStacking(IntegrationTest):
 
     notes = [
         dict(
-            front='Life questions\n\nThis is a question',
+            mnemosyne_front='Life questions\n\nThis is a question',
+            anki_front='Life questions<br><br>This is a question',
             back='And this is the answer',
             tags=['Math::Goniometric', 'formulas']
         )

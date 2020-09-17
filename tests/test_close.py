@@ -13,7 +13,8 @@ class TestCreateClozeNote(IntegrationTest):
 
     notes = [
         dict(
-            text='The circumference of Earth is approximately [6378] km.',
+            mnemosyne_text='The circumference of Earth is approximately [6378] km.',
+            anki_text='The circumference of Earth is approximately {{c1::6378}} km.',
         )
     ]
 
@@ -35,7 +36,8 @@ class TestCreateClozeNoteParagraph(IntegrationTest):
 
     notes = [
         dict(
-            text='The circumference of Earth is\napproximately [6378] km.',
+            mnemosyne_text='The circumference of Earth is\napproximately [6378] km.',
+            anki_text='The circumference of Earth is<br>approximately {{c1::6378}} km.',
         )
     ]
 
@@ -61,10 +63,14 @@ class TestCreateClozeNoteLongParagraph(IntegrationTest):
 
     notes = [
         dict(
-            text='The circumference of Earth,\n'
-                 'the third planet in the Solar System\n'
-                 'by its distance from the Sun (the central star of the system)\n'
-                 'is approximately [6378] km.',
+            mnemosyne_text='The circumference of Earth,\n'
+                           'the third planet in the Solar System\n'
+                           'by its distance from the Sun (the central star of the system)\n'
+                           'is approximately [6378] km.',
+            anki_text='The circumference of Earth,<br>'
+                      'the third planet in the Solar System<br>'
+                      'by its distance from the Sun (the central star of the system)<br>'
+                      'is approximately {{c1::6378}} km.',
         )
     ]
 
@@ -86,8 +92,10 @@ class TestCreateMultilineClozeNote(IntegrationTest):
 
     notes = [
         dict(
-            text='First law: The orbit of a planet is [an ellipse with the Sun at '
-                 'one of the two\nfoci]',
+            mnemosyne_text='First law: The orbit of a planet is [an ellipse with the Sun at '
+                           'one of the two\nfoci]',
+            anki_text='First law: The orbit of a planet is {{c1::an ellipse with the Sun at '
+                      'one of the two<br>foci}}',
         )
     ]
 
@@ -108,7 +116,8 @@ class TestCreateClozeNoteParagraphReformatting(IntegrationTest):
 
     notes = [
         dict(
-            text='The circumference of\nEarth is approximately [6378] km.',
+            mnemosyne_text='The circumference of\nEarth is approximately [6378] km.',
+            anki_text='The circumference of<br>Earth is approximately {{c1::6378}} km.',
         )
     ]
 

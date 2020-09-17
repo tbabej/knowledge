@@ -23,26 +23,34 @@ class TestCreateNumlistItemNote(IntegrationTest):
 
     notes = [
         dict(
-            front='Steps to prepare an omellete:\n1. ',
+            mnemosyne_front='Steps to prepare an omellete:\n1. ',
+            anki_front='Steps to prepare an omellete:<br>1. ',
             back='1. Make sure you have money',
         ),
         dict(
-            front='Steps to prepare an omellete:\n1. Make sure you have money\n2. ',
+            mnemosyne_front='Steps to prepare an omellete:\n1. Make sure you have money\n2. ',
+            anki_front='Steps to prepare an omellete:<br>1. Make sure you have money<br>2. ',
             back='2. Go to the shop',
         ),
         dict(
-            front='Steps to prepare an omellete:\n1. Make sure you have money\n'
+            mnemosyne_front='Steps to prepare an omellete:\n1. Make sure you have money\n'
               '2. Go to the shop\n3. ',
+            anki_front='Steps to prepare an omellete:<br>1. Make sure you have money<br>'
+              '2. Go to the shop<br>3. ',
             back='3. Buy eggs and bacon',
         ),
         dict(
-            front='Steps to prepare an omellete:\n1. Make sure you have money\n'
+            mnemosyne_front='Steps to prepare an omellete:\n1. Make sure you have money\n'
                '2. Go to the shop\n3. Buy eggs and bacon\n4. ',
+            anki_front='Steps to prepare an omellete:<br>1. Make sure you have money<br>'
+               '2. Go to the shop<br>3. Buy eggs and bacon<br>4. ',
             back='4. Fry them on a pan'
         ),
         dict(
-            front='Steps to prepare an omellete:\n1. Make sure you have money\n'
+            mnemosyne_front='Steps to prepare an omellete:\n1. Make sure you have money\n'
               '2. Go to the shop\n3. Buy eggs and bacon\n4. Fry them on a pan\n5. ',
+            anki_front='Steps to prepare an omellete:<br>1. Make sure you have money<br>'
+              '2. Go to the shop<br>3. Buy eggs and bacon<br>4. Fry them on a pan<br>5. ',
             back='5. Eat!'
         ),
     ]

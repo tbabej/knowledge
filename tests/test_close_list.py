@@ -20,13 +20,16 @@ class TestCreateClozeItemNote(IntegrationTest):
 
     notes = [
         dict(
-            text='List of capitols:\n* England - [London]'
+            mnemosyne_text='List of capitols:\n* England - [London]',
+            anki_text='List of capitols:<br>* England - {{c1::London}}'
         ),
         dict(
-            text='List of capitols:\n* France - [Paris]'
+            mnemosyne_text='List of capitols:\n* France - [Paris]',
+            anki_text='List of capitols:<br>* France - {{c1::Paris}}'
         ),
         dict(
-            text='List of capitols:\n* Czech Republic - [Prague]'
+            mnemosyne_text='List of capitols:\n* Czech Republic - [Prague]',
+            anki_text='List of capitols:<br>* Czech Republic - {{c1::Prague}}'
         ),
     ]
 
@@ -53,15 +56,18 @@ class TestCreateMultiClozeItemNote(IntegrationTest):
 
     notes = [
         dict(
-            text='List of capitols:\n* [England] - [London]',
+            mnemosyne_text='List of capitols:\n* [England] - [London]',
+            anki_text='List of capitols:<br>* {{c1::England}} - {{c2::London}}',
             count=2
         ),
         dict(
-            text='List of capitols:\n* [France] - [Paris]',
+            mnemosyne_text='List of capitols:\n* [France] - [Paris]',
+            anki_text='List of capitols:<br>* {{c1::France}} - {{c2::Paris}}',
             count=2
         ),
         dict(
-            text='List of capitols:\n* [Czech Republic] - [Prague]',
+            mnemosyne_text='List of capitols:\n* [Czech Republic] - [Prague]',
+            anki_text='List of capitols:<br>* {{c1::Czech Republic}} - {{c2::Prague}}',
             count=2
         ),
     ]
@@ -92,16 +98,23 @@ class TestCreateMultiLineClozeItemNote(IntegrationTest):
 
     notes = [
         dict(
-            text='List of assembler instructions:\n* [mov eax, ebx] - [copies '
-                 'the data item referred\n'
-                 '  to by its second operand into the location\n'
-                 '  referred to by its first operand]',
+            mnemosyne_text='List of assembler instructions:\n* [mov eax, ebx] - [copies '
+                           'the data item referred\n'
+                           '  to by its second operand into the location\n'
+                           '  referred to by its first operand]',
+            anki_text='List of assembler instructions:<br>* {{c1::mov eax, ebx}} - {{c2::copies '
+                      'the data item referred<br>'
+                      '  to by its second operand into the location<br>'
+                      '  referred to by its first operand}}',
             count=2
         ),
         dict(
-            text='List of assembler instructions:\n* [push eax] - '
-                 '[places its operand onto the top\n'
-                 '  of the hardware supported stack in memory]',
+            mnemosyne_text='List of assembler instructions:\n* [push eax] - '
+                           '[places its operand onto the top\n'
+                           '  of the hardware supported stack in memory]',
+            anki_text='List of assembler instructions:<br>* {{c1::push eax}} - '
+                      '{{c2::places its operand onto the top<br>'
+                      '  of the hardware supported stack in memory}}',
             count=2
         ),
     ]
