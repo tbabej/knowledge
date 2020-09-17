@@ -252,12 +252,18 @@ class IntegrationTest(object):
                     assert front == fact.data.get('f')
                     assert back == fact.data.get('b')
 
-                    cards = db.cards_from_fact(fact)
-                    tags = (expected_fact.get('tags') or []) + ['knowledge']
-                    assert set(tags) == set([tag.name for tag in cards[0].tags])
-
                     # Assert that expected number of cards have been generated
+                    cards = db.cards_from_fact(fact)
                     assert len(db.cards_from_fact(fact)) == expected_fact.get('count', 1)
+
+                    tags = (expected_fact.get('tags') or []) + ['knowledge']
+
+                    # Mnemosyne stores the deck information as a tag
+                    if 'deck' in expected_fact:
+                        tags.append(expected_fact['deck'])
+
+                    # Assert that correct tags were assigned
+                    assert set(tags) == set([tag.name for tag in cards[0].tags])
 
                 # Assert that all facts have been tested
                 assert len(facts) == len(self.notes)
