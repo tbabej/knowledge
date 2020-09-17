@@ -1,0 +1,66 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - _defaults: # see Dockerfile for variable defaults
+          - PYTHON_VERSION: 3.7
+          - PYTHON_VERSION: 3.8
+    continue-on-error: ${{ matrix.continue-on-error == true }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Prepare docker image
+        run: |
+          set -ex -o pipefail
+          shopt -s lastpipe
+          (
+            echo PYTHON_VERSION="$PYTHON_VERSION"
+            echo ANKI_VERSION="$ANKI_VERSION"
+            echo MNEMOSYNE_VERSION="$MNEMOSYNE_VERSION"
+            echo VIM_VERSION="$VIM_VERSION"
+            echo VIMWIKI_VERSION="$VIMWIKI_VERSION"
+            cat Dockerfile
+          ) | sha256sum | read -r tag _
+          docker login "$DOCKER_REGISTRY" -u "$GITHUB_USER" -p "$GITHUB_TOKEN" || :
+          docker pull "$DOCKER_CACHE_IMAGE":"$tag" || :
+          DOCKER_BUILDKIT=1 docker build \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --cache-from "$DOCKER_CACHE_IMAGE":"$tag" \
+            ${PYTHON_VERSION:+--build-arg PYTHON_VERSION="$PYTHON_VERSION"} \
+            ${ANKI_VERSION:+--build-arg ANKI_VERSION="$ANKI_VERSION"} \
+            ${MNEMOSYNE_VERSION:+--build-arg MNEMOSYNE_VERSION="$MNEMOSYNE_VERSION"} \
+            ${VIM_VERSION:+--build-arg VIM_VERSION="$VIM_VERSION"} \
+            ${VIMWIKI_VERSION:+--build-arg VIMWIKI_VERSION="$VIMWIKI_VERSION"} \
+            -t knowledge_tests \
+            .
+          docker tag knowledge_tests "$DOCKER_CACHE_IMAGE":"$tag"
+          docker push "$DOCKER_CACHE_IMAGE":"$tag" || :
+        env:
+          ALPINE_VERSION: ${{ matrix.ALPINE_VERSION }}
+          PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
+          TASK_VERSION: ${{ matrix.TASK_VERSION }}
+          VIM_VERSION: ${{ matrix.VIM_VERSION }}
+          VIMWIKI_VERSION: ${{ matrix.VIMWIKI_VERSION }}
+          DOCKER_REGISTRY: docker.pkg.github.com
+          DOCKER_CACHE_IMAGE: docker.pkg.github.com/${{ github.repository }}/knowledge_tests
+          GITHUB_USER: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        run: make test PYTEST_FLAGS="-n8"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COVERALLS_PARALLEL: true
+
+  coveralls-finished:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Finished
+        uses: coverallsapp/github-action@v1.1.1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          parallel-finished: true
