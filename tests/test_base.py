@@ -301,16 +301,22 @@ class IntegrationTest(object):
                     assert front == get_field(fact, 'Front')
                     assert back == get_field(fact, 'Back')
 
+                    # Assert that the note belongs to the expected deck
+                    deck = expected_fact.get('deck')
+                    if deck:
+                        assert deck == collection.decks.get(fact.cards()[0].did)['name']
+
+                    # Assert that correct tags were assigned
                     tags = (expected_fact.get('tags') or []) + ['knowledge']
                     assert set(tags) == set(fact.tags)
 
-                    ## Assert that expected number of cards have been generated
+                    # Assert that expected number of cards have been generated
                     assert len(fact.cards()) == expected_fact.get('count', 1)
 
                 # Assert that all facts have been tested
                 assert len(facts) == len(self.notes)
 
-                ## Assert that all facts have been obtained
+                # Assert that all facts have been obtained
                 assert len(facts) == collection.noteCount()
 
     def execute(self):
