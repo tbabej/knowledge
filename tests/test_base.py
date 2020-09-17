@@ -258,8 +258,47 @@ class IntegrationTest(object):
                 # Assert that all facts have been obtained
                 assert len(facts) == db.fact_count()
 
-            elif proxy == "anki":
-                pass
+            elif proxy == "Anki":
+                import anki
+                collection = anki.collection.Collection(self.srs_db)
+
+                facts = [
+                    anki.notes.Note(collection, id=int(identifier))
+                    for identifier in translated_identifiers
+                ]
+
+                def get_field(anki_fact, field_name):
+                    """
+                    Obtain given field from the Anki's Note object, or None
+                    if the field is not present.
+                    """
+                    try:
+                        return fact[field_name]
+                    except KeyError:
+                        pass
+
+                for index, fact in enumerate(facts):
+                    expected_fact = self.notes[index]
+
+                    text = expected_fact.get('anki_text') or expected_fact.get('text')
+                    back = expected_fact.get('anki_back') or expected_fact.get('back')
+                    front = expected_fact.get('anki_front') or expected_fact.get('front')
+
+                    assert text == get_field(fact, 'Text')
+                    assert front == get_field(fact, 'Front')
+                    assert back == get_field(fact, 'Back')
+
+                    tags = (expected_fact.get('tags') or []) + ['knowledge']
+                    assert set(tags) == set(fact.tags)
+
+                    ## Assert that expected number of cards have been generated
+                    assert len(fact.cards()) == expected_fact.get('count', 1)
+
+                # Assert that all facts have been tested
+                assert len(facts) == len(self.notes)
+
+                ## Assert that all facts have been obtained
+                assert len(facts) == collection.noteCount()
 
     def execute(self):
         pass
