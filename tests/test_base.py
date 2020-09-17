@@ -83,6 +83,10 @@ class IntegrationTest(object):
         self.add_plugin('vimwiki', 'plugin/vimwiki.vim')
         self.client.edit(self.filepath)
         self.command('set filetype=vimwiki')
+        # TODO: First write with Anki backend for some unknown reason unsets
+        # the filename in vim, but the subsequent writes work fine.
+        # Perform the first write here and ignore the output
+        self.command(f'w', silent=None)
 
     def posttest_teardown(self):
         if hasattr(self, 'client'):
