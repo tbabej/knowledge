@@ -21,6 +21,9 @@ sys.path.insert(0, KNOWLEDGE_BASE_DIR)
 # using common names such as 'errors' or 'utils' using shortname
 # for the whole module
 import knowledge as k
+# TODO: Make these imports lazy
+import knowledge.regexp
+import knowledge.backend
 
 from knowledge.proxy import AnkiProxy, MnemosyneProxy
 from knowledge.wikinote import WikiNote, Header
