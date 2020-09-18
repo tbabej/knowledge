@@ -40,9 +40,9 @@ jobs:
           docker tag knowledge_tests "$DOCKER_CACHE_IMAGE":"$tag"
           docker push "$DOCKER_CACHE_IMAGE":"$tag" || :
         env:
-          ALPINE_VERSION: ${{ matrix.ALPINE_VERSION }}
           PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
-          TASK_VERSION: ${{ matrix.TASK_VERSION }}
+          ANKI_VERSION: ${{ matrix.ANKI_VERSION }}
+          MNEMOSYNE_VERSION: ${{ matrix.MNEMOSYNE_VERSION }}
           VIM_VERSION: ${{ matrix.VIM_VERSION }}
           VIMWIKI_VERSION: ${{ matrix.VIMWIKI_VERSION }}
           DOCKER_REGISTRY: docker.pkg.github.com
