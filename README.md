@@ -2,8 +2,8 @@
 
 _Store your knowledge both in text and neurons._
 
-[![Travis build status](https://travis-ci.org/tbabej/knowledge.svg?branch=master)](https://travis-ci.org/tbabej/knowledge)
-[![Coverage Status](https://coveralls.io/repos/tbabej/knowledge/badge.svg?branch=master)](https://coveralls.io/r/tbabej/knowledge?branch=master)
+[![GitHub Actions build status](https://github.com/tools-life/knowledge/workflows/tests/badge.svg?branch=master)](https://github.com/tools-life/knowledge/actions)
+[![Coverage Status](https://coveralls.io/repos/tools-life/knowledge/badge.svg?branch=master)](https://coveralls.io/r/tools-life/knowledge?branch=master)
 
 Knowledge is a (Neo)Vim plugin that helps you actually remember what you wrote down in your notes, forever.
 
