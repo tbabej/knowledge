@@ -8,40 +8,40 @@ from knowledge import config
 
 
 QUESTION = re.compile(
-    '^'                                    # Starts at the begging
-    '(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
-    '('
-      '\s+'                                # Followed by any whitespace
-      '@(?P<identifier>.*)'                # With opt. identifier marked by @
-    ')?'
-    '\s*'
-    '$'                                    # Matches on whole line
+    r'^'                                    # Starts at the begging
+    r'(?P<question>({prefixes})[^\[\]]+?)'  # Using an allowed prefix
+    r'('
+      r'\s+'                                # Followed by any whitespace
+      r'@(?P<identifier>.*)'                # With opt. identifier marked by @
+    r')?'
+    r'\s*'
+    r'$'                                    # Matches on whole line
     .format(prefixes='|'.join(config.QUESTION_PREFIXES))
 )
 
 # Marks do not start on a 4-space indented lines, and are not preceded by
 # a another '{' or ':' (wikilinks)
-CLOSE_MARK = re.compile('^(?!    ).* \{[^\{]+')
-CLOSE_IDENTIFIER = re.compile('\s@(?P<identifier>[A-Za-z0-9]{11})\s*$', re.MULTILINE)
+CLOSE_MARK = re.compile(r'^(?!    ).* \{[^\{]+')
+CLOSE_IDENTIFIER = re.compile(r'\s@(?P<identifier>[A-Za-z0-9]{11})\s*$', re.MULTILINE)
 
 NOTE_HEADLINE = {
     'default': re.compile(
-        '^'                       # Starts at the begging of the line
-        '(?P<header_start>[=]+)'  # Heading beggining
-        '(?P<name>[^=\|\[]*)'     # Name of the viewport, all before the @ sign
-        '@'                       # Divider @
-        '(?P<metadata>[^=@]*?)'   # Metadata string
-        '\s*'                     # Any whitespace
-        '([=]+)'                  # Heading ending
+        r'^'                       # Starts at the begging of the line
+        r'(?P<header_start>[=]+)'  # Heading beggining
+        r'(?P<name>[^=\|\[]*)'     # Name of the viewport, all before the @ sign
+        r'@'                       # Divider @
+        r'(?P<metadata>[^=@]*?)'   # Metadata string
+        r'\s*'                     # Any whitespace
+        r'([=]+)'                  # Heading ending
     ),
     'markdown': re.compile(
-        '^'                       # Starts at the begging of the line
-        '(?P<header_start>[#]+)'  # Heading beggining
-        '(?P<name>[^#\|\[]*)'     # Name of the viewport, all before the @ sign
-        '@'                       # Divider @
-        '(?P<metadata>[^=@]*?)'   # Metadata string
-        '\s*'                     # Any whitespace
-        '$'                       # End of the line
+        r'^'                       # Starts at the begging of the line
+        r'(?P<header_start>[#]+)'  # Heading beggining
+        r'(?P<name>[^#\|\[]*)'     # Name of the viewport, all before the @ sign
+        r'@'                       # Divider @
+        r'(?P<metadata>[^=@]*?)'   # Metadata string
+        r'\s*'                     # Any whitespace
+        r'$'                       # End of the line
     ),
 }
 
