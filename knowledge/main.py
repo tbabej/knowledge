@@ -372,14 +372,27 @@ def convert_to_pdf(interactive=False):
        ''
     ])
 
+    def outside_math(x, method):
+        """
+        Apply method only to the substrings of x that are not in the "math mode".
+        """
+
+        return '$$'.join([
+            '$'.join([
+                method(inner) if inner_index % 2 == 0 and outer_index % 2 == 0 else inner
+                for inner_index, inner in enumerate(re.split(r'\$', part))
+            ])
+            for outer_index, part in enumerate(re.split(r'\$\$', x))
+        ])
+
     text_substitutions = [
         # Add extra line to have lists recognized as md lists
         lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
         # Add extra line to have enumerations recognized
         lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
         # Markup clozes as underlined OCGs
-        lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)\}', r'\\knowledgeCloze{\g<cloze>}{}', t, flags=re.MULTILINE),
-        lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)( )?:( )?(?P<hint>[^\{\}]+)\}', r'\\knowledgeCloze{\g<cloze>}{\g<hint>}', t, flags=re.MULTILINE),
+        lambda x: outside_math(x, lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)\}', r'\\knowledgeCloze{\g<cloze>}{}', t, flags=re.MULTILINE)),
+        lambda x: outside_math(x, lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)( )?:( )?(?P<hint>[^\{\}]+)\}', r'\\knowledgeCloze{\g<cloze>}{\g<hint>}', t, flags=re.MULTILINE)),
         # Convert code blocks to lstlisting in a given language, because pandoc cannot do it with "- " prefix
         lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
     ]
