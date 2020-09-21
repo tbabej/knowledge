@@ -452,8 +452,9 @@ def convert_to_pdf(interactive=False):
 
     tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
-    output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.pdf', filename))
+    output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
+    # Convert the markdown file to tex source
     with open(tmpdir / 'source.md', 'w') as f:
         f.write(preamble + '\n\n' + '\n'.join(lines))
         f.flush()
@@ -467,4 +468,8 @@ def convert_to_pdf(interactive=False):
             '--listings'
         ])
 
-    subprocess.call(['xdg-open', output_filepath])
+    # Compile the latex source
+    subprocess.check_output(['pdflatex', '-output-directory', tmpdir, output_filepath])
+
+    # Launch the PDF viewer
+    subprocess.call(['xdg-open', k.regexp.EXTENSION.sub('.pdf', output_filepath)])
