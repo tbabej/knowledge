@@ -418,6 +418,9 @@ def convert_to_pdf(interactive=False):
     text = '\n'.join(processed_text_parts)
     lines = text.splitlines()
 
+    # Determine the folder of the file
+    media_folder = Path(k.utils.get_absolute_filepath()).parent / '.media'
+
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
@@ -427,6 +430,7 @@ def convert_to_pdf(interactive=False):
         lambda l: re.sub(r':\[', r'[', l),
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
         lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
+        lambda l: re.sub(r'!\[(?P<label>.+)\]\(file:\.media/(?P<filename>[^\)]+)\)', rf"![\g<label>]({media_folder}/\g<filename>)", l),
     ]
 
     for substitution in substitutions:
@@ -469,7 +473,14 @@ def convert_to_pdf(interactive=False):
         ])
 
     # Compile the latex source
-    subprocess.check_output(['pdflatex', '-output-directory', tmpdir, output_filepath])
+    subprocess.check_output(
+        [
+            'pdflatex',
+            '-output-directory', str(tmpdir),
+            output_filepath
+        ],
+        cwd=str(tmpdir)
+    )
 
     # Launch the PDF viewer
     subprocess.call(['xdg-open', k.regexp.EXTENSION.sub('.pdf', output_filepath)])
