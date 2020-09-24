@@ -16,7 +16,8 @@ jobs:
       - name: Prepare docker image
         run: |
           docker --version
-          sudo apt-get upgrade docker -y
+          which docker
+          dpkg -S $(which docker)
           set -ex -o pipefail
           shopt -s lastpipe
           (
