@@ -18,6 +18,7 @@ jobs:
           docker --version
           which docker
           dpkg -S $(which docker)
+          sudo apt-get upgrade moby-engine -y
           set -ex -o pipefail
           shopt -s lastpipe
           (
