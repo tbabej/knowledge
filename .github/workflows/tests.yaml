@@ -25,7 +25,7 @@ jobs:
             echo VIM_VERSION="$VIM_VERSION"
             echo VIMWIKI_VERSION="$VIMWIKI_VERSION"
             cat Dockerfile
-          ) | sha256sum | read -r tag _
+          ) | sha256sum | read -n 8 -r tag _
           docker login "$DOCKER_REGISTRY" -u "$GITHUB_USER" -p "$GITHUB_TOKEN" || :
           docker pull "$DOCKER_CACHE_IMAGE":"$tag" || :
           docker build \
@@ -34,9 +34,9 @@ jobs:
             ${MNEMOSYNE_VERSION:+--build-arg MNEMOSYNE_VERSION="$MNEMOSYNE_VERSION"} \
             ${VIM_VERSION:+--build-arg VIM_VERSION="$VIM_VERSION"} \
             ${VIMWIKI_VERSION:+--build-arg VIMWIKI_VERSION="$VIMWIKI_VERSION"} \
-            -t knowledge_tests \
+            -t tests \
             .
-          docker tag knowledge_tests "$DOCKER_CACHE_IMAGE":"$tag"
+          docker tag tests "$DOCKER_CACHE_IMAGE":"$tag"
           docker push "$DOCKER_CACHE_IMAGE":"$tag" || :
         env:
           PYTHON_VERSION: ${{ matrix.PYTHON_VERSION }}
@@ -45,7 +45,7 @@ jobs:
           VIM_VERSION: ${{ matrix.VIM_VERSION }}
           VIMWIKI_VERSION: ${{ matrix.VIMWIKI_VERSION }}
           DOCKER_REGISTRY: docker.pkg.github.com
-          DOCKER_CACHE_IMAGE: docker.pkg.github.com/${{ github.repository }}/knowledge_tests
+          DOCKER_CACHE_IMAGE: docker.pkg.github.com/${{ github.repository }}/tests
           GITHUB_USER: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Test
