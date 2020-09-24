@@ -2,7 +2,7 @@ name: tests
 on: [push, pull_request]
 jobs:
   tests:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -16,9 +16,6 @@ jobs:
       - name: Prepare docker image
         run: |
           docker --version
-          which docker
-          dpkg -S $(which docker)
-          sudo apt-get upgrade moby-engine -y
           set -ex -o pipefail
           shopt -s lastpipe
           (
