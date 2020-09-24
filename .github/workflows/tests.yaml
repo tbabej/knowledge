@@ -28,9 +28,7 @@ jobs:
           ) | sha256sum | read -r tag _
           docker login "$DOCKER_REGISTRY" -u "$GITHUB_USER" -p "$GITHUB_TOKEN" || :
           docker pull "$DOCKER_CACHE_IMAGE":"$tag" || :
-          DOCKER_BUILDKIT=1 docker build \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --cache-from "$DOCKER_CACHE_IMAGE":"$tag" \
+          docker build \
             ${PYTHON_VERSION:+--build-arg PYTHON_VERSION="$PYTHON_VERSION"} \
             ${ANKI_VERSION:+--build-arg ANKI_VERSION="$ANKI_VERSION"} \
             ${MNEMOSYNE_VERSION:+--build-arg MNEMOSYNE_VERSION="$MNEMOSYNE_VERSION"} \
