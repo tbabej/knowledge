@@ -991,6 +991,27 @@ $else$
   \renewcommand{\footrulewidth}{0.4pt}
 }
 \pagestyle{eisvogel-header-footer}
+% Make footnotes compatible with fancyhdr
+% Based on https://tex.stackexchange.com/a/528249
+\newcommand{\makefootnotelist}[1]{%
+    \parbox{0.8\textwidth} {%
+        \footnotesize{%
+            \renewcommand*{\do}[1]{##1\\}%
+            \dolistcsloop{#1}}}}%
+\newcommand{\fancyfootnote}[1]{%
+    \footnotemark{}\kern -0.2em%
+    \def\listname{footlist\thepage}%
+    \def\n{$^{\the\numexpr\value{footnote}}$}
+    \ifcsdef{\listname}%
+        {\listcseadd{\listname}{\n\ #1}}%
+        {\csedef{\listname}{}%
+        \listcseadd{\listname}{\n\ #1}}%
+    \fancypagestyle{fancyfootnote}{%
+        \fancyfoot[LO,RE]{\makefootnotelist{\listname}}%
+        \fancyfoot[RO,LE]{\thepage}%
+        \fancyfoot[C]{}%
+    }\thispagestyle{fancyfootnote}}%
+\renewcommand{\footnote}[1]{\fancyfootnote{#1}}
 $if(page-background)$
 \backgroundsetup{
 scale=1,
