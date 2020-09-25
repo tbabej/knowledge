@@ -421,6 +421,24 @@ def convert_to_pdf(interactive=False):
     # Determine the folder of the file
     media_folder = Path(k.utils.get_absolute_filepath()).parent / '.media'
 
+    def process_picture(line):
+        """
+        Process the Markdown styled picture and set the expected width.
+        """
+
+        match = re.match(k.regexp.IMAGE, line)
+        if not match:
+            return line
+
+        if not match.group('format'):
+            formatting = "width=75%"
+        elif 'width' not in match.group('format'):
+            formatting = f"{match.group('format')} width=75%"
+        else:
+            formatting = match.group('format')
+
+        return rf"![{match.group('label')}]({media_folder}/{match.group('filename')}){{{formatting}}}"
+
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
         lambda l: re.sub(k.regexp.NOTE_HEADLINE['markdown'], r'\1\2', l),
@@ -430,7 +448,7 @@ def convert_to_pdf(interactive=False):
         lambda l: re.sub(r':\[', r'[', l),
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
         lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
-        lambda l: re.sub(r'!\[(?P<label>.+)\]\(file:\.media/(?P<filename>[^\)]+)\)', rf"![\g<label>]({media_folder}/\g<filename>)", l),
+        lambda l: process_picture(l),
     ]
 
     for substitution in substitutions:

@@ -47,3 +47,4 @@ NOTE_HEADLINE = {
 
 NUMLIST_MARK = re.compile(r'^(\d+\.)+ ')
 EXTENSION = re.compile(r'\.[^/]+$')
+IMAGE = re.compile(r'!\[(?P<label>.+)\]\(file:\.media/(?P<filename>[^\)]+)\)(\{(?P<format>[^\}]+)\})?')
