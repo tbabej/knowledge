@@ -78,6 +78,27 @@ class TestCreateClozeNoteLongParagraph(IntegrationTest):
         self.command("w", regex="written$", lines=1)
 
 
+class TestCreateClozeAtLineStart(IntegrationTest):
+
+    viminput = """
+    {Bratislava} is the capital city of Slovakia.
+    """
+
+    vimoutput = """
+    {Bratislava} is the capital city of Slovakia. {identifier}
+    """
+
+    notes = [
+        dict(
+            mnemosyne_text='[Bratislava] is the capital city of Slovakia.',
+            anki_text='{{c1::Bratislava}} is the capital city of Slovakia.',
+        )
+    ]
+
+    def execute(self):
+        self.command("w", regex="written$", lines=1)
+
+
 class TestCreateMultilineClozeNote(IntegrationTest):
 
     viminput = """
