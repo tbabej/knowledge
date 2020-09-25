@@ -391,8 +391,8 @@ def convert_to_pdf(interactive=False):
         # Add extra line to have enumerations recognized
         lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
         # Markup clozes as underlined OCGs
-        lambda x: outside_math(x, lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)\}', r'\\knowledgeCloze{\g<cloze>}{}', t, flags=re.MULTILINE)),
-        lambda x: outside_math(x, lambda t: re.sub(r'\{(?P<cloze>[^\{\}:]+)( )?:( )?(?P<hint>[^\{\}]+)\}', r'\\knowledgeCloze{\g<cloze>}{\g<hint>}', t, flags=re.MULTILINE)),
+        lambda x: outside_math(x, lambda t: re.sub(r'(^|\s)\{(?P<cloze>[^\{\}:]+)\}', r' \\knowledgeCloze{\g<cloze>}{}', t, flags=re.MULTILINE)),
+        lambda x: outside_math(x, lambda t: re.sub(r'(^|\s)\{(?P<cloze>[^\{\}:]+)( )?:( )?(?P<hint>[^\{\}]+)\}', r' \\knowledgeCloze{\g<cloze>}{\g<hint>}', t, flags=re.MULTILINE)),
         # Convert code blocks to lstlisting in a given language, because pandoc cannot do it with "- " prefix
         lambda l: re.sub(r'\n- \`\`\`(\w*)\s*\n(- [^\`]+\n)+- \`\`\`', r'\n- \\begin{lstlisting}[style=knowledge_question,language=\1]\n\2- \\end{lstlisting}', l),
     ]
