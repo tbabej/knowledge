@@ -271,7 +271,11 @@ class SRSProxy(object):
         cloze_open = False
 
         for index, char in enumerate(field):
-            if char == '{' and re.match(r'\s', field[index-1]) and not cloze_open:
+            cloze_opening = (
+                char == '{' and
+                (index == 0 or re.match(r'\s', field[index-1]))
+            )
+            if cloze_opening and not cloze_open:
                 last_open_index = index
                 cloze_open = True
                 cloze_count += 1
