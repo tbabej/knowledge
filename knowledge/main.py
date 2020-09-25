@@ -430,12 +430,23 @@ def convert_to_pdf(interactive=False):
         if not match:
             return line
 
-        if not match.group('format'):
-            formatting = "width=75%"
-        elif 'width' not in match.group('format'):
-            formatting = f"{match.group('format')} width=75%"
+        # Determine the right width size
+        if match.group('size') == 'L':
+            width = "width=95%"
+        elif match.group('size') == 'M':
+            width = "width=50%"
+        elif match.group('size') == 'S':
+            width = "width=25%"
         else:
-            formatting = match.group('format')
+            width = "width=75%"
+
+        formatting = match.group('format') or ''
+
+        # Append width into the formatting string
+        if formatting and 'width' not in formatting:
+            formatting = f"{formatting} {width}"
+        else:
+            formatting = width
 
         return rf"![{match.group('label')}]({media_folder}/{match.group('filename')}){{{formatting}}}"
 
