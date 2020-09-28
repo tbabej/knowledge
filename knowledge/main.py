@@ -367,6 +367,8 @@ def convert_to_pdf(interactive=False):
        f'knowledge-interactive: {"true" if interactive else "false"}',
        f'knowledge-underline: {"true" if underline else "false"}',
        r'header-center: \knowledgeControls',
+       'reference-section-title: Sources',
+       'link-citations: true',
        '...',
        ''
     ])
@@ -491,6 +493,9 @@ def convert_to_pdf(interactive=False):
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
+    bibliography_path = data_folder / 'sources.bib'
+    bibliography_path.touch()
+
     # Convert the markdown file to tex source
     with open(tmpdir / 'source.md', 'w') as f:
         f.write(preamble + '\n\n' + '\n'.join(lines))
@@ -502,6 +507,8 @@ def convert_to_pdf(interactive=False):
             '-o', output_filepath,
             '--data-dir', pandoc_data_dir,
             '--template', 'knowledge-basic',
+            '--filter', 'pandoc-citeproc',
+            '--bibliography', str(bibliography_path),
             '--listings'
         ])
 
