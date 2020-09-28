@@ -12,6 +12,10 @@ DB_FILE = utils.decode_bytes(vim.vars.get(
     'knowledge_db_file',
     os.path.expanduser("~/.knowledge.db")
 ))
+DATA_FOLDER = utils.decode_bytes(vim.vars.get(
+    'knowledge_data_folder',
+    os.path.join(vim.eval("vimwiki#vars#get_wikilocal('path')"), '.data')
+))
 
 QUESTION_OMITTED_PREFIXES = utils.decode_bytes(vim.vars.get(
     'knowledge_omitted_prefixes',

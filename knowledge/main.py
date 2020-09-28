@@ -263,14 +263,13 @@ def paste_image():
     translator = basehash.base(k.constants.ALPHABET)
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
-    file_basedir = os.path.dirname(k.utils.get_absolute_filepath())
     filepath = os.path.join(
-        file_basedir,
+        k.config.DATA_FOLDER,
         '.media',
         identifier + '.png'
     )
 
-    # Create the .media directory
+    # Create the .media directory if does not exist
     media_basedir = os.path.dirname(filepath)
     if not os.path.exists(media_basedir):
         os.mkdir(media_basedir)
@@ -419,7 +418,12 @@ def convert_to_pdf(interactive=False):
     lines = text.splitlines()
 
     # Determine the folder of the file
-    media_folder = Path(k.utils.get_absolute_filepath()).parent / '.media'
+    data_folder = Path(k.config.DATA_FOLDER)
+    media_folder =  data_folder / '.media'
+
+    # Ensure the folder structure exists
+    data_folder.mkdir(exist_ok=True)
+    media_folder.mkdir(exist_ok=True)
 
     def process_picture(line):
         """
@@ -448,7 +452,7 @@ def convert_to_pdf(interactive=False):
         else:
             formatting = width
 
-        return rf"![{match.group('label')}]({media_folder}/{match.group('filename')}){{{formatting}}}"
+        return rf"![{match.group('label')}]({str(media_folder)}/{match.group('filename')}){{{formatting}}}"
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
