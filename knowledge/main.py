@@ -263,21 +263,16 @@ def paste_image():
     translator = basehash.base(k.constants.ALPHABET)
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
-    filepath = os.path.join(
-        k.config.DATA_FOLDER,
-        '.media',
-        identifier + '.png'
-    )
-
     # Create the .media directory if does not exist
-    media_basedir = os.path.dirname(filepath)
-    if not os.path.exists(media_basedir):
-        os.mkdir(media_basedir)
+    media_basedir = Path(k.config.DATA_FOLDER) / '.media'
+    media_basedir.mkdir(exist_ok=True)
+
+    filepath = media_basedir / (identifier + '.png')
 
     if sys.platform == 'linux':
         command = 'xclip -selection clipboard -t image/png -o'
     elif sys.platform == 'darwin':
-        command = f'pngpaste {filepath}'
+        command = f'pngpaste {str(filepath)}'
 
     stdout, stderr, code = k.utils.run(shlex.split(command))
 
@@ -289,12 +284,9 @@ def paste_image():
         with open(filepath, 'wb') as f:
             f.write(stdout)
 
+    # Modify the current line in place
     column = k.utils.get_current_column_number()
-    vim_file_link = ''.join([
-        '{{file:',
-        os.path.relpath(filepath, start=file_basedir),
-        '}}'
-    ])
+    vim_file_link = f'![image](media:{identifier + ".png"})'
 
     modified_line = ''.join([
         vim.current.line[:(column+1)],
