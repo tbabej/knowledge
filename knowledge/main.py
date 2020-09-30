@@ -541,6 +541,7 @@ def convert_to_pdf(interactive=False):
     subprocess.check_output(
         [
             'pdflatex',
+            '-interaction=batchmode',
             '-draftmode',
             output_filepath
         ],
@@ -549,7 +550,7 @@ def convert_to_pdf(interactive=False):
     subprocess.check_output(
         [
             'pdflatex',
-            '-output-directory', str(tmpdir),
+            '-interaction=batchmode',
             output_filepath
         ],
         cwd=str(tmpdir)
