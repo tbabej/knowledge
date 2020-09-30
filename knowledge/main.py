@@ -2,10 +2,12 @@ from __future__ import print_function
 import contextlib
 import datetime
 import functools
+import hashlib
 import operator
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -485,6 +487,7 @@ def convert_to_pdf(interactive=False):
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
+    # Ensure bibliography file exists
     bibliography_path = data_folder / 'sources.bib'
     bibliography_path.touch()
 
@@ -503,6 +506,36 @@ def convert_to_pdf(interactive=False):
             '--bibliography', str(bibliography_path),
             '--listings'
         ])
+
+    # Ensure cache folder exists
+    cache_folder = data_folder / 'cache'
+    cache_folder.mkdir(exist_ok=True)
+
+    # Precompile the cached preamble, if does not exist
+    preamble_hash = hashlib.sha256(preamble.encode('utf-8')).hexdigest()[:20]
+    cached_preamble = cache_folder / f"preamble_{preamble_hash}.fmt"
+
+    if not cached_preamble.exists():
+        subprocess.check_output(
+            [
+                'pdftex',
+                '-ini',
+                f'-jobname="{cached_preamble.name.split(".")[0]}"',
+                '&pdflatex',
+                'mylatexformat.ltx',
+                output_filepath
+            ],
+            cwd=str(tmpdir)
+        )
+        shutil.copy(tmpdir / cached_preamble.name, cached_preamble)
+    else:
+        shutil.copy(cached_preamble, tmpdir / cached_preamble.name)
+
+    # Insert the precompiled preamble reference
+    with open(output_filepath, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(f'%&{cached_preamble.name.split(".")[0]}\n{content}')
 
     # Compile the latex source
     subprocess.check_output(
