@@ -255,7 +255,7 @@ def close_questions():
 @k.errors.pretty_exception_handler
 def paste_image():
     """
-    Takes an image from the clipboard, pastes it into the .media directory
+    Takes an image from the clipboard, pastes it into the media directory
     and inserts a link to it into the buffer.
     """
 
@@ -263,8 +263,8 @@ def paste_image():
     translator = basehash.base(k.constants.ALPHABET)
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
-    # Create the .media directory if does not exist
-    media_basedir = Path(k.config.DATA_FOLDER) / '.media'
+    # Create the media directory if does not exist
+    media_basedir = Path(k.config.DATA_FOLDER) / 'media'
     media_basedir.mkdir(exist_ok=True)
 
     filepath = media_basedir / (identifier + '.png')
@@ -413,7 +413,7 @@ def convert_to_pdf(interactive=False):
 
     # Determine the folder of the file
     data_folder = Path(k.config.DATA_FOLDER)
-    media_folder =  data_folder / '.media'
+    media_folder = data_folder / 'media'
 
     # Ensure the folder structure exists
     data_folder.mkdir(exist_ok=True)
