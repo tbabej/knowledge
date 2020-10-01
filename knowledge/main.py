@@ -462,6 +462,7 @@ def convert_to_pdf(interactive=False):
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
         lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
         lambda l: re.sub(r'TODO:\s*(?P<content>.+)$', r'\\margintodo{\g<content>}', l),
+        lambda l: re.sub(k.regexp.SIMPLE_URL, r'[\g<domain>](\g<proto>\g<domain>\g<resource>)', l),
         lambda l: process_picture(l),
     ]
 
