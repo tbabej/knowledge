@@ -296,7 +296,7 @@ $endif$
 $else$
 $if(beamer)$
 $else$
-\usepackage[margin=2.5cm,marginparwidth=1.7cm,marginparsep=0.4cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
+\usepackage[margin=2.5cm,marginparwidth=2.0cm,marginparsep=0.3cm,includehead=true,includefoot=true,centering,$for(geometry)$$geometry$$sep$,$endfor$]{geometry}
 $endif$
 $endif$
 $if(logo)$
@@ -703,7 +703,7 @@ $if(titlepage-background)$
 $endif$
 $if(geometry)$
 $else$
-\usepackage[margin=2.5cm,marginparwidth=1.7cm,marginparsep=0.4cm,includehead=true,includefoot=true,centering]{geometry}
+\usepackage[margin=2.5cm,marginparwidth=2.0cm,marginparsep=0.3cm,includehead=true,includefoot=true,centering]{geometry}
 $endif$
 $endif$
 
