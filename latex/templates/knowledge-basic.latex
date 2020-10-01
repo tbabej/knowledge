@@ -425,6 +425,22 @@ $endif$
 \definecolor{lightyellow}{rgb}{1.0, 1.0, 0.88}
 \newlength{\todowidth}
 
+% Redefine the fancyline to be more subtle
+\makeatletter
+\renewcommand{\@todonotes@drawLineToRightMargin}{
+\if@todonotes@line
+\tikz[remember picture,overlay]{
+\tikzstyle{both}=[line width=1pt, draw, opacity=0.15]
+\tikzstyle{line}=[shorten >=2pt, line cap=round]
+\tikzstyle{head}=[opacity=0.35, shorten >=-1pt, dash pattern=on 0pt off 1pt, ->]
+\foreach \s in {line,head}{
+\draw[both,\s]
+(inNote.west).. controls +(0:0) and +(90:1.5)..([yshift=1ex] inText);
+}
+}
+\fi}%
+\makeatother
+
 \newcommand{\inlinetodo}[2][]{%
 % Prevent todonote lines that are overly long
 \settowidth{\todowidth}{\footnotesize #2}%
