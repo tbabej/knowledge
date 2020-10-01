@@ -385,6 +385,8 @@ def convert_to_pdf(interactive=False):
         lambda t: re.sub(r':\s*\n\* ', ':\n\n* ', t),
         # Add extra line to have enumerations recognized
         lambda t: re.sub(r':\s*\n(\d+)\. ', r':\n\n\1. ', t),
+        # Inline todos are surrounded by blank lines
+        lambda t: re.sub(r'\n\s*\n\s*TODO:\s*(?P<content>[^\n]+)\n\s*\n', r'\n\n\\inlinetodo{\g<content>}\n\n', t),
         # Markup clozes as underlined OCGs
         lambda x: outside_math(x, lambda t: re.sub(r'(^|\s)\{(?P<cloze>[^\{\}:]+)\}', r' \\knowledgeCloze{\g<cloze>}{}', t, flags=re.MULTILINE)),
         lambda x: outside_math(x, lambda t: re.sub(r'(^|\s)\{(?P<cloze>[^\{\}:]+)( )?:( )?(?P<hint>[^\{\}]+)\}', r' \\knowledgeCloze{\g<cloze>}{\g<hint>}', t, flags=re.MULTILINE)),
@@ -459,6 +461,7 @@ def convert_to_pdf(interactive=False):
         lambda l: re.sub(r':\[', r'[', l),
         lambda l: re.sub(r'^- ([^\`]*)\`([^\`]+)\`([^\`]*)$', r'- \1\\passthrough{\\lstinline[style=knowledge_question]!\2!}\3', l),
         lambda l: re.sub(r'^(?P<number>\d+)\. (?P<content>.+)', r'\g<number>. \\knowledgeEnum{\g<content>}', l),
+        lambda l: re.sub(r'TODO:\s*(?P<content>.+)$', r'\\margintodo{\g<content>}', l),
         lambda l: process_picture(l),
     ]
 
