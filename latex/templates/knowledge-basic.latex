@@ -419,6 +419,24 @@ $endif$
 \usepackage{censor}
 \usepackage{xcolor}
 \usepackage{contour}
+\usepackage{todonotes}
+
+% More easy on eyes than the default
+\definecolor{lightyellow}{rgb}{1.0, 1.0, 0.88}
+\newlength{\todowidth}
+
+\newcommand{\inlinetodo}[2][]{%
+% Prevent todonote lines that are overly long
+\settowidth{\todowidth}{\footnotesize #2}%
+\addtolength{\todowidth}{2.5em}%
+\todo[caption={#2}, size=\footnotesize, color=lightyellow, shadow, inline, inlinewidth=\todowidth, #1]{%
+\hfil#2\hfil}%
+}
+
+\newcommand{\margintodo}[2][]{%
+\todo[caption={#2}, size=\tiny, color=lightyellow, fancyline, shadow, #1]{%
+\begin{spacing}{0.8}#2\end{spacing}%
+}}
 
 \censorruledepth=-.25ex
 \censorruleheight=.05ex
