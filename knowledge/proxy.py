@@ -1,6 +1,7 @@
 import abc
 import os
 import re
+import pathlib
 import sys
 import time
 
@@ -11,7 +12,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 from knowledge.errors import KnowledgeException, FactNotFoundException
-from knowledge import config, utils
+from knowledge import config, utils, regexp
 
 
 class SRSProxy(object):
@@ -221,39 +222,19 @@ class SRSProxy(object):
 
         # Use list to store the string to avoid unnecessary
         # work with copying string once per each letter during buildup
-        result = []
-        inside_img = False
-        last_open_index = 0
+        images = list(regexp.IMAGE.finditer(field))
 
-        for index, char in enumerate(field):
-            if ''.join(field[index-7:index]) == '{{file:':
-                inside_img = True
-                result = result[:-7]
-                result.append(self.SYMBOL_IMG_OPEN)
-                last_open_index = len(result)
-                result.append(char)
-            elif inside_img and field[index-1:index+1] == '}}':
-                inside_img = False
-                result = result[:-1]  # Pop last '}'
+        for match in images:
+            filepath = pathlib.Path(config.DATA_FOLDER) / 'media' / match.group('filename')
 
-                # Extract the filename from the top of the stack
-                filepath = ''.join(result[last_open_index:])
-                result = result[:last_open_index]
+            # Make sure media file exists in SRS media directory
+            srs_filepath = self.add_media_file(filepath)
+            print(match.group())
 
-                # Make sure media file exists in SRS media directory
-                srs_filepath = self.add_media_file(filepath)
+            # Replace the markdown image with SRS syntax
+            field = field.replace(match.group(), self.SYMBOL_IMG_OPEN + srs_filepath + self.SYMBOL_IMG_CLOSE, 1)
 
-                # Add the corresponding Mnemosyne filename and end img tag
-                result.append(srs_filepath)
-                result.append(self.SYMBOL_IMG_CLOSE)
-            else:
-                result.append(char)
-
-        # If single {{ was converted, roll it back
-        if inside_img:
-            result[last_open_index] = '{{file:'
-
-        return ''.join(result)
+        return field
 
     def process_cloze(self, field):
         """
