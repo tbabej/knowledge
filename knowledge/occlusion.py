@@ -1,4 +1,6 @@
 #!/usr/bin/python
+import os
+import pathlib
 import threading
 
 import PyQt5
@@ -70,3 +72,13 @@ class OcclusionApplication:
 
         server = http.server.HTTPServer(('127.0.0.1', 8747), http.server.SimpleHTTPRequestHandler)
         server.serve_forever()
+
+    @classmethod
+    def run(cls):
+        """
+        Change the working directory of the process and launch the application.
+        """
+
+        workdir = str(pathlib.Path(__file__).absolute().parent.parent)
+        os.chdir(workdir)
+        cls()
