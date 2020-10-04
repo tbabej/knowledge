@@ -3,6 +3,7 @@ import contextlib
 import datetime
 import functools
 import hashlib
+import multiprocessing
 import operator
 import os
 import re
@@ -253,6 +254,14 @@ def close_questions():
     for number in range(len(buffer_proxy)):
         if re.search(k.regexp.QUESTION, buffer_proxy[number]) is not None:
             k.utils.close_fold(number)
+
+
+@k.errors.pretty_exception_handler
+def occlude_image():
+    import knowledge.occlusion
+    process = multiprocessing.Process(target=k.occlusion.OcclusionApplication.run, daemon=True)
+    process.start()
+
 
 @k.errors.pretty_exception_handler
 def paste_image():
