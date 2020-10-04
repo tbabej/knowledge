@@ -54,6 +54,7 @@ class OcclusionApplication:
         settings.setAttribute(QWebEngineSettings.LocalContentCanAccessFileUrls, True)
         settings.setAttribute(QWebEngineSettings.LocalContentCanAccessRemoteUrls, True)
         settings.setAttribute(QWebEngineSettings.JavascriptEnabled, True)
+        settings.setAttribute(QWebEngineSettings.ShowScrollBars, False)
 
         # Initialize the window
         window = OcclusionWindow()
