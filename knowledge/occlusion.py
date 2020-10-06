@@ -27,7 +27,21 @@ class OcclusionWindow(QWidget):
 
         # Load the URL
         view = QWebEngineView()
-        view.setUrl(QUrl("http://127.0.0.1:8747/svgedit/dist/editor/index.html"))
+
+        # Open the SVG editor
+        editor_url = "http://localhost:8747/svgedit/dist/editor/index.html?{options}".format(
+            options=urlencode({
+                'showRulers': 'false',
+                'initTool': 'rect',
+                'initStroke[color]': '292828',
+                'initStroke[width]': '3',
+                'initFill[color]': 'ffedaf',
+                'dimensions': '940,411',
+                'bkgd_url': 'background.png'
+            })
+        )
+
+        view.setUrl(QUrl(editor_url))
         view.showMaximized()
 
         lay = QVBoxLayout(self)
