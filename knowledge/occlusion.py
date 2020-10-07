@@ -6,7 +6,7 @@ import threading
 import PyQt5
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
-from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 
 
 class OcclusionWindow(QWidget):
@@ -27,6 +27,8 @@ class OcclusionWindow(QWidget):
 
         # Load the URL
         view = QWebEngineView()
+        profile = QWebEngineProfile.defaultProfile()
+        profile.setHttpCacheType(QWebEngineProfile.NoCache)
 
         # Open the SVG editor
         editor_url = "http://localhost:8747/svgedit/dist/editor/index.html?{options}".format(
