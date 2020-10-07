@@ -2,6 +2,8 @@
 import os
 import pathlib
 import threading
+import time
+from urllib.parse import urlencode
 
 import PyQt5
 from PyQt5.QtCore import QUrl
@@ -46,8 +48,22 @@ class OcclusionWindow(QWidget):
         view.setUrl(QUrl(editor_url))
         view.showMaximized()
 
-        lay = QVBoxLayout(self)
-        lay.addWidget(view)
+        self.view = view
+
+        layout = QVBoxLayout(self)
+        layout.addWidget(view)
+
+    def save_svg(self, value):
+        print(value)
+
+    def closeEvent(self, event):
+        page = self.view.page()
+        page.runJavaScript(
+            'window.editor.canvas.getSvgString();',
+            self.save_svg
+        )
+        time.sleep(0.1)  # necessary for callback to have time to execute
+        event.accept()
 
 
 class OcclusionApplication:
