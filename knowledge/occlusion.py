@@ -3,12 +3,15 @@ import os
 import pathlib
 import threading
 import time
+from pathlib import Path
 from urllib.parse import urlencode
 
 import PyQt5
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
+
+from knowledge import config
 
 
 class OcclusionWindow(QWidget):
@@ -90,8 +93,8 @@ class OcclusionApplication:
         settings.setAttribute(QWebEngineSettings.ShowScrollBars, False)
 
         # Initialize the window
-        window = OcclusionWindow()
-        window.show()
+        self.window = OcclusionWindow()
+        self.window.show()
 
         # Start the mainloop
         app.exec_()
@@ -108,11 +111,17 @@ class OcclusionApplication:
         server.serve_forever()
 
     @classmethod
-    def run(cls):
+    def run(cls, media_file: str):
         """
         Change the working directory of the process and launch the application.
         """
 
         workdir = str(pathlib.Path(__file__).absolute().parent.parent)
         os.chdir(workdir)
-        cls()
+        instance = cls()
+
+        occlusions_dir = Path(config.DATA_FOLDER) / 'occlusions'
+        occlusions_dir.mkdir(exist_ok=True)
+
+        with open(str(occlusions_dir / media_file) + '.svg', 'w') as f:
+            f.write(instance.window.value)
