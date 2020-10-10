@@ -258,10 +258,17 @@ def close_questions():
 
 @k.errors.pretty_exception_handler
 def occlude_image():
-    import knowledge.occlusion
-    process = multiprocessing.Process(target=k.occlusion.OcclusionApplication.run, daemon=True)
-    process.start()
-
+    match = re.search(k.regexp.IMAGE, vim.current.line)
+    if match is not None:
+        import knowledge.occlusion
+        process = multiprocessing.Process(
+            target=k.occlusion.OcclusionApplication.run,
+            args=(match.group('filename'),),
+            daemon=True
+        )
+        process.start()
+    else:
+        raise k.errors.KnowledgeException("No image detected on this line")
 
 @k.errors.pretty_exception_handler
 def paste_image():
