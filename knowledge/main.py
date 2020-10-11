@@ -503,7 +503,7 @@ def convert_to_pdf(interactive=False):
             lines[start] += f"{{{icon.command}}}{{{icon.fontsize}}}{{{icon.raise_mm}}}"
             lines[end-1] += '\n\\end{knowledgeQuestion}'
 
-    tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-'))
+    tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-pdf-'))
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
