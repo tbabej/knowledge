@@ -1,4 +1,5 @@
 basehash
 pony
 pygments
+imagesize
 # xclip - via system manager
