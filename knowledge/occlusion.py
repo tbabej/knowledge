@@ -7,6 +7,7 @@ import time
 from pathlib import Path
 from urllib.parse import urlencode
 
+import imagesize
 import PyQt5
 from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
@@ -37,6 +38,9 @@ class OcclusionWindow(QWidget):
         profile = QWebEngineProfile.defaultProfile()
         profile.setHttpCacheType(QWebEngineProfile.NoCache)
 
+        # Determine the dimensions of the image
+        width, height = imagesize.get('background.png')
+
         # Open the SVG editor
         editor_url = "http://localhost:8747/editor/index.html?{options}".format(
             options=urlencode({
@@ -45,7 +49,7 @@ class OcclusionWindow(QWidget):
                 'initStroke[color]': '292828',
                 'initStroke[width]': '3',
                 'initFill[color]': 'ffedaf',
-                'dimensions': '940,411',
+                'dimensions': f'{width},{height}',
                 'bkgd_url': '../background.png'
             })
         )
