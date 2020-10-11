@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import pathlib
+import tempfile
 import threading
 import time
 from pathlib import Path
@@ -11,7 +12,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 
-from knowledge import config
+from knowledge import config, constants
 
 
 class OcclusionWindow(QWidget):
@@ -37,7 +38,7 @@ class OcclusionWindow(QWidget):
         profile.setHttpCacheType(QWebEngineProfile.NoCache)
 
         # Open the SVG editor
-        editor_url = "http://localhost:8747/svgedit/dist/editor/index.html?{options}".format(
+        editor_url = "http://localhost:8747/editor/index.html?{options}".format(
             options=urlencode({
                 'showRulers': 'false',
                 'initTool': 'rect',
@@ -45,7 +46,7 @@ class OcclusionWindow(QWidget):
                 'initStroke[width]': '3',
                 'initFill[color]': 'ffedaf',
                 'dimensions': '940,411',
-                'bkgd_url': 'background.png'
+                'bkgd_url': '../background.png'
             })
         )
 
@@ -116,8 +117,16 @@ class OcclusionApplication:
         Change the working directory of the process and launch the application.
         """
 
-        workdir = str(pathlib.Path(__file__).absolute().parent.parent)
-        os.chdir(workdir)
+        # Create a temporary directory and change our working directory
+        tmpdir = Path(tempfile.mkdtemp(prefix='knowledge-occ-'))
+        os.chdir(tmpdir)
+
+        # Setup content for the server
+        media_file_path = Path(config.DATA_FOLDER) / 'media' / media_file
+        editor_path = constants.PLUGIN_ROOT_DIR / 'svgedit/dist/editor'
+        os.symlink(media_file_path, 'background.png')
+        os.symlink(editor_path, 'editor')
+
         instance = cls()
 
         occlusions_dir = Path(config.DATA_FOLDER) / 'occlusions'
