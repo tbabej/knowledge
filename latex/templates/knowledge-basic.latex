@@ -413,7 +413,7 @@ $endif$
 \hypersetup{colorlinks=true,linkcolor=default-linkcolor,filecolor=default-linkcolor}
 \usepackage{awesomebox}
 \usepackage{sectsty}
-\usepackage{ocgx2}
+\usepackage[tikz]{ocgx2}
 \usepackage{etoolbox}
 \usepackage{transparent}
 \usepackage{censor}
@@ -481,6 +481,7 @@ $endif$
 \newcounter{questioncounter}[section]
 \newcounter{enumcounter}[section]
 \newcounter{clozecounter}[section]
+\newcounter{figurecounter}[section]
 \newcounter{hintcounter}[page]
 \addtocounter{section}{1}
 
@@ -512,6 +513,37 @@ $endif$
 \sectionfont{\fontsize{21}{24}\selectfont\centering}
 \subsectionfont{\fontsize{15}{18}\selectfont\centering}
 \subsubsectionfont{\fontsize{12}{15}\selectfont\centering}
+
+\newcommand{\knowledgeFigure}[4]{%
+% #1: Path to the picture
+% #2: Path to the occlusion
+% #3: Includegraphics settings
+% #4: Caption
+\begin{figure}
+\centering
+\iftoggle{interactive}{%
+  % #2 contains path to occlusion overlay
+  \ifstrempty{#2}{%
+    % Normal figure
+    \includegraphics[#3]{#1}
+  }
+  {
+    \addtocounter{figurecounter}{1}%
+    \listxadd{\allocgs}{P\thesection.\thefigurecounter}
+    \begin{tikzpicture}[every node/.style={anchor=north west, inner sep=0.pt}]
+      \node (fig1) at (0, 0) {\includegraphics[#3]{#1}};
+      \begin{scope}[ocg={ref=P\thesection.\thefigurecounter, name=NP\thesection.\thefigurecounter}]
+      \node[switch ocg=P\thesection.\thefigurecounter] (fig2) at (0, 0) {\includegraphics[#3]{#2}};
+      \end{scope}
+    \end{tikzpicture}
+  }
+}
+{
+    \includegraphics[#3]{#1}
+}
+\caption{#4}
+\end{figure}
+}
 
 \newcommand{\knowledgeCloze}[2]{%
 \addtocounter{clozecounter}{1}%
