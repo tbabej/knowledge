@@ -21,9 +21,10 @@ class OcclusionWindow(QWidget):
     Widget displaying the browser with the SVGEditor.
     """
 
-    def __init__(self):
+    def __init__(self, svg_filepath):
         super().__init__()
         self.value = None
+        self.svg_filepath = svg_filepath
         self.init_ui()
 
     def init_ui(self):
@@ -41,19 +42,23 @@ class OcclusionWindow(QWidget):
         # Determine the dimensions of the image
         width, height = imagesize.get('background.png')
 
-        # Open the SVG editor
-        editor_url = "http://localhost:8747/editor/index.html?{options}".format(
-            options=urlencode({
-                'showRulers': 'false',
-                'initTool': 'rect',
-                'initStroke[color]': '292828',
-                'initStroke[width]': '3',
-                'initFill[color]': 'ffedaf',
-                'dimensions': f'{width},{height}',
-                'bkgd_url': '../background.png'
-            })
-        )
+        editor_options = {
+            'showRulers': 'false',
+            'initTool': 'rect',
+            'initStroke[color]': '292828',
+            'initStroke[width]': '3',
+            'initFill[color]': 'ffedaf',
+            'dimensions': f'{width},{height}',
+            'bkgd_url': '../background.png',
+        }
 
+        # Load the SVG content, if exists
+        if os.path.exists(self.svg_filepath):
+            with open(self.svg_filepath, 'r') as f:
+                editor_options['source'] = f'data:image/svg+xml;utf8,{f.read()}'
+
+        # Open the SVG editor
+        editor_url = f"http://localhost:8747/editor/index.html?{urlencode(editor_options)}"
         view.setUrl(QUrl(editor_url))
         view.showMaximized()
 
@@ -80,7 +85,7 @@ class OcclusionApplication:
     Wrapper for the occlusion window.
     """
 
-    def __init__(self):
+    def __init__(self, svg_filepath):
         """
         Performs setup for the occlusion window and launches the mainloop.
         """
@@ -98,7 +103,7 @@ class OcclusionApplication:
         settings.setAttribute(QWebEngineSettings.ShowScrollBars, False)
 
         # Initialize the window
-        self.window = OcclusionWindow()
+        self.window = OcclusionWindow(svg_filepath)
         self.window.show()
 
         # Start the mainloop
@@ -131,10 +136,11 @@ class OcclusionApplication:
         os.symlink(media_file_path, 'background.png')
         os.symlink(editor_path, 'editor')
 
-        instance = cls()
-
         occlusions_dir = Path(config.DATA_FOLDER) / 'occlusions'
         occlusions_dir.mkdir(exist_ok=True)
 
-        with open(str(occlusions_dir / media_file) + '.svg', 'w') as f:
+        svg_filepath = str(occlusions_dir / media_file) + '.svg'
+        instance = cls(svg_filepath)
+
+        with open(svg_filepath, 'w') as f:
             f.write(instance.window.value)
