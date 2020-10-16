@@ -434,10 +434,12 @@ def convert_to_pdf(interactive=False):
     # Determine the folder of the file
     data_folder = Path(k.config.DATA_FOLDER)
     media_folder = data_folder / 'media'
+    occlusion_folder = data_folder / 'occlusions'
 
     # Ensure the folder structure exists
     data_folder.mkdir(exist_ok=True)
     media_folder.mkdir(exist_ok=True)
+    occlusion_folder.mkdir(exist_ok=True)
 
     def process_picture(line):
         """
@@ -450,23 +452,26 @@ def convert_to_pdf(interactive=False):
 
         # Determine the right width size
         if match.group('size') == 'L':
-            width = "width=95%"
+            width = r"width=0.95\textwidth"
         elif match.group('size') == 'M':
-            width = "width=50%"
+            width = r"width=0.50\textwidth"
         elif match.group('size') == 'S':
-            width = "width=25%"
+            width = r"width=0.25\textwidth"
         else:
-            width = "width=75%"
+            width = r"width=0.75\textwidth"
 
         formatting = match.group('format') or ''
 
         # Append width into the formatting string
         if formatting and 'width' not in formatting:
-            formatting = f"{formatting} {width}"
+            formatting = f"{formatting},{width}"
         else:
             formatting = width
 
-        return rf"![{match.group('label')}]({str(media_folder)}/{match.group('filename')}){{{formatting}}}"
+        media_filepath = media_folder / match.group('filename')
+        occlusion_filepath = occlusion_folder / match.group('filename')
+
+        return rf"\knowledgeFigure{{{str(media_filepath)}}}{{{str(occlusion_filepath) if occlusion_filepath.exists() else ''}}}{{{formatting}}}{{{match.group('label')}}}"
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
