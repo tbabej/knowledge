@@ -536,31 +536,33 @@ def convert_to_pdf(interactive=False):
     cache_folder = data_folder / 'cache'
     cache_folder.mkdir(exist_ok=True)
 
-    # Precompile the cached preamble, if does not exist
-    preamble_hash = hashlib.sha256(preamble.encode('utf-8')).hexdigest()[:20]
-    cached_preamble = cache_folder / f"preamble_{preamble_hash}.fmt"
+    # Preamble compilation only works in non-interactive mode
+    if not interactive:
+        # Precompile the cached preamble, if does not exist
+        preamble_hash = hashlib.sha256(preamble.encode('utf-8')).hexdigest()[:20]
+        cached_preamble = cache_folder / f"preamble_{preamble_hash}.fmt"
 
-    if not cached_preamble.exists():
-        subprocess.check_output(
-            [
-                'pdftex',
-                '-ini',
-                f'-jobname="{cached_preamble.name.split(".")[0]}"',
-                '&pdflatex',
-                'mylatexformat.ltx',
-                output_filepath
-            ],
-            cwd=str(tmpdir)
-        )
-        shutil.copy(tmpdir / cached_preamble.name, cached_preamble)
-    else:
-        shutil.copy(cached_preamble, tmpdir / cached_preamble.name)
+        if not cached_preamble.exists():
+            subprocess.check_output(
+                [
+                    'pdftex',
+                    '-ini',
+                    f'-jobname="{cached_preamble.name.split(".")[0]}"',
+                    '&pdflatex',
+                    'mylatexformat.ltx',
+                    output_filepath
+                ],
+                cwd=str(tmpdir)
+            )
+            shutil.copy(tmpdir / cached_preamble.name, cached_preamble)
+        else:
+            shutil.copy(cached_preamble, tmpdir / cached_preamble.name)
 
-    # Insert the precompiled preamble reference
-    with open(output_filepath, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write(f'%&{cached_preamble.name.split(".")[0]}\n{content}')
+        # Insert the precompiled preamble reference
+        with open(output_filepath, 'r+') as f:
+            content = f.read()
+            f.seek(0, 0)
+            f.write(f'%&{cached_preamble.name.split(".")[0]}\n{content}')
 
     # Compile the latex source
     subprocess.check_output(
