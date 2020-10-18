@@ -569,7 +569,7 @@ def convert_to_pdf(interactive=False):
         [
             'pdflatex',
             '-interaction=batchmode',
-            '-draftmode',
+            '-draftmode' if not interactive else '',
             output_filepath
         ],
         cwd=str(tmpdir)
