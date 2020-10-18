@@ -471,7 +471,7 @@ def convert_to_pdf(interactive=False):
         media_filepath = media_folder / match.group('filename')
         occlusion_filepath = occlusion_folder / match.group('filename')
 
-        return rf"\knowledgeFigure{{{str(media_filepath)}}}{{{str(occlusion_filepath) if occlusion_filepath.exists() else ''}}}{{{formatting}}}{{{match.group('label')}}}"
+        return rf"\knowledgeFigure{{{str(media_filepath)}}}{{{str(occlusion_filepath) if interactive and occlusion_filepath.exists() else ''}}}{{{formatting}}}{{{match.group('label')}}}"
 
     # Perform substitutions (removing identifiers and other syntactic sugar)
     substitutions = [
