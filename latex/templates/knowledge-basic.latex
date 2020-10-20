@@ -477,6 +477,8 @@ $endif$
 \makeatother
 
 \def\allocgs{}
+\def\allocclusions{}
+
 \newcommand{\printocg}[1]{#1 }
 \newcounter{questioncounter}[section]
 \newcounter{enumcounter}[section]
@@ -503,9 +505,10 @@ $endif$
     \iftoggle{interactive}{
         \fontsize{8}{2}\selectfont
         \transparent{0.6}
-        \showocg{\forlistloop{\printocg}{\allocgs}}{\faClipboardCheck \kern2pt show} {\fontsize{9}{2}\selectfont /}
-        \hideocg{\forlistloop{\printocg}{\allocgs}}{\kern1pt \faEyeSlash \kern1pt hide}
+        \actionsocg{}{\forlistloop{\printocg}{\allocgs}}{\forlistloop{\printocg}{\allocclusions}}{\faClipboardCheck \kern2pt show} {\fontsize{9}{2}\selectfont /}
+        \actionsocg{}{\forlistloop{\printocg}{\allocclusions}}{\forlistloop{\printocg}{\allocgs}}{\kern1pt \faEyeSlash \kern1pt hide}
         \global\def\allocgs{}
+        \global\def\allocclusions{}
     }{}
 }
 
@@ -529,7 +532,7 @@ $endif$
   }
   {
     \addtocounter{figurecounter}{1}%
-    \listxadd{\allocgs}{P\thesection.\thefigurecounter}
+    \listxadd{\allocclusions}{P\thesection.\thefigurecounter}
     \begin{tikzpicture}[every node/.style={anchor=north west, inner sep=0.pt}]
       \node (fig1) at (0, 0) {\includegraphics[#3]{#1}};
       \begin{scope}[ocg={ref=P\thesection.\thefigurecounter, name=NP\thesection.\thefigurecounter}]
