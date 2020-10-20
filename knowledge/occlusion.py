@@ -14,7 +14,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 
-from knowledge import config, constants, regexp
+from knowledge import config, paths, regexp
 
 
 class OcclusionWindow(QWidget):
@@ -133,7 +133,7 @@ class OcclusionApplication:
 
         # Setup content for the server
         media_file_path = Path(config.DATA_FOLDER) / 'media' / media_file
-        editor_path = constants.PLUGIN_ROOT_DIR / 'svgedit/dist/editor'
+        editor_path = paths.PLUGIN_ROOT_DIR / 'svgedit/dist/editor'
         os.symlink(media_file_path, 'background.png')
         os.symlink(editor_path, 'editor')
 
