@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import pathlib
+import subprocess
 import tempfile
 import threading
 import time
@@ -13,7 +14,7 @@ from PyQt5.QtCore import QUrl
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout
 from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEngineSettings, QWebEngineProfile
 
-from knowledge import config, constants
+from knowledge import config, constants, regexp
 
 
 class OcclusionWindow(QWidget):
@@ -139,8 +140,16 @@ class OcclusionApplication:
         occlusions_dir = Path(config.DATA_FOLDER) / 'occlusions'
         occlusions_dir.mkdir(exist_ok=True)
 
-        svg_filepath = str(occlusions_dir / media_file) + '.svg'
+        svg_filepath = regexp.EXTENSION.sub('.svg', str(occlusions_dir / media_file))
         instance = cls(svg_filepath)
 
         with open(svg_filepath, 'w') as f:
             f.write(instance.window.value)
+
+        # Convert the SVG to PNG
+        subprocess.run([
+            'convert',
+            '-transparent', 'white',
+            svg_filepath,
+            regexp.EXTENSION.sub('.png', svg_filepath)
+        ])
