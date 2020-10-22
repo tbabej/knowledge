@@ -229,7 +229,6 @@ class SRSProxy(object):
 
             # Make sure media file exists in SRS media directory
             srs_filepath = self.add_media_file(filepath)
-            print(match.group())
 
             # Replace the markdown image with SRS syntax
             field = field.replace(match.group(), self.SYMBOL_IMG_OPEN + srs_filepath + self.SYMBOL_IMG_CLOSE, 1)
