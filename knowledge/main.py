@@ -282,10 +282,9 @@ def paste_image():
     identifier = translator.encode(uuid.uuid4().int >> 34).zfill(16)
 
     # Create the media directory if does not exist
-    media_basedir = Path(k.config.DATA_FOLDER) / 'media'
-    media_basedir.mkdir(exist_ok=True)
+    k.paths.MEDIA_DIR.mkdir(exist_ok=True, parents=True)
 
-    filepath = media_basedir / (identifier + '.png')
+    filepath = k.paths.MEDIA_DIR / (identifier + '.png')
 
     if sys.platform == 'linux':
         command = 'xclip -selection clipboard -t image/png -o'
@@ -431,16 +430,6 @@ def convert_to_pdf(interactive=False):
     text = '\n'.join(processed_text_parts)
     lines = text.splitlines()
 
-    # Determine the folder of the file
-    data_folder = Path(k.config.DATA_FOLDER)
-    media_folder = data_folder / 'media'
-    occlusion_folder = data_folder / 'occlusions'
-
-    # Ensure the folder structure exists
-    data_folder.mkdir(exist_ok=True)
-    media_folder.mkdir(exist_ok=True)
-    occlusion_folder.mkdir(exist_ok=True)
-
     def process_picture(line):
         """
         Process the Markdown styled picture and set the expected width.
@@ -468,8 +457,8 @@ def convert_to_pdf(interactive=False):
         else:
             formatting = width
 
-        media_filepath = media_folder / match.group('filename')
-        occlusion_filepath = occlusion_folder / match.group('filename')
+        media_filepath = k.paths.MEDIA_DIR / match.group('filename')
+        occlusion_filepath = k.paths.OCCLUSIONS_DIR / match.group('filename')
 
         return rf"\knowledgeFigure{{{str(media_filepath)}}}{{{str(occlusion_filepath) if interactive and occlusion_filepath.exists() else ''}}}{{{formatting}}}{{{match.group('label')}}}"
 
@@ -533,8 +522,7 @@ def convert_to_pdf(interactive=False):
         ])
 
     # Ensure cache folder exists
-    cache_folder = data_folder / 'cache'
-    cache_folder.mkdir(exist_ok=True)
+    k.paths.CACHE_DIR.mkdir(exist_ok=True, parents=True)
 
     # Preamble compilation only works in non-interactive mode
     if not interactive:
