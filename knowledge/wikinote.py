@@ -1,6 +1,7 @@
 import re
 
 import knowledge as k
+import knowledge.paths
 
 MARKUP_SYNTAX = k.utils.get_var('knowledge_syntax', 'default')
 

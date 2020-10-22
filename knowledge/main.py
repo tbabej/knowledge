@@ -502,7 +502,7 @@ def convert_to_pdf(interactive=False):
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
     # Ensure bibliography file exists
-    bibliography_path = data_folder / 'sources.bib'
+    bibliography_path = k.paths.DATA_DIR / 'sources.bib'
     bibliography_path.touch()
 
     # Convert the markdown file to tex source
@@ -528,7 +528,7 @@ def convert_to_pdf(interactive=False):
     if not interactive:
         # Precompile the cached preamble, if does not exist
         preamble_hash = hashlib.sha256(preamble.encode('utf-8')).hexdigest()[:20]
-        cached_preamble = cache_folder / f"preamble_{preamble_hash}.fmt"
+        cached_preamble = k.paths.CACHE_DIR / f"preamble_{preamble_hash}.fmt"
 
         if not cached_preamble.exists():
             subprocess.check_output(

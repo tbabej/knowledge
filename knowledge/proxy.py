@@ -12,7 +12,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 from knowledge.errors import KnowledgeException, FactNotFoundException
-from knowledge import config, utils, regexp
+from knowledge import config, utils, regexp, paths
 
 
 class SRSProxy(object):
@@ -225,7 +225,7 @@ class SRSProxy(object):
         images = list(regexp.IMAGE.finditer(field))
 
         for match in images:
-            filepath = pathlib.Path(config.DATA_FOLDER) / 'media' / match.group('filename')
+            filepath = paths.MEDIA_DIR / match.group('filename')
 
             # Make sure media file exists in SRS media directory
             srs_filepath = self.add_media_file(filepath)

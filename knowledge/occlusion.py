@@ -138,10 +138,10 @@ class OcclusionApplication:
         os.symlink(editor_path, 'editor')
 
         # Ensure occlusions directory exists
-        k.paths.OCCLUSIONS_DIR.mkdir(exist_ok=True, parents=True)
+        paths.OCCLUSIONS_DIR.mkdir(exist_ok=True, parents=True)
 
         # Open the occlusion SVG editor window
-        svg_filepath = regexp.EXTENSION.sub('.svg', str(occlusions_dir / media_file))
+        svg_filepath = regexp.EXTENSION.sub('.svg', str(paths.OCCLUSIONS_DIR / media_file))
         instance = cls(svg_filepath)
 
         # Write out the SVG file
