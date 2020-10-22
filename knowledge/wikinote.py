@@ -42,16 +42,29 @@ class WikiNote(object):
     @classmethod
     def from_line(cls, buffer_proxy, number, proxy, heading=None, tags=None, model=None, deck=None):
         """
-        This methods detects if a current line is a note-defining headline. If
+        This methods detects if a current line contains note-relevant information. If
         positive, it will try to parse the note data out of the block.
+
+        In particular, it detects:
+        - The beginning of an question block (i.e. Q: ....)
+        - Start of the cloze
+        - Enumeration item
+        - Occluded images
         """
 
         basic_question = re.search(k.regexp.QUESTION, buffer_proxy[number])
         close_mark_present = re.search(k.regexp.CLOSE_MARK, buffer_proxy[number])
         numlist_item = re.match(k.regexp.NUMLIST_MARK, buffer_proxy[number])
+        occluded_image = re.search(k.regexp.IMAGE, buffer_proxy[number])
 
-        if not any([basic_question, close_mark_present, numlist_item]):
+        if not any([basic_question, close_mark_present, numlist_item, occluded_image]):
             return None, 1
+
+        # Image line generates a note only if an occlusion exists
+        if occluded_image:
+            path = k.paths.OCCLUSIONS_DIR / occluded_image.group('filename')
+            if not path.exists():
+                return None, 1
 
         self = cls(buffer_proxy, proxy)
 
@@ -80,6 +93,8 @@ class WikiNote(object):
             line_shift = self.parse_numlist_item()
         elif basic_question:
             line_shift = self.parse_basic(basic_question)
+        elif occluded_image:
+            line_shift = self.parse_occlusion(occluded_image)
 
         return self, line_shift
 
@@ -318,6 +333,41 @@ class WikiNote(object):
         })
 
         return lines_inspected_forward
+
+    def parse_occlusion(self, occlusion):
+        current_line = self.buffer_proxy[(self.data['line'])]
+
+        # Parse out identifier
+        match = re.search(k.regexp.CLOSE_IDENTIFIER, current_line)
+        if match:
+            # If present, do not include it in the field, and save it
+            answerlines = re.sub(k.regexp.CLOSE_IDENTIFIER, '', current_line)
+            self.data['id'] = match.group('identifier')
+
+        # Images only take one line
+        self.data['last_line'] = self.data['line']
+
+        visible_path = k.paths.MEDIA_DIR / occlusion.group('filename')
+        occluded_path = k.paths.OCCLUSIONS_DIR / occlusion.group('filename')
+
+        visible_style =  "position:absolute;left:0px;top:0px;z-index:1;"
+        occlusion_style =  "position:absolute;left:0px;top:0px;z-index:2;"
+
+        questionlines = "<div style=\"position:relative;\">\n"
+        questionlines += f"![{occlusion.group('label')}]({visible_path}){{{visible_style}}}\n"
+        questionlines += f"![{occlusion.group('label')}]({occluded_path}){{{occlusion_style}}}\n"
+        questionlines += "</div>"
+
+        # Inject heading into the question
+        if self.data.get('heading'):
+            questionlines = self.data.get('heading') + '\n\n' + questionlines
+
+        self.fields.update({
+            'Front': questionlines,
+            'Back': f"![{occlusion.group('label')}]({visible_path})"
+        })
+
+        return 1
 
     @property
     def created(self):
