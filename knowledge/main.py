@@ -502,8 +502,7 @@ def convert_to_pdf(interactive=False):
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
     # Ensure bibliography file exists
-    bibliography_path = k.paths.DATA_DIR / 'sources.bib'
-    bibliography_path.touch()
+    k.paths.BIBLIOGRAPHY_PATH.touch()
 
     # Convert the markdown file to tex source
     with open(tmpdir / 'source.md', 'w') as f:
@@ -517,7 +516,7 @@ def convert_to_pdf(interactive=False):
             '--data-dir', pandoc_data_dir,
             '--template', 'knowledge-basic',
             '--filter', 'pandoc-citeproc',
-            '--bibliography', str(bibliography_path),
+            '--bibliography', str(k.paths.BIBLIOGRAPHY_PATH),
             '--listings'
         ])
 
