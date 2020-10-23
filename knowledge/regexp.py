@@ -48,4 +48,5 @@ NOTE_HEADLINE = {
 NUMLIST_MARK = re.compile(r'^(\d+\.)+ ')
 EXTENSION = re.compile(r'\.[^/]+$')
 IMAGE = re.compile(r'!(?P<size>[LMS])?\[(?P<label>.+)\]\(media:(?P<filename>[^\)]+)\)(\{(?P<format>[^\}]+)\})?')
+RAW_IMAGE = re.compile(r'!\[(?P<label>.+)\]\((?P<filepath>[^\)]+)\)(\{(?P<format>[^\}]+)\})?')
 SIMPLE_URL = re.compile(r'(?P<proto>http(s)?://)(?P<domain>[^\s/]+)(?P<resource>[^\s]*)')

@@ -233,6 +233,16 @@ class SRSProxy(object):
             # Replace the markdown image with SRS syntax
             field = field.replace(match.group(), self.SYMBOL_IMG_OPEN + srs_filepath + self.SYMBOL_IMG_CLOSE, 1)
 
+        # Process all remaining raw images
+        raw_images = list(regexp.RAW_IMAGE.finditer(field))
+        for match in raw_images:
+            filepath = match.group('filepath')
+
+            # Make sure media file exists in SRS media directory
+            srs_filepath = self.add_media_file(filepath)
+
+            field = field.replace(match.group(), f"<img src=\"{srs_filepath}\" style=\"{match.group('format')}\">", 1)
+
         return field
 
     def process_cloze(self, field):
