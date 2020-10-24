@@ -2,4 +2,6 @@ basehash
 pony
 pygments
 imagesize
+bibtexparser
+pyperclip
 # xclip - via system manager

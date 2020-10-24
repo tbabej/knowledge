@@ -315,6 +315,35 @@ def paste_image():
     vim.current.window.cursor = vim.current.window.cursor[0], column + len(vim_file_link)
 
 
+@k.errors.pretty_exception_handler
+def add_citation():
+    """
+    Takes a citation reference from the clipboard and adds it into the sources
+    file and adds a citation mark in the text.
+    """
+
+    # Optimizing runtime speed via local imports
+    import pyperclip
+
+    from bibtexparser.bwriter import BibTexWriter
+    from bibtexparser.bibdatabase import BibDatabase
+
+    # Obtain the URL from the clipboard and generate ID number from the hash
+    url = pyperclip.paste().strip()
+    hash_id = int(hashlib.sha256(url.encode('utf-8')).hexdigest(), 16) % 1000
+
+    # Generate the citation entry and add it into the sources.bib
+    citations_db = BibDatabase()
+    citations_db.entries = [{
+        'ENTRYTYPE': 'misc',
+        'ID': f"source{hash_id}",
+        'url': url
+    }]
+
+    with open(k.paths.BIBLIOGRAPHY_PATH, 'a') as f:
+        f.write(BibTexWriter().write(citations_db))
+
+
 def convert_to_pdf(interactive=False):
     lines = vim.current.buffer[:]
     data = {}
