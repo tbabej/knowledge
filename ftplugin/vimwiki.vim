@@ -42,6 +42,7 @@ augroup END
 command! KnowledgeBufferSave :py3 create_notes()
 command! KnowledgeCloseQuestions :py3 close_questions()
 command! KnowledgePasteImage :py3 paste_image()
+command! KnowledgeCite :py3 add_citation()
 command! KnowledgeOccludeImage :py3 occlude_image()
 command! KnowledgeNoteInfo :py3 note_info()
 command! KnowledgeDiag :py3 diagnose()
@@ -51,6 +52,7 @@ command! KnowledgeExportPDFInteractive :py3 convert_to_pdf(interactive=True)
 
 " Leader-related mappings.
 nmap <silent><buffer> <Leader>kp :KnowledgePasteImage<CR>
+nmap <silent><buffer> <Leader>kc :KnowledgeCite<CR>
 nmap <silent><buffer> <Leader>ko :KnowledgeOccludeImage<CR>
 nmap <silent><buffer> <Leader>ki :KnowledgeNoteInfo<CR>
 nmap <silent><buffer> <Leader>ke :KnowledgeExportPDF<CR>
