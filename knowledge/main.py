@@ -331,17 +331,28 @@ def add_citation():
     # Obtain the URL from the clipboard and generate ID number from the hash
     url = pyperclip.paste().strip()
     hash_id = int(hashlib.sha256(url.encode('utf-8')).hexdigest(), 16) % 1000
+    entry_id = f"source{hash_id}"
 
     # Generate the citation entry and add it into the sources.bib
     citations_db = BibDatabase()
     citations_db.entries = [{
         'ENTRYTYPE': 'misc',
-        'ID': f"source{hash_id}",
+        'ID': entry_id,
         'url': url
     }]
 
     with open(k.paths.BIBLIOGRAPHY_PATH, 'a') as f:
         f.write(BibTexWriter().write(citations_db))
+
+    # Add the citation into the text
+    line = vim.current.line
+
+    cloze_identifier = k.regexp.CLOSE_IDENTIFIER.search(line)
+    if cloze_identifier is None:
+        vim.current.line = f"{line} [@{entry_id}]"
+    else:
+        stripped_line = k.regexp.CLOSE_IDENTIFIER.sub('', line)
+        vim.current.line = f"{stripped_line} [@{entry_id}] {cloze_identifier.group()}"
 
 
 def convert_to_pdf(interactive=False):
