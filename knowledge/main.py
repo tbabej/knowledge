@@ -324,6 +324,7 @@ def add_citation():
 
     # Optimizing runtime speed via local imports
     import pyperclip
+    import requests_html
 
     from bibtexparser.bwriter import BibTexWriter
     from bibtexparser.bibdatabase import BibDatabase
@@ -333,11 +334,15 @@ def add_citation():
     hash_id = int(hashlib.sha256(url.encode('utf-8')).hexdigest(), 16) % 1000
     entry_id = f"source{hash_id}"
 
+    session = requests_html.HTMLSession()
+    title = session.get(url).html.find('title', first=True).text
+
     # Generate the citation entry and add it into the sources.bib
     citations_db = BibDatabase()
     citations_db.entries = [{
         'ENTRYTYPE': 'misc',
         'ID': entry_id,
+        'title': title,
         'url': url
     }]
 
