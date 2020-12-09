@@ -64,7 +64,7 @@ RUN wget https://github.com/mnemosyne-proj/mnemosyne/archive/${MNEMOSYNE_VERSION
     rm ${MNEMOSYNE_VERSION}.zip
 WORKDIR /opt/mnemosyne/mnemosyne-${MNEMOSYNE_VERSION}
 RUN pip3 install -r requirements.txt && \
-    pip3 install googletrans gtts && \
+    pip3 install googletrans google-trans-new gtts && \
     python3 setup.py install
 
 # Install Anki
