@@ -12,7 +12,7 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 from knowledge.errors import KnowledgeException, FactNotFoundException
-from knowledge import config, utils, regexp, paths
+from knowledge import config, utils, regexp, paths, vimutils
 
 
 class SRSProxy(object):
@@ -402,7 +402,7 @@ class AnkiProxy(SRSProxy):
             filename_abs = filename_expanded
         else:
             filename_abs = os.path.join(
-                os.path.dirname(utils.get_absolute_filepath()),
+                os.path.dirname(vimutils.get_absolute_filepath()),
                 filename_expanded
             )
 
@@ -644,7 +644,7 @@ class MnemosyneProxy(SRSProxy):
             filename_abs = filename_expanded
         else:
             filename_abs = os.path.join(
-                os.path.dirname(utils.get_absolute_filepath()),
+                os.path.dirname(vimutils.get_absolute_filepath()),
                 filename_expanded
             )
 

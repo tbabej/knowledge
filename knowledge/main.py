@@ -191,7 +191,7 @@ def note_info():
     with autodeleted_proxy() as srs_proxy:
         note, processed = WikiNote.from_line(
             buffer_proxy,
-            k.utils.get_current_line_number(),
+            k.vimutils.get_current_line_number(),
             srs_proxy,
             heading=None,
             tags=None,
@@ -253,7 +253,7 @@ def close_questions():
 
     for number in range(len(buffer_proxy)):
         if re.search(k.regexp.QUESTION, buffer_proxy[number]) is not None:
-            k.utils.close_fold(number)
+            k.vimutils.close_fold(number)
 
 
 @k.errors.pretty_exception_handler
@@ -302,7 +302,7 @@ def paste_image():
             f.write(stdout)
 
     # Modify the current line in place
-    column = k.utils.get_current_column_number()
+    column = k.vimutils.get_current_column_number()
     vim_file_link = f'![image](media:{identifier + ".png"})'
 
     modified_line = ''.join([
@@ -387,7 +387,7 @@ def convert_to_pdf(interactive=False):
     default_background = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/backgrounds/default-background.pdf')
 
     # Detect author and last commit date if in a git repository
-    full_path = k.utils.get_absolute_filepath()
+    full_path = k.vimutils.get_absolute_filepath()
     parent_dir = os.path.dirname(full_path)
     filename = os.path.basename(full_path)
 

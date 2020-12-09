@@ -3,7 +3,7 @@ import re
 import knowledge as k
 import knowledge.paths
 
-MARKUP_SYNTAX = k.utils.get_var('knowledge_syntax', 'default')
+MARKUP_SYNTAX = k.vimutils.get_var('knowledge_syntax', 'default')
 
 
 class Header(object):
