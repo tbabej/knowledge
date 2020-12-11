@@ -19,6 +19,13 @@ class Configuration:
     """
 
     def __init__(self):
+        self.load()
+
+    def load(self):
+        """
+        Sets configuration values either from environment variables or vim settings.
+        """
+
         self.SRS_PROVIDER = self._get_config_var('knowledge_srs_provider', None)
         self.SRS_DB = self._get_config_var('knowledge_srs_db', None)
         self.DB_FILE = self._get_config_var(
