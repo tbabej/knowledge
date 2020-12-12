@@ -280,4 +280,10 @@ def convert_to_pdf(filepath, lines, interactive=False):
     )
 
     # Launch the PDF viewer
-    subprocess.call(['xdg-open', k.regexp.EXTENSION.sub('.pdf', output_filepath)])
+    subprocess.Popen(
+        [
+            'xdg-open',
+            k.regexp.EXTENSION.sub('.pdf', output_filepath)
+        ],
+        start_new_session=True
+    )
