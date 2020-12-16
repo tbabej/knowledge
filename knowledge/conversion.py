@@ -210,6 +210,9 @@ def convert_to_pdf(filepath, lines, interactive=False):
     pandoc_data_dir = os.path.join(KNOWLEDGE_BASE_DIR, 'latex/')
     output_filepath = str(tmpdir / k.regexp.EXTENSION.sub('.tex', filename))
 
+    # Ensure cache folder exists
+    k.paths.CACHE_DIR.mkdir(exist_ok=True, parents=True)
+
     # Ensure bibliography file exists
     k.paths.BIBLIOGRAPHY_PATH.touch()
 
@@ -228,9 +231,6 @@ def convert_to_pdf(filepath, lines, interactive=False):
             '--bibliography', str(k.paths.BIBLIOGRAPHY_PATH),
             '--listings'
         ])
-
-    # Ensure cache folder exists
-    k.paths.CACHE_DIR.mkdir(exist_ok=True, parents=True)
 
     # Preamble compilation only works in non-interactive mode
     if not interactive:
